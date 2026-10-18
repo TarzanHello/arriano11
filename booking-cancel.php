@@ -10,40 +10,43 @@ if ($sessionId !== '' && !preg_match('/^cs_[A-Za-z0-9_]+$/', $sessionId)) {
   $sessionId = '';
 }
 
-// Best effort: release the temporary hold without calling Stripe (avoids needless API calls).
+// Release the temporary hold (under the store lock) and close the Stripe payment page.
 if ($sessionId !== '') {
-  $before = count($store['bookings'] ?? []);
-  $store['bookings'] = array_values(array_filter(($store['bookings'] ?? []), function($b) use ($sessionId) {
-    if ((string)($b['stripe_session_id'] ?? '') !== $sessionId) return true;
-    // Remove only temporary holds
-    return (string)($b['status'] ?? '') !== 'payment_pending';
-  }));
+  [$rlOk, $rlRetry] = rate_limit_hit('stripe_cancel', client_ip(), 30, 60 * 60);
+  if ($rlOk) {
+    $secretKey = stripe_secret_key($store);
 
-  if (count($store['bookings'] ?? []) !== $before) {
-    save_store($store);
-  } else {
-    // Legacy fallback: retrieve session metadata to find booking_id
-    [$rlOk, $rlRetry] = rate_limit_hit('stripe_verify', client_ip(), 30, 60 * 60);
-    if ($rlOk) {
-      $secretKey = stripe_secret_key($store);
-      if ($secretKey !== '') {
-        $res = stripe_retrieve_checkout_session($secretKey, $sessionId);
-        if (!empty($res['ok'])) {
-          $session = $res['data'] ?? [];
-          $meta = $session['metadata'] ?? [];
-          $bookingId = (string)($meta['booking_id'] ?? ($session['client_reference_id'] ?? ''));
-
-          if ($bookingId !== '') {
-            $store = load_store();
-            $store['bookings'] = array_values(array_filter(($store['bookings'] ?? []), function($b) use ($bookingId) {
-              if ((string)($b['id'] ?? '') !== $bookingId) return true;
-              // Remove only temporary holds
-              return (string)($b['status'] ?? '') !== 'payment_pending';
-            }));
-            save_store($store);
-          }
+    // FIX: expire the Checkout Session on Stripe. Before, the hold was released but the
+    // payment page stayed valid: going "back" in the browser the guest could still pay
+    // for dates that in the meantime might have been sold to someone else.
+    $bookingId = '';
+    if ($secretKey !== '') {
+      $exp = stripe_expire_checkout_session($secretKey, $sessionId);
+      $sess = (!empty($exp['ok']) && is_array($exp['data'] ?? null)) ? $exp['data'] : null;
+      if (!$sess) {
+        $r = stripe_retrieve_checkout_session($secretKey, $sessionId);
+        $sess = (!empty($r['ok']) && is_array($r['data'] ?? null)) ? $r['data'] : null;
+      }
+      if ($sess) {
+        $meta = $sess['metadata'] ?? [];
+        $bookingId = (string)($meta['booking_id'] ?? ($sess['client_reference_id'] ?? ''));
+        // If it was paid after all, do not release anything.
+        if ((string)($sess['payment_status'] ?? '') === 'paid') {
+          $sessionId = '';
         }
       }
+    }
+
+    if ($sessionId !== '') {
+      store_mutate(function(&$s) use ($sessionId, $bookingId) {
+        $s['bookings'] = array_values(array_filter(($s['bookings'] ?? []), function($b) use ($sessionId, $bookingId) {
+          $match = ((string)($b['stripe_session_id'] ?? '') === $sessionId)
+            || ($bookingId !== '' && (string)($b['id'] ?? '') === $bookingId);
+          if (!$match) return true;
+          // Remove only temporary holds
+          return (string)($b['status'] ?? '') !== 'payment_pending';
+        }));
+      });
     }
   }
 }

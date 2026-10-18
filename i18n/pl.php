@@ -270,6 +270,7 @@ return [
       'legend' => 'Legenda',
       'bookable' => 'Dostępne',
       'unavailable' => 'Niedostępne',
+      'turnover' => 'Dzień zmiany (tylko zameldowanie lub wymeldowanie)',
       'guest_data' => 'Dane gościa',
       'name' => 'Imię i nazwisko',
       'email' => 'E‑mail',

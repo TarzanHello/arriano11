@@ -270,6 +270,7 @@ return [
       'legend' => 'Legenda',
       'bookable' => 'Disponível',
       'unavailable' => 'Indisponível',
+      'turnover' => 'Dia de troca (apenas entrada ou saída)',
       'guest_data' => 'Dados do hóspede',
       'name' => 'Nome completo',
       'email' => 'Email',

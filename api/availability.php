@@ -14,10 +14,7 @@ if (!preg_match('/^\d{4}-\d{2}$/', $month)) {
 $store = load_store();
 
 // Cleanup expired payment holds (so the calendar doesn't stay blocked forever)
-$changed = prune_expired_payment_holds($store);
-if ($changed) {
-  save_store($store);
-}
+prune_expired_payment_holds_locked($store);
 
 // Try to keep availability aligned with Booking (iCal)
 maybe_auto_sync($store);

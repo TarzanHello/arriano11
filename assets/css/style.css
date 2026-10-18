@@ -1636,3 +1636,30 @@ h3{ font-size:18px; line-height:1.25; }
   padding-bottom:36px;
 }
 
+
+/* === Calendar: arrival / departure days (half-day, colour by NIGHT) — Oct 2026 ===
+   is-half-in  = a stay STARTS this evening (night busy, morning free → you can check out here)
+   is-half-out = a stay ENDS this morning   (morning busy, night free → you can check in here)  */
+.calendar .day.is-half-in{
+  background:linear-gradient(135deg, rgba(16,185,129,.14) 0 50%, rgba(239,68,68,.16) 50% 100%);
+  border-color:rgba(239,68,68,.30);
+}
+.calendar .day.is-half-out{
+  background:linear-gradient(135deg, rgba(239,68,68,.16) 0 50%, rgba(16,185,129,.14) 50% 100%);
+  border-color:rgba(16,185,129,.32);
+}
+.admin-calendar .day.is-half-in{
+  background:linear-gradient(135deg, rgba(15,118,110,.10) 0 50%, rgba(245,158,11,.22) 50% 100%);
+  border-color:rgba(245,158,11,.30);
+}
+.admin-calendar .day.is-half-out{
+  background:linear-gradient(135deg, rgba(245,158,11,.22) 0 50%, rgba(15,118,110,.10) 50% 100%);
+  border-color:rgba(15,118,110,.26);
+}
+.swatch.half{
+  background:linear-gradient(135deg, rgba(16,185,129,.22) 0 50%, rgba(239,68,68,.22) 50% 100%);
+  border-color:rgba(239,68,68,.32);
+}
+.admin-calendar .swatch.half{
+  background:linear-gradient(135deg, rgba(15,118,110,.18) 0 50%, rgba(245,158,11,.26) 50% 100%);
+}

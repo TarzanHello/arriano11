@@ -41,18 +41,13 @@ if (!$okRL) {
 }
 
 // Cleanup expired payment holds
-$changed = prune_expired_payment_holds($store);
-if ($changed) {
-  @save_store($store);
-}
+prune_expired_payment_holds_locked($store);
 
 $start = microtime(true);
 
-// Force a sync (ignores interval)
-$res = sync_from_booking($store);
+// Force a sync (ignores interval). Download happens outside the lock, saving inside it.
+$res = sync_booking_locked($store);
 if (is_array($res) && isset($res[0]) && $res[0] === true) {
-  @save_store($store);
-
   $elapsedMs = (int)round((microtime(true) - $start) * 1000);
   $count = isset($res[1]) ? (int)$res[1] : 0;
 

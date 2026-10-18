@@ -543,6 +543,69 @@ function save_store($store) {
   return $ok2;
 }
 
+// ------------------------------------------------------------
+// Store locking (prevents lost updates between concurrent requests)
+// ------------------------------------------------------------
+// FIX: every page did load_store() → change → save_store() without any lock.
+// Two requests at the same time (e.g. the Stripe webhook confirming a payment
+// while a visitor's calendar triggers the 5-minute iCal sync) could overwrite each
+// other, so a paid booking could silently go back to "payment_pending" and then be
+// deleted as an expired hold. Writers now take an exclusive lock and re-read the
+// store while holding it.
+
+function store_lock() {
+  $depth = (int)($GLOBALS['_VIA_STORE_LOCK_DEPTH'] ?? 0);
+  if ($depth > 0) {
+    $GLOBALS['_VIA_STORE_LOCK_DEPTH'] = $depth + 1;
+    return true;
+  }
+  $dir = dirname(store_file_path());
+  if (!is_dir($dir)) {
+    @mkdir($dir, 0755, true);
+  }
+  $fh = @fopen($dir . '/store.lock', 'c');
+  if (!$fh) {
+    // Degrade gracefully (same behaviour as before) if the lock file cannot be created.
+    $GLOBALS['_VIA_STORE_LOCK_DEPTH'] = 1;
+    $GLOBALS['_VIA_STORE_LOCK_FH'] = null;
+    return false;
+  }
+  @flock($fh, LOCK_EX);
+  $GLOBALS['_VIA_STORE_LOCK_FH'] = $fh;
+  $GLOBALS['_VIA_STORE_LOCK_DEPTH'] = 1;
+  return true;
+}
+
+function store_unlock() {
+  $depth = (int)($GLOBALS['_VIA_STORE_LOCK_DEPTH'] ?? 0);
+  if ($depth <= 0) return;
+  if ($depth > 1) {
+    $GLOBALS['_VIA_STORE_LOCK_DEPTH'] = $depth - 1;
+    return;
+  }
+  $fh = $GLOBALS['_VIA_STORE_LOCK_FH'] ?? null;
+  if ($fh) {
+    @flock($fh, LOCK_UN);
+    @fclose($fh);
+  }
+  $GLOBALS['_VIA_STORE_LOCK_FH'] = null;
+  $GLOBALS['_VIA_STORE_LOCK_DEPTH'] = 0;
+}
+
+// Locks, re-reads the store, runs $fn(&$store) and saves (unless $fn returns false).
+// Returns [$store, $result, $saved].
+function store_mutate($fn) {
+  store_lock();
+  $store = load_store();
+  $result = $fn($store);
+  $saved = false;
+  if ($result !== false) {
+    $saved = save_store($store);
+  }
+  store_unlock();
+  return [$store, $result, $saved];
+}
+
 
 // ------------------------------------------------------------
 // Verified reviews (guest-only)
@@ -989,7 +1052,9 @@ function normalize_ymd($ymd) {
   // Accepts YYYY-MM-DD, returns normalized string or null.
   if (!is_string($ymd)) return null;
   $ymd = trim($ymd);
-  if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $ymd)) return null;
+  if (!preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $ymd, $m)) return null;
+  // Reject impossible dates (e.g. 2026-02-31) instead of silently shifting them
+  if (!checkdate((int)$m[2], (int)$m[3], (int)$m[1])) return null;
   $t = strtotime($ymd . ' 00:00:00');
   if ($t === false) return null;
   return date('Y-m-d', $t);
@@ -1058,10 +1123,18 @@ function get_direct_price_for_date($store, $dateYmd) {
 }
 
 function nights_between($start, $end) {
-  $ts = strtotime($start . ' 00:00:00');
-  $te = strtotime($end . ' 00:00:00');
-  if ($ts === false || $te === false) return 0;
-  $diff = (int)(($te - $ts) / 86400);
+  // Calendar-day difference computed in UTC.
+  // FIX: the old version divided seconds by 86400 in Europe/Rome time, so a stay
+  // across the end-of-March DST change (23-hour day) lost one night
+  // (e.g. 27→30 March = 2 nights instead of 3), breaking min-nights and city tax.
+  $s = normalize_ymd((string)$start);
+  $e = normalize_ymd((string)$end);
+  if (!$s || !$e) return 0;
+  $utc = new DateTimeZone('UTC');
+  $ds = DateTime::createFromFormat('!Y-m-d', $s, $utc);
+  $de = DateTime::createFromFormat('!Y-m-d', $e, $utc);
+  if (!$ds || !$de) return 0;
+  $diff = (int)$ds->diff($de)->format('%r%a');
   return max(0, $diff);
 }
 
@@ -1476,6 +1549,18 @@ function prune_expired_payment_holds(&$store) {
   return count($store['bookings'] ?? []) !== $before;
 }
 
+// Prunes expired holds and saves under the lock (only if something expired).
+// $store is replaced with the fresh saved version.
+function prune_expired_payment_holds_locked(&$store) {
+  $probe = $store;
+  if (!prune_expired_payment_holds($probe)) return false;
+  [$fresh, $changed] = store_mutate(function(&$s) {
+    return prune_expired_payment_holds($s) ? true : false;
+  });
+  $store = $fresh;
+  return (bool)$changed;
+}
+
 function get_min_nights_for_arrival($store, $arrivalYmd) {
   $arrivalYmd = normalize_ymd($arrivalYmd);
   if (!$arrivalYmd) return (int)($store['settings']['min_nights'] ?? 1);
@@ -1551,7 +1636,11 @@ function quote_stay($store, $start, $end, $guests = 2) {
   if ($cleaning < 0) $cleaning = 0;
 
   $cityTaxPppn = get_city_tax_per_person_per_night($store);
-  $cityTaxTotal = round($cityTaxPppn * $g * $nights, 2);
+  // FIX: Rome's tourist tax is due only for the first N consecutive nights
+  // (setting "tourist_tax_max_nights", default 10). It existed but was never applied.
+  $taxMax = (int)($store['settings']['tourist_tax_max_nights'] ?? 10);
+  $taxNights = ($taxMax > 0) ? min($nights, $taxMax) : $nights;
+  $cityTaxTotal = round($cityTaxPppn * $g * $taxNights, 2);
 
   $bookingTotalWithFees = round($bookingTotal + $cleaning + $cityTaxTotal, 2);
   $directTotalWithFees = round($directTotal + $cleaning + $cityTaxTotal, 2);
@@ -1575,17 +1664,16 @@ function quote_stay($store, $start, $end, $guests = 2) {
   ];
 }
 
-function day_slots_for_day($store, $dateYmd) {
+// State of the NIGHT that starts on $dateYmd (from that day to the next morning).
+// Returns: 'past' | 'closed' | 'booked' | 'free'.
+// A booking start→end occupies the nights start, start+1, ..., end-1 (the end day is the
+// departure morning, so its night is free again).
+function night_state($store, $dateYmd) {
   $dateYmd = normalize_ymd($dateYmd);
-  if (!$dateYmd) {
-    return ['status' => 'available', 'can_checkin' => true, 'can_checkout' => true, 'is_stay' => false];
-  }
+  if (!$dateYmd) return 'closed';
 
-  // Close past days: no bookings in the past (local timezone)
   $today = date('Y-m-d');
-  if ($dateYmd < $today) {
-    return ['status' => 'closed', 'can_checkin' => false, 'can_checkout' => false, 'is_stay' => false];
-  }
+  if ($dateYmd < $today) return 'past';
 
   // Daily override (closed=true or forced-open closed=false)
   $daily = $store['daily'] ?? [];
@@ -1596,25 +1684,16 @@ function day_slots_for_day($store, $dateYmd) {
       $dailyClosed = $v;
     }
   }
-
-  if ($dailyClosed === true) {
-    return ['status' => 'closed', 'can_checkin' => false, 'can_checkout' => false, 'is_stay' => false];
-  }
+  if ($dailyClosed === true) return 'closed';
 
   // Blocks apply unless the day is explicitly forced open (closed=false)
   if ($dailyClosed !== false) {
     foreach (($store['blocks'] ?? []) as $b) {
       $s = normalize_ymd($b['start'] ?? '');
       $e = normalize_ymd($b['end'] ?? '');
-      if ($s && $e && date_in_range($dateYmd, $s, $e)) {
-        return ['status' => 'closed', 'can_checkin' => false, 'can_checkout' => false, 'is_stay' => false];
-      }
+      if ($s && $e && date_in_range($dateYmd, $s, $e)) return 'closed';
     }
   }
-
-  $canCheckin = true;
-  $canCheckout = true;
-  $isStay = false; // true only for days strictly inside a booking (between start and end)
 
   $now = time();
   foreach (($store['bookings'] ?? []) as $bk) {
@@ -1624,48 +1703,65 @@ function day_slots_for_day($store, $dateYmd) {
     // Skip expired payment holds
     if ($status === 'payment_pending') {
       $exp = (int)($bk['expires_at'] ?? 0);
-      if ($exp > 0 && $exp < $now) {
-        continue;
-      }
+      if ($exp > 0 && $exp < $now) continue;
     }
 
     $s = normalize_ymd($bk['start'] ?? '');
     $e = normalize_ymd($bk['end'] ?? '');
     if (!$s || !$e || $e <= $s) continue;
 
-    // Day of arrival: occupies check-in slot
-    if ($dateYmd === $s) {
-      $canCheckin = false;
-    }
-
-    // Days in between: occupies the full day
-    if ($dateYmd > $s && $dateYmd < $e) {
-      $canCheckin = false;
-      $canCheckout = false;
-      $isStay = true;
-    }
-
-    // Day of departure: occupies check-out slot
-    if ($dateYmd === $e) {
-      $canCheckout = false;
-    }
-
-    if (!$canCheckin && !$canCheckout) {
-      // Fully blocked, no need to keep scanning
-      break;
-    }
+    if ($dateYmd >= $s && $dateYmd < $e) return 'booked';
   }
 
-  $status = 'available';
-  if (!$canCheckin && !$canCheckout) {
-    $status = 'booked';
-  } elseif ($canCheckin && $canCheckout) {
+  return 'free';
+}
+
+function day_slots_for_day($store, $dateYmd) {
+  $dateYmd = normalize_ymd($dateYmd);
+  if (!$dateYmd) {
+    return ['status' => 'available', 'can_checkin' => true, 'can_checkout' => true, 'is_stay' => false, 'night_busy' => false, 'prev_night_busy' => false];
+  }
+
+  // Close past days: no bookings in the past (local timezone)
+  $today = date('Y-m-d');
+  if ($dateYmd < $today) {
+    return ['status' => 'closed', 'can_checkin' => false, 'can_checkout' => false, 'is_stay' => false, 'night_busy' => true, 'prev_night_busy' => true];
+  }
+
+  // FIX: availability is now computed per NIGHT.
+  // - check-in on D is possible if the night of D is free
+  // - check-out on D is possible if the night before (D-1) is free
+  // Before, closed days/blocks also forbade checking OUT on the first closed day, and
+  // the calendars painted the arrival day of a booking as "free", so short stays
+  // (1-2 nights) were almost invisible.
+  $tonight = night_state($store, $dateYmd);
+  $prev = night_state($store, add_days_ymd($dateYmd, -1));
+
+  $canCheckin = ($tonight === 'free');
+  $canCheckout = ($prev === 'free');
+  $nightBusy = ($tonight === 'booked' || $tonight === 'closed');
+  $prevBusy = ($prev === 'booked' || $prev === 'closed');
+  $isStay = ($tonight === 'booked' && $prev === 'booked');
+
+  if ($canCheckin && $canCheckout) {
     $status = 'available';
+  } elseif ($canCheckin && !$prevBusy) {
+    // Today: the previous night is in the past, the day is simply open.
+    $status = 'available';
+  } elseif (!$canCheckin && !$canCheckout) {
+    $status = ($tonight === 'closed') ? 'closed' : 'booked';
   } else {
     $status = 'turnover';
   }
 
-  return ['status' => $status, 'can_checkin' => $canCheckin, 'can_checkout' => $canCheckout, 'is_stay' => $isStay];
+  return [
+    'status' => $status,
+    'can_checkin' => $canCheckin,
+    'can_checkout' => $canCheckout,
+    'is_stay' => $isStay,
+    'night_busy' => $nightBusy,
+    'prev_night_busy' => $prevBusy,
+  ];
 }
 
 function date_status_for_day($store, $dateYmd) {
@@ -1695,6 +1791,8 @@ function availability_for_month($store, $monthKey) {
       'can_checkin' => !empty($slots['can_checkin']),
       'can_checkout' => !empty($slots['can_checkout']),
       'is_stay' => !empty($slots['is_stay']),
+      'night_busy' => !empty($slots['night_busy']),
+      'prev_night_busy' => !empty($slots['prev_night_busy']),
       'price' => get_direct_price_for_date($store, $ymd),
       'min_nights' => get_min_nights_for_arrival($store, $ymd)
     ];
@@ -1715,29 +1813,29 @@ function is_range_available_for_request($store, $start, $end) {
   if (!$start || !$end) return false;
   if ($end <= $start) return false;
 
-  // Check-in day must allow check-in
-  $s = day_slots_for_day($store, $start);
-  if (empty($s['can_checkin']) || ($s['status'] ?? '') === 'closed') {
-    return false;
-  }
-
-  // Check-out day must allow check-out
-  $e = day_slots_for_day($store, $end);
-  if (empty($e['can_checkout']) || ($e['status'] ?? '') === 'closed') {
-    return false;
-  }
-
-  // Days in between must be fully available (no arrivals/departures inside stay)
-  $cursor = add_days_ymd($start, 1);
+  // Every night of the stay (start … end-1) must be free.
+  // The departure day itself is not checked: its night belongs to the next guest.
+  $cursor = $start;
+  $guard = 0;
   while ($cursor < $end) {
-    $d = day_slots_for_day($store, $cursor);
-    if (($d['status'] ?? '') !== 'available' || empty($d['can_checkin']) || empty($d['can_checkout'])) {
+    if (night_state($store, $cursor) !== 'free') {
       return false;
     }
     $cursor = add_days_ymd($cursor, 1);
+    if (++$guard > 400) return false; // safety
   }
 
   return true;
+}
+
+// Same check, ignoring one booking (used when the admin confirms a pending request).
+function is_range_available_excluding($store, $start, $end, $excludeId) {
+  $excludeId = (string)$excludeId;
+  $copy = $store;
+  $copy['bookings'] = array_values(array_filter(($store['bookings'] ?? []), function($b) use ($excludeId) {
+    return (string)($b['id'] ?? '') !== $excludeId;
+  }));
+  return is_range_available_for_request($copy, $start, $end);
 }
 
 function maybe_auto_sync(&$store, $force = false) {
@@ -1750,16 +1848,43 @@ function maybe_auto_sync(&$store, $force = false) {
 
   if (!$force) {
     $last = (int)($store['settings']['last_sync'] ?? 0);
+    // FIX: also respect the last FAILED attempt, otherwise when Booking is slow/down
+    // every page view waited for the 10-second download timeout.
+    $lastAttempt = (int)($store['settings']['last_sync_attempt'] ?? 0);
+    $ref = max($last, $lastAttempt);
     $now = time();
-    if ($last > 0 && ($now - $last) < ($interval * 60)) {
+    if ($ref > 0 && ($now - $ref) < ($interval * 60)) {
       return;
     }
   }
 
-  $res = sync_from_booking($store);
-  if (is_array($res) && isset($res[0]) && $res[0] === true) {
-    save_store($store);
+  sync_booking_locked($store);
+}
+
+// Downloads the Booking iCal feed WITHOUT holding the lock (it can take seconds),
+// then applies it to a freshly re-read store while holding the lock.
+// $store is replaced with the up-to-date version. Returns [ok, count|error].
+function sync_booking_locked(&$store) {
+  $url = trim((string)($store['settings']['booking_ical_url'] ?? ''));
+  if ($url === '') {
+    return [false, 'URL iCal Booking.com non impostato.'];
   }
+
+  [$ok, $eventsOrError] = booking_ical_fetch_events($url);
+
+  [$fresh, $res] = store_mutate(function(&$s) use ($ok, $eventsOrError) {
+    $s['settings']['last_sync_attempt'] = time();
+    if (!$ok) {
+      $s['settings']['last_sync_error'] = (string)$eventsOrError;
+      return [false, (string)$eventsOrError];
+    }
+    $n = booking_ical_apply_events($s, $eventsOrError);
+    $s['settings']['last_sync_error'] = '';
+    return [true, $n];
+  });
+
+  $store = $fresh;
+  return is_array($res) ? $res : [false, 'Sync non riuscita.'];
 }
 
 
@@ -2089,10 +2214,21 @@ function unfold_ical_lines($ics) {
 }
 
 function ical_date_to_ymd($value) {
-  // Accepts 20250101 or 20250101T120000Z, returns YYYY-MM-DD
+  // Accepts 20250101, 20250101T120000 or 20250101T230000Z, returns YYYY-MM-DD (Rome date)
   $value = trim((string)$value);
+  // FIX: UTC timestamps ("...Z") are converted to the local date first; taking the
+  // first 8 digits shifted late-evening events to the previous day.
+  if (preg_match('/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})?Z$/i', $value, $m)) {
+    try {
+      $dt = new DateTime($m[1] . '-' . $m[2] . '-' . $m[3] . 'T' . $m[4] . ':' . $m[5] . ':' . ($m[6] ?? '00'), new DateTimeZone('UTC'));
+      $dt->setTimezone(new DateTimeZone(date_default_timezone_get()));
+      return $dt->format('Y-m-d');
+    } catch (Exception $e) {
+      // fall through
+    }
+  }
   if (preg_match('/^(\d{4})(\d{2})(\d{2})/', $value, $m)) {
-    return $m[1] . '-' . $m[2] . '-' . $m[3];
+    return normalize_ymd($m[1] . '-' . $m[2] . '-' . $m[3]);
   }
   return null;
 }
@@ -2114,11 +2250,17 @@ function parse_ical_events($ics) {
         $uid = $cur['UID'] ?? null;
         $dtstart = $cur['DTSTART'] ?? null;
         $dtend = $cur['DTEND'] ?? null;
+        $evStatus = strtoupper(trim((string)($cur['STATUS'] ?? '')));
 
         $start = $dtstart ? ical_date_to_ymd($dtstart) : null;
         $end = $dtend ? ical_date_to_ymd($dtend) : null;
+        // Cancelled events must not block the calendar
+        if ($evStatus === 'CANCELLED') {
+          $start = null;
+        }
         if ($start) {
-          if (!$end) {
+          // Missing or inconsistent DTEND → treat as a one-night block
+          if (!$end || $end <= $start) {
             $end = add_days_ymd($start, 1);
           }
           $events[] = [
@@ -2143,7 +2285,7 @@ function parse_ical_events($ics) {
 
     // Remove params (e.g. DTSTART;VALUE=DATE)
     $key = strtoupper(explode(';', $left)[0]);
-    if (in_array($key, ['UID', 'DTSTART', 'DTEND'], true)) {
+    if (in_array($key, ['UID', 'DTSTART', 'DTEND', 'STATUS'], true)) {
       $cur[$key] = $value;
     }
   }
@@ -2151,44 +2293,77 @@ function parse_ical_events($ics) {
   return $events;
 }
 
-function sync_from_booking(&$store) {
-  $url = trim((string)($store['settings']['booking_ical_url'] ?? ''));
-  if ($url === '') {
-    return [false, 'URL iCal Booking.com non impostato.'];
-  }
-
+// Downloads and parses the feed. Returns [true, events] or [false, error].
+function booking_ical_fetch_events($url) {
   list($ok, $bodyOrError) = fetch_url($url);
   if (!$ok) {
     return [false, $bodyOrError];
   }
 
   $ics = (string)$bodyOrError;
-  $events = parse_ical_events($ics);
+  // FIX: if Booking answers with an error/HTML page (HTTP 200) the old code found
+  // 0 events and DELETED all imported reservations, making those dates bookable
+  // on the site (double-booking risk). Now such a response is rejected.
+  if (stripos($ics, 'BEGIN:VCALENDAR') === false) {
+    return [false, 'Risposta iCal non valida (manca BEGIN:VCALENDAR): le prenotazioni importate restano invariate.'];
+  }
 
-  // Remove previous booking-source imports.
+  return [true, parse_ical_events($ics)];
+}
+
+// Replaces the imported Booking reservations with $events. Returns the count.
+function booking_ical_apply_events(&$store, $events) {
+  // Keep the original import time of reservations we already knew.
+  $prevCreated = [];
   $clean = [];
   foreach (($store['bookings'] ?? []) as $bk) {
-    if (($bk['source'] ?? '') !== 'booking') {
+    if (($bk['source'] ?? '') === 'booking') {
+      $prevCreated[(string)($bk['id'] ?? '')] = (int)($bk['created_at'] ?? 0);
+    } else {
       $clean[] = $bk;
     }
   }
 
+  $now = time();
+  $seen = [];
   foreach ($events as $ev) {
+    $id = 'booking-' . md5($ev['uid']);
+    if (isset($seen[$id])) {
+      // Some feeds reuse the same UID for several events: keep them all.
+      $id = 'booking-' . md5($ev['uid'] . '|' . $ev['start'] . '|' . $ev['end']);
+      if (isset($seen[$id])) continue;
+    }
+    $seen[$id] = true;
+    $created = $prevCreated[$id] ?? 0;
     $clean[] = [
-      'id' => 'booking-' . md5($ev['uid']),
+      'id' => $id,
       'start' => $ev['start'],
       'end' => $ev['end'],
+      'nights' => nights_between($ev['start'], $ev['end']),
       'status' => 'booked',
       'source' => 'booking',
       'external_uid' => $ev['uid'],
-      'created_at' => time()
+      'created_at' => $created > 0 ? $created : $now,
     ];
   }
 
   $store['bookings'] = $clean;
-  $store['settings']['last_sync'] = time();
+  $store['settings']['last_sync'] = $now;
 
-  return [true, count($events)];
+  return count($seen);
+}
+
+// Backward-compatible wrapper (caller is responsible for saving).
+function sync_from_booking(&$store) {
+  $url = trim((string)($store['settings']['booking_ical_url'] ?? ''));
+  if ($url === '') {
+    return [false, 'URL iCal Booking.com non impostato.'];
+  }
+  [$ok, $eventsOrError] = booking_ical_fetch_events($url);
+  if (!$ok) {
+    return [false, $eventsOrError];
+  }
+  return [true, booking_ical_apply_events($store, $eventsOrError)];
 }
 
 function build_ics_from_store($store) {

@@ -270,6 +270,7 @@ return [
       'legend' => 'Legende',
       'bookable' => 'Buchbar',
       'unavailable' => 'Nicht verfügbar',
+      'turnover' => 'Wechseltag (nur An- oder Abreise)',
       'guest_data' => 'Gästedaten',
       'name' => 'Vollständiger Name',
       'email' => 'E‑Mail',

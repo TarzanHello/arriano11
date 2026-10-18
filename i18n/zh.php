@@ -270,6 +270,7 @@ return [
       'legend' => '图例',
       'bookable' => '可预订',
       'unavailable' => '不可用',
+      'turnover' => '换房日（仅可入住或仅可退房）',
       'guest_data' => '住客信息',
       'name' => '姓名',
       'email' => '邮箱',

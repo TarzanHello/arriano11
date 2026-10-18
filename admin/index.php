@@ -17,10 +17,7 @@ if (empty($store['settings']['ical_export_secret'])) {
 }
 
 // Cleanup expired payment holds
-$changed = prune_expired_payment_holds($store);
-if ($changed) {
-  save_store($store);
-}
+prune_expired_payment_holds_locked($store);
 
 // Keep availability aligned with Booking (iCal)
 maybe_auto_sync($store);
@@ -158,18 +155,20 @@ function month_title_it($ym) {
                       // Align admin day classes with the same booking rules used on the public calendar.
                       // In particular: "turnover" days (arrival/departure) are NOT fully booked.
                       // They must remain selectable/open in admin like they are in the user calendar.
+                      // FIX: colour by NIGHT. A day whose night is occupied is shown as occupied
+                      // (before, the arrival day of a booking looked "free", so 1-night stays
+                      // were invisible). Arrival/departure days are shown half-and-half.
+                      $nightBusy = !empty($info['night_busy']);
+                      $prevBusy = !empty($info['prev_night_busy']);
                       $cls = 'day ';
                       if ($status === 'closed') {
                         $cls .= 'is-closed';
-                      } elseif ($status === 'booked') {
+                      } elseif ($nightBusy && $prevBusy) {
                         $cls .= 'is-booked';
-                      } elseif ($status === 'turnover') {
-                        // Turnover days (arrivals/departures) are still bookable on one side.
-                        // For consistency with the public calendar, keep them visually "open".
-                        $cls .= 'is-available';
-                      } elseif ($status === 'review') {
-                        // Backward-compatibility: treat as booked/busy.
-                        $cls .= 'is-booked';
+                      } elseif ($nightBusy) {
+                        $cls .= 'is-available is-half-in';   // a stay starts tonight
+                      } elseif ($prevBusy) {
+                        $cls .= 'is-available is-half-out';  // a stay ends this morning
                       } else {
                         $cls .= 'is-available';
                       }
@@ -224,7 +223,8 @@ function month_title_it($ym) {
 
               <div class="legend" style="margin-top:12px;">
                 <div class="item"><span class="swatch available"></span> Aperto</div>
-                <div class="item"><span class="swatch booked"></span> Occupato / In corso</div>
+                <div class="item"><span class="swatch booked"></span> Notte occupata</div>
+                <div class="item"><span class="swatch half"></span> Giorno di arrivo / partenza</div>
                 <div class="item"><span class="swatch closed"></span> Chiuso</div>
                 <div class="item"><span style="display:inline-block; width:12px;">●</span> Giorno con regole personalizzate</div>
               </div>
@@ -721,9 +721,15 @@ function month_title_it($ym) {
       <?php elseif ($tab === 'bookings'): ?>
         <?php
           $bookings = $store['bookings'] ?? [];
-          // Newest first
-          usort($bookings, function($a,$b){
-            return (int)($b['created_at']??0) <=> (int)($a['created_at']??0);
+          // FIX: order by stay date (upcoming/current first, then past most recent first).
+          // Before it was ordered by created_at, which for Booking imports is reset at every sync.
+          $todayYmd = date('Y-m-d');
+          usort($bookings, function($a, $b) use ($todayYmd) {
+            $ae = (string)($a['end'] ?? ''); $be = (string)($b['end'] ?? '');
+            $aPast = ($ae !== '' && $ae < $todayYmd); $bPast = ($be !== '' && $be < $todayYmd);
+            if ($aPast !== $bPast) return $aPast ? 1 : -1;
+            $as = (string)($a['start'] ?? ''); $bs = (string)($b['start'] ?? '');
+            return $aPast ? strcmp($bs, $as) : strcmp($as, $bs);
           });
         ?>
 
@@ -739,6 +745,8 @@ function month_title_it($ym) {
                 <thead>
                   <tr>
                     <th style="text-align:left; padding:10px; border-bottom:1px solid var(--border);">Periodo</th>
+                    <th style="text-align:left; padding:10px; border-bottom:1px solid var(--border);">Notti</th>
+                    <th style="text-align:left; padding:10px; border-bottom:1px solid var(--border);">Origine</th>
                     <th style="text-align:left; padding:10px; border-bottom:1px solid var(--border);">Ospite</th>
                     <th style="text-align:left; padding:10px; border-bottom:1px solid var(--border);">Stato</th>
                     <th style="text-align:left; padding:10px; border-bottom:1px solid var(--border);">Importo</th>
@@ -767,12 +775,23 @@ function month_title_it($ym) {
                         $amount = format_currency((float)$bk['amount_due'], (string)($bk['currency'] ?? 'EUR'));
                       }
 
+                      $nightsN = nights_between((string)($bk['start'] ?? ''), (string)($bk['end'] ?? ''));
+                      $isBookingCom = ((string)($bk['source'] ?? '') === 'booking');
+                      $sourceLabel = $isBookingCom ? 'Booking.com' : 'Sito';
+                      if (!$isBookingCom && $guest === '' && $email === '') $guest = '—';
+                      if ($isBookingCom && $guest === '') $guest = '(dati su Booking.com)';
+
                       $guestLine = e($guest ?: '—');
+                      if (!empty($bk['needs_check'])) {
+                        $guestLine .= '<div class="small" style="color:#b91c1c; font-weight:800;">⚠ Pagata ma date in conflitto: verificare</div>';
+                      }
                       if ($email) $guestLine .= '<div class="small muted">' . e($email) . '</div>';
                       if ($phone) $guestLine .= '<div class="small muted">' . e($phone) . '</div>';
                     ?>
                     <tr>
                       <td style="padding:10px; border-bottom:1px solid var(--border); white-space:nowrap;"><?php echo $period; ?></td>
+                      <td style="padding:10px; border-bottom:1px solid var(--border); white-space:nowrap;"><?php echo e((string)$nightsN); ?></td>
+                      <td style="padding:10px; border-bottom:1px solid var(--border); white-space:nowrap;"><?php echo e($sourceLabel); ?></td>
                       <td style="padding:10px; border-bottom:1px solid var(--border);"><?php echo $guestLine; ?></td>
                       <td style="padding:10px; border-bottom:1px solid var(--border);"><span class="pill"><?php echo e($label); ?></span></td>
                       <td style="padding:10px; border-bottom:1px solid var(--border); white-space:nowrap;"><?php echo e($amount ?: '—'); ?></td>
@@ -799,6 +818,8 @@ function month_title_it($ym) {
                               echo '<span class="small muted">In attesa di pagamento</span>';
                             }
                           ?>
+                        <?php elseif ($status === 'booked' && $isBookingCom): ?>
+                          <span class="small muted">Gestita su Booking.com</span>
                         <?php elseif ($status === 'booked'): ?>
                           <?php
                             $eligible = booking_is_eligible_for_review($bk);
@@ -832,6 +853,15 @@ function month_title_it($ym) {
                           <?php endif; ?>
                         <?php else: ?>
                           <span class="small muted">—</span>
+                        <?php endif; ?>
+
+                        <?php if (!$isBookingCom && $status !== 'payment_pending'): ?>
+                          <form method="post" action="/admin/action.php" style="display:block; margin-top:6px;" data-confirm="Eliminare definitivamente questa prenotazione/richiesta? Le date torneranno libere.">
+                            <input type="hidden" name="csrf" value="<?php echo e($csrf); ?>">
+                            <input type="hidden" name="action" value="delete_booking">
+                            <input type="hidden" name="id" value="<?php echo e((string)($bk['id'] ?? '')); ?>">
+                            <button class="btn" type="submit">Elimina</button>
+                          </form>
                         <?php endif; ?>
                       </td>
                     </tr>
@@ -925,7 +955,7 @@ function month_title_it($ym) {
                           </form>
                         <?php endif; ?>
 
-                        <form method="post" action="/admin/action.php" style="display:inline-block; margin-left:6px;" onsubmit="return confirm('Eliminare questa recensione?');">
+                        <form method="post" action="/admin/action.php" style="display:inline-block; margin-left:6px;" data-confirm="Eliminare questa recensione?">
                           <input type="hidden" name="csrf" value="<?php echo e($csrf); ?>">
                           <input type="hidden" name="action" value="delete_review">
                           <input type="hidden" name="id" value="<?php echo e($rid); ?>">
@@ -969,6 +999,11 @@ function month_title_it($ym) {
             <div class="v"><code style="word-break:break-all;"><?php echo e($ical ?: '—'); ?></code></div>
             <div class="k">Ultimo sync import</div>
             <div class="v"><?php echo $last ? e(date('Y-m-d H:i', $last)) : 'Mai'; ?></div>
+            <?php $lastSyncErr = (string)($store['settings']['last_sync_error'] ?? ''); ?>
+            <?php if ($lastSyncErr !== ''): ?>
+              <div class="k">Ultimo errore sync</div>
+              <div class="v"><span style="color:#b91c1c;"><?php echo e($lastSyncErr); ?></span></div>
+            <?php endif; ?>
 
             <div class="k">Export (sito → Booking)</div>
             <div class="v">
@@ -1210,7 +1245,7 @@ function month_title_it($ym) {
           <div class="actions" style="margin-top:10px;">
             <a class="btn" href="/admin/2fa_setup.php">Configura / Gestisci 2FA</a>
             <?php if ($twoEnabled): ?>
-              <form method="post" action="/admin/2fa_disable.php" style="display:inline; margin:0;" onsubmit="return confirm('Disattivare la 2FA?');">
+              <form method="post" action="/admin/2fa_disable.php" style="display:inline; margin:0;" data-confirm="Disattivare la 2FA?">
                 <input type="hidden" name="csrf" value="<?php echo e($csrf); ?>">
                 <button class="btn" type="submit">Disattiva 2FA</button>
               </form>
@@ -1222,5 +1257,7 @@ function month_title_it($ym) {
 
     </div>
   </main>
+  <?php $adm_js_v = @filemtime(__DIR__ . '/../assets/js/admin.js') ?: 1; ?>
+  <script src="/assets/js/admin.js?v=<?php echo e((string)$adm_js_v); ?>"></script>
 </body>
 </html>

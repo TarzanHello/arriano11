@@ -270,6 +270,7 @@ return [
       'legend' => '표시',
       'bookable' => '예약 가능',
       'unavailable' => '이용 불가',
+      'turnover' => '교대일 (체크인 또는 체크아웃만 가능)',
       'guest_data' => '투숙객 정보',
       'name' => '이름',
       'email' => '이메일',

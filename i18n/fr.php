@@ -270,6 +270,7 @@ return [
       'legend' => 'Légende',
       'bookable' => 'Réservable',
       'unavailable' => 'Indisponible',
+      'turnover' => 'Jour de rotation (arrivée ou départ uniquement)',
       'guest_data' => 'Informations voyageur',
       'name' => 'Nom et prénom',
       'email' => 'Email',

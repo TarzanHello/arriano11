@@ -509,12 +509,24 @@
 
           var ciFree = canCheckin(dateStr);
           var coFree = canCheckout(dateStr);
-          var isStay = !!(info && info.is_stay);
+
+          // FIX: colour by NIGHT. A booking from the 23rd to the 25th occupies the nights
+          // of the 23rd and 24th: before, the 23rd was painted green (only the 24th red)
+          // and a 1-night stay was not visible at all.
+          //  - night and previous night busy → red
+          //  - only tonight busy (someone arrives) → half: you can still CHECK OUT here
+          //  - only last night busy (someone leaves) → half: you can CHECK IN here
+          var nightBusy = info ? ((typeof info.night_busy === 'boolean') ? info.night_busy : !info.can_checkin) : true;
+          var prevBusy = info ? ((typeof info.prev_night_busy === 'boolean') ? info.prev_night_busy : !info.can_checkout) : true;
+          var isPast = (dateStr < todayStr);
 
           var cls = 'day';
-          // Unified colors: green=open, red=non disponibile
-          if(isStay || (!ciFree && !coFree)){
+          if(isPast || !info || (!ciFree && !coFree) || (nightBusy && prevBusy)){
             cls += ' is-unavailable';
+          } else if(nightBusy){
+            cls += ' is-open is-half-in';
+          } else if(prevBusy && dateStr !== todayStr){
+            cls += ' is-open is-half-out';
           } else {
             cls += ' is-open';
           }
@@ -532,7 +544,8 @@
           }
 
           var price = priceFor(dateStr);
-          var showPrice = ((price !== null) && (cls.indexOf(' is-open') !== -1));
+          // Price = price of the night starting this day → only when that night is free
+          var showPrice = ((price !== null) && ciFree);
           var priceHtml = '';
           if(showPrice){
             var fullP = fmtMoney(price);

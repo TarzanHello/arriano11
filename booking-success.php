@@ -59,96 +59,22 @@ if (!$confirmed) {
           if ($paymentStatus !== 'paid') {
             $errorKey = 'booking_success.err_not_paid';
           } else {
-            $meta = $session['metadata'] ?? [];
-            $bookingId = (string)($meta['booking_id'] ?? ($session['client_reference_id'] ?? ''));
-            $start = normalize_ymd((string)($meta['start'] ?? ''));
-            $end = normalize_ymd((string)($meta['end'] ?? ''));
-            $guests = normalize_guests($meta['guests'] ?? '', 2);
-
-            $amountTotal = isset($session['amount_total']) ? ((int)$session['amount_total'] / 100.0) : 0.0;
-            $currency = strtoupper((string)($session['currency'] ?? $currency));
-
-            // Update store: mark booking as booked
-            $store = load_store();
-            prune_expired_payment_holds($store);
-
-            $found = false;
-            foreach (($store['bookings'] ?? []) as &$bk) {
-              if ((string)($bk['id'] ?? '') === $bookingId && $bookingId !== '') {
-                $found = true;
-                $bk['status'] = 'booked';
-                $bk['paid_at'] = time();
-                $bk['stripe_session_id'] = $sessionId;
-                $bk['stripe_payment_intent'] = (string)($session['payment_intent'] ?? '');
-                $bk['amount_paid'] = round($amountTotal, 2);
-                $bk['currency'] = $currency;
-
-                // Send paid confirmation emails (guest + owner) in an idempotent way
-                maybe_send_paid_booking_emails($store, $bk);
-                break;
-              }
-            }
-            unset($bk);
-
-            if (!$found) {
-              // Safety net: create the booking if the temporary hold is missing
-              if (!$start || !$end || $end <= $start) {
-                $errorKey = 'booking_success.err_missing_details';
-                $errorVars = ['id' => $sessionId];
-              } else {
-                $newId = ($bookingId !== '') ? $bookingId : new_id('bk_');
-
-                // Rebuild the quote/breakdown if possible (so emails contain proper totals)
-                $quote = quote_stay($store, $start, $end, (int)$guests);
-
-                $store['bookings'][] = [
-                  'id' => $newId,
-                  'start' => $start,
-                  'end' => $end,
-                  'nights' => !empty($quote['ok']) ? (int)($quote['nights'] ?? 0) : null,
-                  'guests' => ($guests === null) ? null : (int)$guests,
-                  'status' => 'booked',
-                  'source' => 'direct',
-                  'name' => (string)($session['customer_details']['name'] ?? ''),
-                  'email' => (string)($session['customer_details']['email'] ?? ''),
-                  'phone' => '',
-                  'message' => '',
-                  'created_at' => time(),
-                  'paid_at' => time(),
-                  'stripe_session_id' => $sessionId,
-                  'stripe_payment_intent' => (string)($session['payment_intent'] ?? ''),
-                  'amount_paid' => round($amountTotal, 2),
-                  'currency' => $currency,
-                  'lang' => (string)($meta['lang'] ?? 'it'),
-                  // Cost breakdown (best-effort)
-                  'accommodation_total' => !empty($quote['ok']) ? (float)($quote['accommodation_total'] ?? 0) : null,
-                  'cleaning_fee' => !empty($quote['ok']) ? (float)($quote['cleaning_fee'] ?? 0) : null,
-                  'city_tax_total' => !empty($quote['ok']) ? (float)($quote['city_tax_total'] ?? 0) : null,
-                  'direct_total_with_fees' => !empty($quote['ok']) ? (float)($quote['direct_total_with_fees'] ?? 0) : null,
-                  'deposit_amount' => !empty($quote['ok']) ? (float)($quote['deposit_amount'] ?? 0) : null,
-                  'balance_due' => !empty($quote['ok']) ? (float)($quote['balance_due'] ?? 0) : null,
-                ];
-
-                $idx = count($store['bookings'] ?? []) - 1;
-                if ($idx >= 0 && isset($store['bookings'][$idx]) && is_array($store['bookings'][$idx])) {
-                  maybe_send_paid_booking_emails($store, $store['bookings'][$idx]);
-                }
-
-                $found = true;
-              }
-            }
-
-            if ($found) {
-              save_store($store);
+            // Confirm (or re-create) the booking under the store lock — shared with the webhook.
+            $conf = stripe_confirm_paid_session($session);
+            if (!empty($conf['ok']) && is_array($conf['booking'] ?? null)) {
+              $bkc = $conf['booking'];
               $confirmed = true;
               $details = [
-                'booking_id' => $bookingId,
-                'start' => $start,
-                'end' => $end,
-                'amount_paid' => round($amountTotal, 2),
-                'currency' => $currency,
-                'email' => (string)($session['customer_details']['email'] ?? '')
+                'booking_id' => (string)($bkc['id'] ?? ''),
+                'start' => (string)($bkc['start'] ?? ''),
+                'end' => (string)($bkc['end'] ?? ''),
+                'amount_paid' => (float)($bkc['amount_paid'] ?? 0),
+                'currency' => (string)($bkc['currency'] ?? $currency),
+                'email' => (string)($bkc['email'] ?? ($session['customer_details']['email'] ?? '')),
               ];
+            } else {
+              $errorKey = (string)($conf['error_key'] ?? 'booking_success.err_verify_failed');
+              $errorVars = ['id' => $sessionId];
             }
           }
         }

@@ -411,19 +411,13 @@ function pe_event_lift_for_date($store, $dateYmd, $pe) {
 // Pace / occupancy helpers
 // ------------------------------------------------------------
 
+// Night-based helpers (aligned with the per-night availability model in lib.php)
 function pe_is_sellable_night($store, $dateYmd) {
-  $slots = day_slots_for_day($store, $dateYmd);
-  if (($slots['status'] ?? '') === 'closed') return false;
-  // Se è occupato (arrivo o stay) non è vendibile.
-  if (empty($slots['can_checkin'])) return false;
-  return true;
+  return night_state($store, $dateYmd) === 'free';
 }
 
 function pe_is_sold_night($store, $dateYmd) {
-  $slots = day_slots_for_day($store, $dateYmd);
-  if (($slots['status'] ?? '') === 'closed') return false;
-  // Notte venduta se il check-in è bloccato (arrivo o stay)
-  return empty($slots['can_checkin']);
+  return night_state($store, $dateYmd) === 'booked';
 }
 
 function pe_coverage_days_from_today($store, $maxDays = 90) {
@@ -431,12 +425,8 @@ function pe_coverage_days_from_today($store, $maxDays = 90) {
   $cov = 0;
   for ($i=0; $i<$maxDays; $i++) {
     $d = add_days_ymd($today, $i);
-    $slots = day_slots_for_day($store, $d);
-    if (($slots['status'] ?? '') === 'closed') {
-      $cov++;
-      continue;
-    }
-    if (empty($slots['can_checkin'])) {
+    $ns = night_state($store, $d);
+    if ($ns === 'closed' || $ns === 'booked') {
       $cov++;
       continue;
     }
@@ -469,11 +459,11 @@ function pe_month_occupancy($store, $monthKey) {
   $open = 0;
   $d = $s;
   while ($d < $e) {
-    $slots = day_slots_for_day($store, $d);
-    if (($slots['status'] ?? '') !== 'closed') {
-      // Inventory open (non chiuso)
+    $ns = night_state($store, $d);
+    if ($ns === 'free' || $ns === 'booked') {
+      // Inventory open (non chiuso, non passato)
       $open++;
-      if (empty($slots['can_checkin'])) {
+      if ($ns === 'booked') {
         $sold++;
       }
     }
@@ -489,7 +479,8 @@ function pe_days_to_end_of_month($ymd) {
   $t = strtotime($ymd . ' 00:00:00');
   if ($t === false) return 0;
   $end = date('Y-m-t', $t);
-  return max(0, (int)((strtotime($end . ' 00:00:00') - $t) / 86400));
+  // DST-safe day difference
+  return nights_between($ymd, $end);
 }
 
 function pe_next_month_key($ymd) {
@@ -541,7 +532,7 @@ function pricing_engine_price_for_date($store, $dateYmd, $pe, $ctx = []) {
   $aggr = (float)($pe['aggressiveness'] ?? 0.65);
 
   // Days to arrival
-  $dta = max(0, (int)((strtotime($dateYmd . ' 00:00:00') - strtotime($today . ' 00:00:00')) / 86400));
+  $dta = nights_between($today, $dateYmd); // DST-safe
 
   // Horizon factor: spinge i prezzi (su/giù) nelle prossime ~1.2×targetCov giornate
   $pressure = ($targetCov > 0) ? (($covNow - $targetCov) / $targetCov) : 0.0; // negativo => siamo "corti"

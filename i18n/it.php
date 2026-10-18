@@ -274,6 +274,7 @@ return [
       'legend' => 'Legenda',
       'bookable' => 'Prenotabili',
       'unavailable' => 'Non disponibili',
+      'turnover' => 'Giorno di arrivo/partenza (solo check-in o solo check-out)',
       'guest_data' => 'Dati ospite',
       'name' => 'Nome e cognome',
       'email' => 'Email',

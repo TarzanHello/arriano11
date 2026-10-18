@@ -345,7 +345,8 @@ send_security_headers([
   <script nonce="<?php echo e(csp_nonce()); ?>">
     window.__VIA_I18N = <?php echo json_encode($jsPayload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?>;
   </script>
-  <script src="/assets/js/i18n.js" defer></script>
+  <?php $i18n_js_v = @filemtime(__DIR__ . '/../assets/js/i18n.js') ?: 1; ?>
+  <script src="/assets/js/i18n.js?v=<?php echo e((string)$i18n_js_v); ?>" defer></script>
 </head>
 <body class="<?php echo e($bodyClass); ?>">
   <header class="site-header">

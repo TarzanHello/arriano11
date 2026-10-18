@@ -270,6 +270,7 @@ return [
       'legend' => 'Förklaring',
       'bookable' => 'Bokningsbar',
       'unavailable' => 'Ej tillgänglig',
+      'turnover' => 'Bytesdag (endast incheckning eller utcheckning)',
       'guest_data' => 'Gästuppgifter',
       'name' => 'Fullständigt namn',
       'email' => 'E‑post',

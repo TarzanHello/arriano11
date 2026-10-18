@@ -270,6 +270,7 @@ return [
       'legend' => 'Legendă',
       'bookable' => 'Disponibil',
       'unavailable' => 'Indisponibil',
+      'turnover' => 'Zi de schimb (doar check-in sau doar check-out)',
       'guest_data' => 'Datele oaspetelui',
       'name' => 'Nume complet',
       'email' => 'Email',

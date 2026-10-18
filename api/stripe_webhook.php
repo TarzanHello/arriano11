@@ -92,38 +92,11 @@ if (!is_array($event)) {
 $type = (string)($event['type'] ?? '');
 $obj = $event['data']['object'] ?? null;
 
-if ($type === 'checkout.session.completed' && is_array($obj)) {
+if (($type === 'checkout.session.completed' || $type === 'checkout.session.async_payment_succeeded') && is_array($obj)) {
   $paymentStatus = (string)($obj['payment_status'] ?? '');
   if ($paymentStatus === 'paid') {
-    $meta = $obj['metadata'] ?? [];
-    $bookingId = (string)($meta['booking_id'] ?? ($obj['client_reference_id'] ?? ''));
-    $sessionId = (string)($obj['id'] ?? '');
-    $paymentIntent = (string)($obj['payment_intent'] ?? '');
-    $amountTotal = isset($obj['amount_total']) ? ((int)$obj['amount_total'] / 100.0) : 0.0;
-    $currency = strtoupper((string)($obj['currency'] ?? ($store['settings']['currency'] ?? 'EUR')));
-
-    if ($bookingId !== '') {
-      $store = load_store();
-      $changed = prune_expired_payment_holds($store);
-
-      foreach (($store['bookings'] ?? []) as &$bk) {
-        if ((string)($bk['id'] ?? '') === $bookingId) {
-          $bk['status'] = 'booked';
-          $bk['paid_at'] = time();
-          if ($sessionId !== '') $bk['stripe_session_id'] = $sessionId;
-          if ($paymentIntent !== '') $bk['stripe_payment_intent'] = $paymentIntent;
-          $bk['amount_paid'] = round($amountTotal, 2);
-          $bk['currency'] = $currency;
-
-          // Send paid confirmation emails (guest + owner) in an idempotent way
-          maybe_send_paid_booking_emails($store, $bk);
-          break;
-        }
-      }
-      unset($bk);
-
-      save_store($store);
-    }
+    // Confirms (or re-creates) the booking under the store lock; sends emails once.
+    stripe_confirm_paid_session($obj);
   }
 }
 
@@ -131,12 +104,12 @@ if ($type === 'checkout.session.expired' && is_array($obj)) {
   $meta = $obj['metadata'] ?? [];
   $bookingId = (string)($meta['booking_id'] ?? ($obj['client_reference_id'] ?? ''));
   if ($bookingId !== '') {
-    $store = load_store();
-    $store['bookings'] = array_values(array_filter(($store['bookings'] ?? []), function($b) use ($bookingId) {
-      if ((string)($b['id'] ?? '') !== $bookingId) return true;
-      return (string)($b['status'] ?? '') !== 'payment_pending';
-    }));
-    save_store($store);
+    store_mutate(function(&$s) use ($bookingId) {
+      $s['bookings'] = array_values(array_filter(($s['bookings'] ?? []), function($b) use ($bookingId) {
+        if ((string)($b['id'] ?? '') !== $bookingId) return true;
+        return (string)($b['status'] ?? '') !== 'payment_pending';
+      }));
+    });
   }
 }
 

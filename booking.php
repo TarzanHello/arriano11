@@ -99,6 +99,10 @@ include __DIR__ . '/partials/page-hero.php';
             <div class="legend" aria-label="Legend">
               <div class="item"><span class="swatch open"></span><?php echo e(t('booking.labels.bookable')); ?></div>
               <div class="item"><span class="swatch unavailable"></span><?php echo e(t('booking.labels.unavailable')); ?></div>
+              <?php $turnoverLabel = t('booking.labels.turnover'); ?>
+              <?php if ($turnoverLabel !== 'booking.labels.turnover'): ?>
+                <div class="item"><span class="swatch half"></span><?php echo e($turnoverLabel); ?></div>
+              <?php endif; ?>
             </div>
           </div>
 

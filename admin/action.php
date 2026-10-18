@@ -37,6 +37,9 @@ function require_save_or_redirect($store, $tab, $extra = [], $customErr = null) 
   }
 }
 
+// Hold the store lock for the whole admin action: re-read the data while locked so
+// a concurrent iCal sync / Stripe webhook cannot be overwritten by this save.
+store_lock();
 $store = load_store();
 
 switch ($action) {
@@ -139,15 +142,24 @@ switch ($action) {
 
   case 'approve_booking':
     $id = (string)($_POST['id'] ?? '');
-    foreach ($store['bookings'] as &$bk) {
-      if (($bk['id'] ?? '') === $id) {
-        $bk['status'] = 'booked';
-        $bk['approved_at'] = time();
+    $found = false;
+    foreach ($store['bookings'] as $i => $bk) {
+      if ($id !== '' && (string)($bk['id'] ?? '') === $id) {
+        $found = true;
+        // FIX: before confirming, check that the nights are still free (a Booking.com
+        // reservation may have arrived in the meantime) → avoids double bookings.
+        if (!is_range_available_excluding($store, (string)($bk['start'] ?? ''), (string)($bk['end'] ?? ''), $id)) {
+          redirect_tab('bookings', null, 'Impossibile confermare: le date ' . (string)($bk['start'] ?? '') . ' → ' . (string)($bk['end'] ?? '') . ' non sono più libere (es. prenotazione arrivata da Booking). Rifiuta la richiesta o contatta l’ospite.');
+        }
+        $store['bookings'][$i]['status'] = 'booked';
+        $store['bookings'][$i]['approved_at'] = time();
       }
     }
-    unset($bk);
+    if (!$found) {
+      redirect_tab('bookings', null, 'Prenotazione non trovata.');
+    }
     require_save_or_redirect($store, 'bookings');
-    redirect_tab('bookings', 'Prenotazione confermata.');
+    redirect_tab('bookings', 'Prenotazione confermata. Ricordati di scrivere all’ospite per confermargli il soggiorno.');
     break;
 
   case 'reject_booking':
@@ -273,9 +285,10 @@ switch ($action) {
     break;
 
   case 'manual_sync':
-    $res = sync_from_booking($store);
+    // Download outside the lock (can take seconds), then apply under the lock.
+    store_unlock();
+    $res = sync_booking_locked($store);
     if (is_array($res) && !empty($res[0])) {
-      require_save_or_redirect($store, 'sync');
       $n = isset($res[1]) ? (int)$res[1] : 0;
       redirect_tab('sync', 'Sync completato. Importati ' . $n . ' eventi.');
     }

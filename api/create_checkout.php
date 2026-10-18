@@ -38,14 +38,20 @@ if (!$lang || !isset($supported[$lang])) {
 }
 i18n_init($lang);
 
-function respond_error($code, $fallbackMsg = '') {
+function respond_error($code, $fallbackMsg = '', $vars = []) {
+  // Never leave the store locked on an early exit
+  if (function_exists('store_unlock')) {
+    while ((int)($GLOBALS['_VIA_STORE_LOCK_DEPTH'] ?? 0) > 0) store_unlock();
+  }
   $msg = $fallbackMsg;
   $tKey = 'booking.messages.' . $code;
-  $tVal = t($tKey);
+  $tVal = t($tKey, is_array($vars) ? $vars : []);
   if ($tVal && $tVal !== $tKey) {
     $msg = $tVal;
   }
-  echo json_encode(['ok' => false, 'error_code' => $code, 'error' => $msg], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+  $out = ['ok' => false, 'error_code' => $code, 'error' => $msg];
+  if (is_array($vars) && $vars) $out['error_vars'] = $vars;
+  echo json_encode($out, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
   exit;
 }
 
@@ -85,18 +91,26 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 $store = load_store();
 
 // Cleanup expired holds
-$changed = prune_expired_payment_holds($store);
-if ($changed) {
-  @save_store($store);
-}
+prune_expired_payment_holds_locked($store);
 
-// Keep availability aligned with Booking (iCal)
+// Keep availability aligned with Booking (iCal) — always refresh before booking
 maybe_auto_sync($store, true);
+
+// From here on we hold the lock: availability check + saving the booking are atomic,
+// so two guests cannot grab the same nights at the same moment.
+store_lock();
+$store = load_store();
+
+// FIX: give the guest the real reason (e.g. minimum stay) instead of a generic error
+$minNightsReq = get_min_nights_for_arrival($store, $start);
+if (nights_between($start, $end) < $minNightsReq) {
+  respond_error('min_nights', 'Minimum stay: ' . $minNightsReq . ' nights.', ['n' => $minNightsReq]);
+}
 
 // Enforce min nights + compute quote (includes cleaning + city tax)
 $quote = quote_stay($store, $start, $end, (int)$guests);
 if (empty($quote['ok'])) {
-  respond_error('request_failed');
+  respond_error('request_failed', (string)($quote['error'] ?? ''));
 }
 
 // Prevent overlaps with unavailable dates
@@ -170,6 +184,8 @@ if ($requirePayment && $secretKey !== '') {
   if (!save_store($store)) {
     respond_error('request_failed', 'Unable to save booking.');
   }
+  // Release the lock before calling Stripe (network call)
+  store_unlock();
 
   $siteName = (string)($store['settings']['site_name'] ?? 'Via Arriano 11');
   $productName = $siteName;
@@ -212,11 +228,11 @@ if ($requirePayment && $secretKey !== '') {
   $res = stripe_create_checkout_session($secretKey, $params);
   if (empty($res['ok'])) {
     // Remove the temporary hold
-    $store = load_store();
-    $store['bookings'] = array_values(array_filter(($store['bookings'] ?? []), function($b) use ($id) {
-      return (string)($b['id'] ?? '') !== $id;
-    }));
-    @save_store($store);
+    store_mutate(function(&$s) use ($id) {
+      $s['bookings'] = array_values(array_filter(($s['bookings'] ?? []), function($b) use ($id) {
+        return (string)($b['id'] ?? '') !== $id;
+      }));
+    });
 
     respond_error('payment_failed');
   }
@@ -226,15 +242,14 @@ if ($requirePayment && $secretKey !== '') {
   $checkoutUrl = (string)($session['url'] ?? '');
 
   if ($sessionId !== '') {
-    $store = load_store();
-    foreach (($store['bookings'] ?? []) as &$bk) {
-      if ((string)($bk['id'] ?? '') === $id) {
-        $bk['stripe_session_id'] = $sessionId;
-        break;
+    store_mutate(function(&$s) use ($id, $sessionId) {
+      foreach (($s['bookings'] ?? []) as $i => $bk) {
+        if ((string)($bk['id'] ?? '') === $id) {
+          $s['bookings'][$i]['stripe_session_id'] = $sessionId;
+          break;
+        }
       }
-    }
-    unset($bk);
-    @save_store($store);
+    });
   }
 
   if ($checkoutUrl === '') {
@@ -279,7 +294,7 @@ if (!save_store($store)) {
   respond_error('request_failed', 'Unable to send request.');
 }
 
-// Notify owner (request mode)
+// Notify owner (request mode) — still under the lock
 $idx = count($store['bookings'] ?? []) - 1;
 if ($idx >= 0 && isset($store['bookings'][$idx]) && is_array($store['bookings'][$idx])) {
   $sent = maybe_notify_owner_booking($store, $store['bookings'][$idx], 'request');
@@ -287,6 +302,7 @@ if ($idx >= 0 && isset($store['bookings'][$idx]) && is_array($store['bookings'][
     @save_store($store);
   }
 }
+store_unlock();
 
 echo json_encode([
   'ok' => true,

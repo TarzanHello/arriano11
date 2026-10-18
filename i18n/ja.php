@@ -301,6 +301,7 @@ return [
       'legend' => '凡例',
       'bookable' => '予約可能',
       'unavailable' => '利用不可',
+      'turnover' => '入れ替え日（チェックインまたはチェックアウトのみ）',
       'guest_data' => 'お客様情報',
       'name' => '氏名',
       'email' => 'メール',

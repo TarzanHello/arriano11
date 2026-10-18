@@ -149,7 +149,7 @@ AddType text/calendar .ics
 </IfModule>
 
 # Prevent access to JSON data even if /data/.htaccess is ignored
-<FilesMatch "^(store\.json(?:\.bak)?|rate_limits\.json|reviews\.json(?:\.bak)?|admin_2fa\.json|INITIAL_ADMIN_CREDENTIALS\.txt|store\.corrupt\..+\.json|store\.tmp\..+\.json)$">
+<FilesMatch "^(store\.json(?:\.bak)?|rate_limits\.json|reviews\.json(?:\.bak)?|admin_2fa\.json|INITIAL_ADMIN_CREDENTIALS\.txt|store\.corrupt\..+\.json|store\.tmp\..+\.json|store\.lock)$">
   <IfModule mod_authz_core.c>
     Require all denied
   </IfModule>

@@ -270,6 +270,7 @@ return [
       'legend' => 'Forklaring',
       'bookable' => 'Kan bookes',
       'unavailable' => 'Ikke ledig',
+      'turnover' => 'Skiftedag (kun indtjekning eller udtjekning)',
       'guest_data' => 'Gæsteoplysninger',
       'name' => 'Fulde navn',
       'email' => 'E-mail',
