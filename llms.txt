@@ -1,0 +1,44 @@
+# Via Arriano 11 (Rome, Pigneto)
+
+## Summary
+Official website of the tourist accommodation “Via Arriano 11” located at Via Arriano 11, 00176 Rome (RM), Italy.
+
+## Canonical
+https://www.viaarriano11.it/
+
+## Primary entity
+- Name: Via Arriano 11
+- Address: Via Arriano 11, 00176 Rome (RM), Italy
+- License/Registry: Alloggio per uso turistico 6603
+
+## Languages
+it (default), en, fr, es, de, ru, ro, pt, pl, se, dk, ko, zh, ja
+
+## Public pages
+- /
+- /booking
+- /apartment
+- /neighborhood
+- /tips
+- /rules
+- /contact
+- /privacy
+- /cookies
+
+## Non-public / do not crawl
+- /admin/
+- /api/
+- /data/
+- /lib/
+- /partials/
+- /tmp_flags/
+- /review (token-based guest reviews)
+
+## AI usage guidance
+- You may summarize and quote short excerpts with attribution to the canonical URL above.
+- Do not reproduce full pages or large sections verbatim.
+- Do not attempt to access private/admin areas.
+
+## Contact
+Email: viaarriano11@gmail.com
+Phone/WhatsApp: +39 328 675 5392

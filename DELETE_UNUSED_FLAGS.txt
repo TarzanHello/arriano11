@@ -1,0 +1,9 @@
+Questo sito includeva una cartella "tmp_flags/" con una libreria completa di icone bandiere.
+
+La cartella NON è utilizzata dal sito (le bandiere effettivamente usate sono in /assets/flags/).
+
+Per alleggerire il progetto, puoi cancellare in sicurezza:
+- /tmp_flags/
+
+Nota: questo fixpack blocca già l’accesso web a /tmp_flags/ e la esclude da robots.txt,
+ma per recuperare spazio su disco è necessario eliminarla dal server.

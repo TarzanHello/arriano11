@@ -1,0 +1,159 @@
+# Basic security hardening
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # --- PageSpeed: serve WebP variants when supported ---
+  # If a .webp file exists next to the requested .jpg/.jpeg/.png, and the browser supports WebP,
+  # serve the WebP file to reduce bytes.
+  RewriteCond %{HTTP_ACCEPT} image/webp
+  RewriteCond %{REQUEST_URI} (.+)\.(jpe?g|png)$ [NC]
+  RewriteCond %{DOCUMENT_ROOT}%1.webp -f
+  RewriteRule ^ %1.webp [T=image/webp,E=serve_webp:1,L]
+
+  # Block documentation files (info leak hardening)
+  RewriteRule ^README(?:[^/]*?)\.(?:txt|md)$ - [F,L,NC]
+  RewriteRule ^LICENSE\.(?:txt|md)$ - [F,L,NC]
+  RewriteBase /
+
+  # Block uncommon/unsafe HTTP methods
+  RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK) [NC]
+  RewriteRule .* - [F,L]
+
+  # Allow ACME challenges (Let's Encrypt) if needed
+  RewriteRule ^\.well-known/ - [L]
+
+  # Block legacy/dev asset dump (unused flag icon library)
+  RewriteRule ^tmp_flags/ - [F,L]
+
+  # Block hidden files and common sensitive extensions
+  RewriteRule (^|/)\. - [F,L]
+  RewriteRule \.(?:env|ini|log|sql|bak|old|swp|zip|tar|gz)$ - [F,L,NC]
+  RewriteRule ^(?:composer\.(?:json|lock)|package\.json|yarn\.lock|pnpm-lock\.yaml)$ - [F,L,NC]
+
+
+  # Removed document
+  RewriteRule ^house-rules\.pdf$ - [G,L]
+
+  # iCal export alias
+  RewriteRule ^calendar\.ics$ calendar.php [L,QSA]
+  RewriteRule ^calendar\.ics/$ calendar.php [L,QSA]
+
+  # Sitemap
+  RewriteRule ^sitemap\.xml$ sitemap.php [L,QSA]
+
+  # -------------------------------------------------
+  # Canonical redirects
+  # -------------------------------------------------
+
+  # Normalize language root with trailing slash
+  RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)$ $1/ [R=301,L]
+
+  # Remove trailing slashes for pages (keep /en/ allowed)
+  RewriteRule ^(booking|apartment|neighborhood|tips|rules|contact|privacy|cookies|review|booking-success|booking-cancel)/+$ $1 [R=301,L]
+  RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/(booking|apartment|neighborhood|tips|rules|contact|privacy|cookies|review|booking-success|booking-cancel)/+$ $1/$2 [R=301,L]
+
+  # -------------------------------------------------
+  # Redirect *.php -> clean slugs (301)
+  # IMPORTANT: guard with THE_REQUEST to avoid redirect loops
+  # -------------------------------------------------
+
+  # Redirect language-prefixed .php only if user requested .php
+  RewriteCond %{THE_REQUEST} \s/+[^\s?]+\.php[?\s] [NC]
+  RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/index\.php$ /$1/ [R=301,L]
+
+  RewriteCond %{THE_REQUEST} \s/+[^\s?]+\.php[?\s] [NC]
+  RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/(booking|apartment|neighborhood|tips|rules|contact|privacy|cookies|review)\.php$ /$1/$2 [R=301,L,QSA]
+
+  RewriteCond %{THE_REQUEST} \s/+[^\s?]+\.php[?\s] [NC]
+  RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/booking-success\.php$ /$1/booking-success [R=301,L,QSA]
+
+  RewriteCond %{THE_REQUEST} \s/+[^\s?]+\.php[?\s] [NC]
+  RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/booking-cancel\.php$ /$1/booking-cancel [R=301,L,QSA]
+
+  # Redirect default-language .php only if user requested .php
+  RewriteCond %{THE_REQUEST} \s/+index\.php[?\s] [NC]
+  RewriteRule ^index\.php$ / [R=301,L]
+
+  RewriteCond %{THE_REQUEST} \s/+[^\s?]+\.php[?\s] [NC]
+  RewriteRule ^(booking|apartment|neighborhood|tips|rules|contact|privacy|cookies|review)\.php$ /$1 [R=301,L,QSA]
+
+  RewriteCond %{THE_REQUEST} \s/+booking-success\.php[?\s] [NC]
+  RewriteRule ^booking-success\.php$ /booking-success [R=301,L,QSA]
+
+  RewriteCond %{THE_REQUEST} \s/+booking-cancel\.php[?\s] [NC]
+  RewriteRule ^booking-cancel\.php$ /booking-cancel [R=301,L,QSA]
+
+  # -------------------------------------------------
+  # SEO-friendly URLs + languages (internal rewrites)
+  # -------------------------------------------------
+
+  # Language prefixed home
+  RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/?$ index.php?lang=$1 [L,QSA]
+
+  # Language prefixed pages
+  RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/(booking|apartment|neighborhood|tips|rules|contact|privacy|cookies|review)$ $2.php?lang=$1 [L,QSA]
+  RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/booking-success$ booking-success.php?lang=$1 [L,QSA]
+  RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/booking-cancel$ booking-cancel.php?lang=$1 [L,QSA]
+
+  # Clean URLs for default language
+  RewriteRule ^(booking|apartment|neighborhood|tips|rules|contact|privacy|cookies|review)$ $1.php [L,QSA]
+  RewriteRule ^booking-success$ booking-success.php [L,QSA]
+  RewriteRule ^booking-cancel$ booking-cancel.php [L,QSA]
+</IfModule>
+
+# MIME types
+AddType image/webp .webp
+AddType text/calendar .ics
+
+# --- PageSpeed: compression for text assets ---
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json application/xml image/svg+xml
+</IfModule>
+
+# --- PageSpeed: cache static assets ---
+<IfModule mod_expires.c>
+  ExpiresActive On
+
+  # CSS/JS (versioned via ?v=... in HTML)
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType text/javascript "access plus 1 year"
+
+  # Images
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+
+  # Fonts (if any)
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType font/woff "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+  # Make caches aware of compression + WebP content negotiation
+  Header append Vary Accept-Encoding
+  Header append Vary Accept env=serve_webp
+
+  # Long cache for static assets (CSS/JS are versioned)
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  <FilesMatch "\.(jpg|jpeg|png|webp|gif|svg|ico)$">
+    Header set Cache-Control "public, max-age=31536000"
+  </FilesMatch>
+</IfModule>
+
+# Prevent access to JSON data even if /data/.htaccess is ignored
+<FilesMatch "^(store\.json(?:\.bak)?|rate_limits\.json|reviews\.json(?:\.bak)?|admin_2fa\.json|INITIAL_ADMIN_CREDENTIALS\.txt|store\.corrupt\..+\.json|store\.tmp\..+\.json)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Deny from all
+  </IfModule>
+</FilesMatch>

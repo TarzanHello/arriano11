@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="flag-icons-pt" viewBox="0 0 640 480">
+  <path fill="#006600" d="M0 0h256v480H0z"/>
+  <path fill="#ff0000" d="M256 0h384v480H256z"/>
+  <circle cx="256" cy="240" r="72" fill="#ffcc00" stroke="#d4a000" stroke-width="10"/>
+</svg>
