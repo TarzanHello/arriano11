@@ -77,4 +77,16 @@ return [
       ['h' => 'Cum ajungi de la aeroporturi și Termini', 'html' => '<strong>De la Fiumicino:</strong> trenul Leonardo Express până la Termini (circa 30 de minute), apoi tramvaiul 14 sau un drum scurt cu taxiul. Taxiul direct face 45–60 de minute și se plătește după aparat (tariful fix de la aeroport se aplică doar în interiorul Zidurilor Aureliene).<br><strong>De la Ciampino:</strong> autobuz shuttle până la Termini, apoi tramvaiul 14, sau taxi (circa 30 de minute).<br><strong>De la Termini:</strong> tramvaiul 14 direcția Togliatti sau metroul A până la San Giovanni, apoi metroul C.'],
     ],
   ],
+
+  // Redesign v2 (Oct 2026)
+  'v2' => [
+    'title' => 'De la ușa ta la Colosseum, fără schimbări',
+    'start' => 'Casa ta din Roma',
+    'walk' => '3–5 minute pe jos',
+    'metro_a' => 'Schimb cu metroul A',
+    'colosseo' => 'Circa 15 minute de la ușă la ușă',
+    'place' => 'Pigneto, Roma',
+    'skip' => 'Salt la conținut',
+    'photos' => 'Fotografiile apartamentului',
+  ],
 ];

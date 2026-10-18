@@ -61,10 +61,6 @@ include __DIR__ . '/partials/page-hero.php';
           </div>
         </div>
 
-        <div style="margin-top:12px;">
-          <?php include __DIR__ . '/partials/price-match.php'; ?>
-        </div>
-
         <noscript>
           <div class="notice warn" style="margin-top:12px;"><?php echo e(t('ui.enable_js')); ?></div>
         </noscript>
@@ -150,6 +146,9 @@ include __DIR__ . '/partials/page-hero.php';
             </form>
           </div>
         </div>
+      </div>
+      <div style="margin-top:28px;">
+        <?php include __DIR__ . '/partials/price-match.php'; ?>
       </div>
     </div>
   </section>

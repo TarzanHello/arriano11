@@ -116,17 +116,18 @@ send_security_headers([
     <meta name="twitter:description" content="<?php echo e($metaDesc); ?>">
   <?php endif; ?>
   <meta name="twitter:image" content="<?php echo e($ogImage); ?>">
-<meta name="theme-color" content="#f97316">
+<meta name="theme-color" content="#1D2633">
   <link rel="icon" href="/favicon.ico">
 
   <?php if ($route === 'home'): ?>
     <!-- Preload LCP hero image -->
-    <link rel="preload" as="image" href="/assets/images/gallery/camera_da_letto_wide_800.jpg" imagesrcset="/assets/images/gallery/camera_da_letto_wide_480.jpg 480w, /assets/images/gallery/camera_da_letto_wide_800.jpg 800w, /assets/images/gallery/camera_da_letto_wide_1200.jpg 1200w, /assets/images/gallery/camera_da_letto_wide.jpg 1600w" imagesizes="100vw">
+    <link rel="preload" as="image" href="/assets/images/gallery/giardino_2_800.jpg" imagesrcset="/assets/images/gallery/giardino_2_480.jpg 480w, /assets/images/gallery/giardino_2_800.jpg 800w, /assets/images/gallery/giardino_2_1200.jpg 1200w, /assets/images/gallery/giardino_2.jpg 1600w" imagesizes="100vw" fetchpriority="high">
   <?php endif; ?>
   <!-- Fonts: use system stack for performance (no render-blocking third-party requests) -->
 
-  <?php $css_v = @filemtime(__DIR__ . '/../assets/css/style.css') ?: 1; ?>
-  <link rel="stylesheet" href="/assets/css/style.css?v=<?php echo e((string)$css_v); ?>">
+  <link rel="preload" href="/assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <?php $css_v = @filemtime(__DIR__ . '/../assets/css/site.css') ?: 1; ?>
+  <link rel="stylesheet" href="/assets/css/site.css?v=<?php echo e((string)$css_v); ?>">
 
     <?php
     // Structured data:
@@ -378,28 +379,27 @@ send_security_headers([
   <script src="/assets/js/i18n.js?v=<?php echo e((string)$i18n_js_v); ?>" defer></script>
 </head>
 <body class="<?php echo e($bodyClass); ?>">
+  <a class="skip-link" href="#main"><?php echo e(t('v2.skip')); ?></a>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="<?php echo e(i18n_url('home')); ?>" aria-label="<?php echo e(t('nav.home')); ?>">
-        <img src="/assets/brand/logo-44.png" srcset="/assets/brand/logo-44.png 1x, /assets/brand/logo-88.png 2x" alt="Logo <?php echo e($siteName); ?>" width="44" height="44" decoding="async">
-        <div class="brand-text">
-          <div class="brand-title"><?php echo e($siteName); ?></div>
-          <div class="brand-sub"><?php echo e(t('nav.brand_sub')); ?></div>
-        </div>
+      <a class="brand" href="<?php echo e(i18n_url('home')); ?>" aria-label="<?php echo e($siteName); ?> – <?php echo e(t('nav.home')); ?>">
+        <img src="/assets/brand/logo-44.png" srcset="/assets/brand/logo-44.png 1x, /assets/brand/logo-88.png 2x" alt="" width="38" height="38" decoding="async">
+        <span>
+          <span class="brand-title"><?php echo e($siteName); ?></span>
+          <span class="brand-sub" style="display:block;"><?php echo e(t('v2.place')); ?></span>
+        </span>
       </a>
 
-      <nav class="nav" id="siteNav">
-        <a class="<?php echo nav_active_route('home', $route); ?>" href="<?php echo e(i18n_url('home')); ?>"><?php echo e(t('nav.home')); ?></a>
+      <nav class="nav" id="siteNav" aria-label="<?php echo e(t('nav.menu')); ?>">
         <a class="<?php echo nav_active_route('apartment', $route); ?>" href="<?php echo e(i18n_url('apartment')); ?>"><?php echo e(t('nav.apartment')); ?></a>
         <a class="<?php echo nav_active_route('neighborhood', $route); ?>" href="<?php echo e(i18n_url('neighborhood')); ?>"><?php echo e(t('nav.neighborhood')); ?></a>
         <a class="<?php echo nav_active_route('tips', $route); ?>" href="<?php echo e(i18n_url('tips')); ?>"><?php echo e(t('nav.tips')); ?></a>
         <a class="<?php echo nav_active_route('rules', $route); ?>" href="<?php echo e(i18n_url('rules')); ?>"><?php echo e(t('nav.rules')); ?></a>
         <a class="<?php echo nav_active_route('contact', $route); ?>" href="<?php echo e(i18n_url('contact')); ?>"><?php echo e(t('nav.contact')); ?></a>
+        <a class="nav-book" href="<?php echo e(i18n_url('booking')); ?>"><?php echo e(t('nav.book')); ?></a>
       </nav>
 
       <div class="header-actions">
-        <button id="navToggle" class="nav-toggle" type="button" aria-label="<?php echo e(t('ui.open_menu')); ?>">☰</button>
-
         <div class="lang-switch" data-lang-switch>
           <button class="lang-btn" type="button" data-lang-btn aria-haspopup="listbox" aria-expanded="false" aria-label="<?php echo e(t('ui.language')); ?>">
             <img class="lang-flag" src="/assets/flags/<?php echo e(flag_code($lang)); ?>.svg" alt="<?php echo e(lang_label($lang)); ?>" width="22" height="16">
@@ -407,7 +407,7 @@ send_security_headers([
           </button>
           <div class="lang-menu" data-lang-menu role="listbox" aria-label="<?php echo e(t('ui.language')); ?>">
             <?php foreach(i18n_supported_languages() as $code => $info): ?>
-              <a class="lang-item <?php echo ($code === $lang) ? 'is-active' : ''; ?>" href="<?php echo e($urlsMap[$code] ?? i18n_url($route, $code)); ?>" data-lang="<?php echo e($code); ?>" role="option" aria-selected="<?php echo ($code === $lang) ? 'true' : 'false'; ?>">
+              <a class="lang-item <?php echo ($code === $lang) ? 'is-active' : ''; ?>" href="<?php echo e($urlsMap[$code] ?? i18n_url($route, $code)); ?>" data-lang="<?php echo e($code); ?>" role="option" aria-selected="<?php echo ($code === $lang) ? 'true' : 'false'; ?>" hreflang="<?php echo e($info['hreflang']); ?>">
                 <img src="/assets/flags/<?php echo e($info['flag']); ?>.svg" alt="" width="22" height="16">
                 <span><?php echo e($info['label']); ?></span>
               </a>
@@ -416,6 +416,7 @@ send_security_headers([
         </div>
 
         <a class="cta" href="<?php echo e(i18n_url('booking')); ?>"><?php echo e(t('nav.book')); ?></a>
+        <button id="navToggle" class="nav-toggle" type="button" aria-label="<?php echo e(t('ui.open_menu')); ?>" aria-controls="siteNav" aria-expanded="false"><span></span><span></span><span></span></button>
       </div>
     </div>
   </header>

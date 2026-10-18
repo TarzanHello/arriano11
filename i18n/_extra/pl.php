@@ -77,4 +77,16 @@ return [
       ['h' => 'Jak dojechać z lotnisk i z Termini', 'html' => '<strong>Z Fiumicino:</strong> pociąg Leonardo Express do Termini (około 30 minut), potem tramwaj 14 lub krótki kurs taksówką. Taksówka bezpośrednia jedzie 45–60 minut według taksometru (stała opłata z lotniska obowiązuje tylko w obrębie Murów Aureliańskich).<br><strong>Z Ciampino:</strong> autobus shuttle do Termini, potem tramwaj 14, albo taksówka (około 30 minut).<br><strong>Z Termini:</strong> tramwaj 14 w kierunku Togliatti albo metro A do San Giovanni, a potem metro C.'],
     ],
   ],
+
+  // Redesign v2 (Oct 2026)
+  'v2' => [
+    'title' => 'Od drzwi do Koloseum, bez przesiadek',
+    'start' => 'Twój dom w Rzymie',
+    'walk' => '3–5 minut pieszo',
+    'metro_a' => 'Przesiadka na metro A',
+    'colosseo' => 'Około 15 minut od drzwi do drzwi',
+    'place' => 'Pigneto, Rzym',
+    'skip' => 'Przejdź do treści',
+    'photos' => 'Zdjęcia apartamentu',
+  ],
 ];

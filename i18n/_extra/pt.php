@@ -77,4 +77,16 @@ return [
       ['h' => 'Como chegar a partir dos aeroportos e de Termini', 'html' => '<strong>De Fiumicino:</strong> comboio Leonardo Express até Termini (cerca de 30 minutos), depois elétrico 14 ou um curto trajeto de táxi. O táxi direto demora 45–60 minutos e é pago a taxímetro (a tarifa fixa do aeroporto só vale dentro das Muralhas Aurelianas).<br><strong>De Ciampino:</strong> autocarro shuttle até Termini e depois elétrico 14, ou táxi (cerca de 30 minutos).<br><strong>De Termini:</strong> elétrico 14 em direção a Togliatti, ou metro A até San Giovanni e depois metro C.'],
     ],
   ],
+
+  // Redesign v2 (Oct 2026)
+  'v2' => [
+    'title' => 'Da sua porta ao Coliseu, sem mudanças',
+    'start' => 'A sua casa em Roma',
+    'walk' => '3–5 minutos a pé',
+    'metro_a' => 'Mudança para o metro A',
+    'colosseo' => 'Cerca de 15 minutos porta a porta',
+    'place' => 'Pigneto, Roma',
+    'skip' => 'Ir para o conteúdo',
+    'photos' => 'Fotos do apartamento',
+  ],
 ];

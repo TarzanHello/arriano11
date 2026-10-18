@@ -77,4 +77,16 @@ return [
       ['h' => 'Venir depuis les aéroports et Termini', 'html' => '<strong>Depuis Fiumicino :</strong> train Leonardo Express jusqu’à Termini (environ 30 minutes), puis tram 14 ou un court trajet en taxi. Le taxi direct met 45 à 60 minutes, au compteur (le forfait aéroport ne s’applique qu’à l’intérieur des murs d’Aurélien).<br><strong>Depuis Ciampino :</strong> navette jusqu’à Termini, puis tram 14, ou taxi (environ 30 minutes).<br><strong>Depuis Termini :</strong> tram 14 direction Togliatti, ou métro A jusqu’à San Giovanni puis métro C.'],
     ],
   ],
+
+  // Redesign v2 (Oct 2026)
+  'v2' => [
+    'title' => 'De votre porte au Colisée, sans changement',
+    'start' => 'Votre maison à Rome',
+    'walk' => '3 à 5 minutes à pied',
+    'metro_a' => 'Correspondance métro A',
+    'colosseo' => 'Environ 15 minutes de porte à porte',
+    'place' => 'Pigneto, Rome',
+    'skip' => 'Aller au contenu',
+    'photos' => 'Les photos de l’appartement',
+  ],
 ];

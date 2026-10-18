@@ -18,59 +18,69 @@ if ($email === '') {
     <div class="footer-grid">
       <div>
         <div class="footer-title"><?php echo e($siteName); ?></div>
-        <div class="small" style="margin:0 0 12px; opacity:.92;">
-          <?php echo e(t('footer.tagline')); ?>
-        </div>
+        <p style="margin:0 0 14px; max-width:42ch;"><?php echo e(t('footer.tagline')); ?></p>
         <div class="footer-list">
           <?php if ($address): ?>
-            <div class="footer-item"><span class="footer-ico">📍</span> <span><?php echo e($address); ?></span></div>
+            <div class="footer-item"><span class="footer-ico" aria-hidden="true">📍</span> <span><?php echo e($address); ?></span></div>
           <?php endif; ?>
           <?php if ($phone): ?>
-            <div class="footer-item"><span class="footer-ico">📞</span> <a href="tel:<?php echo e(str_replace(" ", "", $phone)); ?>"><?php echo e($phone); ?></a></div>
+            <div class="footer-item"><span class="footer-ico" aria-hidden="true">📞</span> <a href="tel:<?php echo e(str_replace(" ", "", $phone)); ?>"><?php echo e($phone); ?></a></div>
           <?php endif; ?>
-          <div class="footer-item"><span class="footer-ico">✉️</span> <a href="mailto:<?php echo e($email); ?>"><?php echo e($email); ?></a></div>
+          <div class="footer-item"><span class="footer-ico" aria-hidden="true">✉️</span> <a href="mailto:<?php echo e($email); ?>"><?php echo e($email); ?></a></div>
         </div>
       </div>
 
-      <div>
-        <div class="footer-title"><?php echo e(t('footer.links_title')); ?></div>
+      <nav aria-label="<?php echo e(t('footer.links_title')); ?>">
+        <div class="footer-title" style="font-size:20px;"><?php echo e(t('footer.links_title')); ?></div>
         <div class="footer-links">
           <a href="<?php echo e(i18n_url('home')); ?>"><?php echo e(t('nav.home')); ?></a>
           <a href="<?php echo e(i18n_url('apartment')); ?>"><?php echo e(t('nav.apartment')); ?></a>
-          <a href="<?php echo e(i18n_url('neighborhood')); ?>"><?php echo e(t('nav.neighborhood')); ?></a>
-          <a href="<?php echo e(i18n_url('policlinico', i18n_route_lang('policlinico', current_lang()))); ?>"><?php echo e(t('policlinico.nav')); ?></a>
           <a href="<?php echo e(i18n_url('booking')); ?>"><?php echo e(t('nav.book')); ?></a>
-          <a href="<?php echo e(i18n_url('contact')); ?>"><?php echo e(t('nav.contact')); ?></a>
-          <a href="<?php echo e(i18n_url('rules')); ?>"><?php echo e(t('nav.rules')); ?></a>
+          <a href="<?php echo e(i18n_url('neighborhood')); ?>"><?php echo e(t('nav.neighborhood')); ?></a>
           <a href="<?php echo e(i18n_url('tips')); ?>"><?php echo e(t('nav.tips')); ?></a>
+          <a href="<?php echo e(i18n_url('rules')); ?>"><?php echo e(t('nav.rules')); ?></a>
+          <a href="<?php echo e(i18n_url('contact')); ?>"><?php echo e(t('nav.contact')); ?></a>
+        </div>
+      </nav>
+
+      <div>
+        <div class="footer-title" style="font-size:20px;"><?php echo e(t('v2.place')); ?></div>
+        <div class="footer-links">
+          <a href="<?php echo e(i18n_url('policlinico', i18n_route_lang('policlinico', current_lang()))); ?>"><?php echo e(t('policlinico.nav')); ?></a>
           <a href="<?php echo e(i18n_url('privacy')); ?>"><?php echo e(t('footer.privacy')); ?></a>
           <a href="<?php echo e(i18n_url('cookies')); ?>"><?php echo e(t('footer.cookies')); ?></a>
+          <button class="linklike" type="button" data-cookie-manage style="text-align:left; color:#fff; text-decoration:none;"><?php echo e(t('footer.manage_cookies')); ?></button>
         </div>
       </div>
     </div>
 
     <div class="footer-bottom">
       <div>© <?php echo e(current_year()); ?> <?php echo e($siteName); ?></div>
-      <div class="small" style="opacity:.92;">
-        <?php echo e(t('footer.owner')); ?>
-      </div>
+      <div><?php echo e(t('footer.owner')); ?></div>
       <?php $cin = trim((string)($store['settings']['cin'] ?? '')); ?>
       <?php if ($cin !== ''): ?>
-        <div class="small footer-cin" style="opacity:.92;">
-          <abbr title="Codice Identificativo Nazionale">CIN</abbr>: <strong><?php echo e($cin); ?></strong>
-          <span aria-hidden="true">·</span> <?php echo e(t('home.official.license_label')); ?> n. 6603
+        <div class="footer-cin">
+          <abbr title="Codice Identificativo Nazionale">CIN</abbr>: <strong><?php echo e($cin); ?></strong>,
+          <?php echo e(t('home.official.license_label')); ?> n. 6603
         </div>
       <?php endif; ?>
-      <div class="small footer-legal" style="opacity:.92;">
-        <a href="<?php echo e(i18n_url('privacy')); ?>"><?php echo e(t('footer.privacy')); ?></a>
-        <span aria-hidden="true">·</span>
-        <a href="<?php echo e(i18n_url('cookies')); ?>"><?php echo e(t('footer.cookies')); ?></a>
-        <span aria-hidden="true">·</span>
-        <button class="linklike" type="button" data-cookie-manage><?php echo e(t('footer.manage_cookies')); ?></button>
-      </div>
     </div>
   </div>
 </footer>
+
+<?php
+  // Mobile action bar: the two things people do on a phone — book or message.
+  $mbDigits = preg_replace('/\D+/', '', $phone);
+  if ($mbDigits !== '' && strpos($mbDigits, '39') !== 0) $mbDigits = '39' . $mbDigits;
+?>
+<div class="mobile-bar">
+  <a class="btn primary" href="<?php echo e(i18n_url('booking')); ?>"><?php echo e(t('nav.book')); ?></a>
+  <?php if ($mbDigits !== ''): ?>
+    <a class="btn btn-wa" href="https://wa.me/<?php echo e($mbDigits); ?>?text=<?php echo e(rawurlencode(t('ui.whatsapp_text'))); ?>" target="_blank" rel="noopener">WhatsApp</a>
+  <?php else: ?>
+    <a class="btn" href="<?php echo e(i18n_url('contact')); ?>"><?php echo e(t('nav.contact')); ?></a>
+  <?php endif; ?>
+</div>
 
 <!-- Cookie banner + preferences (shown only until a choice is saved) -->
 <?php
@@ -151,9 +161,6 @@ if ($email === '') {
   $v_cookie = @filemtime(__DIR__ . '/../assets/js/cookie-consent.js') ?: 1;
 ?>
 <script src="/assets/js/site.js?v=<?php echo e((string)$v_site); ?>" defer></script>
-<?php if ($routeNow === 'home'): ?>
-  <script src="/assets/js/carousel.js?v=<?php echo e((string)$v_carousel); ?>" defer></script>
-<?php endif; ?>
 <?php if (in_array($routeNow, ['home','apartment'], true)): ?>
   <script src="/assets/js/lightbox.js?v=<?php echo e((string)$v_lightbox); ?>" defer></script>
 <?php endif; ?>

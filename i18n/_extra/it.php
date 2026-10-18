@@ -126,4 +126,16 @@ return [
       ['h' => 'Il quartiere', 'html' => 'Al Pigneto hai supermercati, farmacie, bar e ristoranti a pochi passi, e la Metro C porta senza cambi fino al Colosseo. Leggi la <a href="{neighborhood_url}">guida al quartiere</a>.'],
     ],
   ],
+
+  // Redesign v2 (Oct 2026)
+  'v2' => [
+    'title' => 'Dalla porta di casa al Colosseo, senza cambi',
+    'start' => 'Casa tua a Roma',
+    'walk' => '3–5 minuti a piedi',
+    'metro_a' => 'Cambio per la Metro A',
+    'colosseo' => 'Circa 15 minuti porta a porta',
+    'place' => 'Pigneto, Roma',
+    'skip' => 'Vai al contenuto',
+    'photos' => 'Le foto della casa',
+  ],
 ];

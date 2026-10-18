@@ -3,7 +3,14 @@
   var nav = document.getElementById('siteNav');
   if(btn && nav){
     btn.addEventListener('click', function(){
-      document.body.classList.toggle('nav-open');
+      var open = document.body.classList.toggle('nav-open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape' && document.body.classList.contains('nav-open')){
+        document.body.classList.remove('nav-open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
     });
 
     // Close on link click (mobile)

@@ -126,4 +126,16 @@ return [
       ['h' => 'The neighbourhood', 'html' => 'In Pigneto you have supermarkets, pharmacies, cafés and restaurants a few steps away, and Metro C takes you to the Colosseum with no changes. Read our <a href="{neighborhood_url}">neighbourhood guide</a>.'],
     ],
   ],
+
+  // Redesign v2 (Oct 2026)
+  'v2' => [
+    'title' => 'From your door to the Colosseum, no changes',
+    'start' => 'Your home in Rome',
+    'walk' => '3–5 minutes on foot',
+    'metro_a' => 'Change for Metro A',
+    'colosseo' => 'About 15 minutes door to door',
+    'place' => 'Pigneto, Rome',
+    'skip' => 'Skip to content',
+    'photos' => 'Photos of the apartment',
+  ],
 ];

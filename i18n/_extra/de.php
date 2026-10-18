@@ -77,4 +77,16 @@ return [
       ['h' => 'Anreise von den Flughäfen und Termini', 'html' => '<strong>Ab Fiumicino:</strong> Leonardo Express bis Termini (ca. 30 Minuten), dann Straßenbahn 14 oder eine kurze Taxifahrt. Ein direktes Taxi braucht 45–60 Minuten und fährt nach Taxameter (der Flughafen-Festpreis gilt nur innerhalb der Aurelianischen Mauer).<br><strong>Ab Ciampino:</strong> Shuttlebus bis Termini, dann Straßenbahn 14, oder Taxi (ca. 30 Minuten).<br><strong>Ab Termini:</strong> Straßenbahn 14 Richtung Togliatti oder Metro A bis San Giovanni und dann Metro C.'],
     ],
   ],
+
+  // Redesign v2 (Oct 2026)
+  'v2' => [
+    'title' => 'Von der Haustür zum Kolosseum, ohne Umsteigen',
+    'start' => 'Ihr Zuhause in Rom',
+    'walk' => '3–5 Minuten zu Fuß',
+    'metro_a' => 'Umstieg in die Metro A',
+    'colosseo' => 'Rund 15 Minuten von Tür zu Tür',
+    'place' => 'Pigneto, Rom',
+    'skip' => 'Zum Inhalt springen',
+    'photos' => 'Fotos der Wohnung',
+  ],
 ];

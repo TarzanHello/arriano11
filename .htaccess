@@ -114,6 +114,7 @@ Options -Indexes
 # MIME types
 AddType image/webp .webp
 AddType text/calendar .ics
+AddType font/woff2 .woff2
 
 # --- PageSpeed: compression for text assets ---
 <IfModule mod_deflate.c>
@@ -151,7 +152,7 @@ AddType text/calendar .ics
     Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>
 
-  <FilesMatch "\.(jpg|jpeg|png|webp|gif|svg|ico)$">
+  <FilesMatch "\.(jpg|jpeg|png|webp|gif|svg|ico|woff2)$">
     Header set Cache-Control "public, max-age=31536000"
   </FilesMatch>
 </IfModule>

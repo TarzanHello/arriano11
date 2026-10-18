@@ -63,7 +63,17 @@ $gallery = array_values(array_filter($gallery, function($p){
   return $thumbUrl !== '';
 }));
 
-sort($gallery);
+// Show the strongest photos first: terrace, living, bedroom, kitchen, then the rest.
+$aptOrder = ['giardino', 'living', 'camera_da_letto_wide', 'camera_da_letto', 'cucina', 'divano', 'finestra', 'macchina', 'proiettore', 'bagno'];
+usort($gallery, function($a, $b) use ($aptOrder) {
+  $rank = function($p) use ($aptOrder) {
+    $f = basename($p);
+    foreach ($aptOrder as $i => $k) { if (strpos($f, $k) === 0) return $i; }
+    return count($aptOrder);
+  };
+  $ra = $rank($a); $rb = $rank($b);
+  return $ra === $rb ? strcmp($a, $b) : $ra <=> $rb;
+});
 
 $pageHero = [
   'title' => t('apartment.hero.title'),
@@ -79,107 +89,50 @@ include __DIR__ . '/partials/page-hero.php';
 
 <main class="site-main">
   <section class="section-pad">
-    <div class="container">
-      <div class="split-showcase">
-        <div>
-          <div class="section-head">
-            <h2 class="section-heading"><?php echo e(t('apartment.section1.title')); ?></h2>
-            <p class="muted" style="margin:0; max-width:70ch;">
-              <?php echo e(t('apartment.section1.text')); ?>
-            </p>
-          </div>
-
-          <div class="tile-grid" aria-label="<?php echo e(t('apartment.section1.title')); ?>">
-            <div class="tile">
-              <div class="tile-icon" aria-hidden="true">📶</div>
-              <div>
-                <h3><?php echo e(t('apartment.section1.wifi_title')); ?></h3>
-                <p><?php echo e(t('apartment.section1.wifi_text')); ?></p>
-              </div>
-            </div>
-            <div class="tile">
-              <div class="tile-icon" aria-hidden="true">❄️</div>
-              <div>
-                <h3><?php echo e(t('apartment.section1.ac_title')); ?></h3>
-                <p><?php echo e(t('apartment.section1.ac_text')); ?></p>
-              </div>
-            </div>
-            <div class="tile">
-              <div class="tile-icon" aria-hidden="true">🍳</div>
-              <div>
-                <h3><?php echo e(t('apartment.section1.kitchen_title')); ?></h3>
-                <p><?php echo e(t('apartment.section1.kitchen_text')); ?></p>
-              </div>
-            </div>
-            <div class="tile">
-              <div class="tile-icon" aria-hidden="true">🌿</div>
-              <div>
-                <h3><?php echo e(t('apartment.section1.outdoor_title')); ?></h3>
-                <p><?php echo e(t('apartment.section1.outdoor_text')); ?></p>
-              </div>
-            </div>
-          </div>
-
-          <div class="center-actions" style="justify-content:flex-start; margin-top:18px;">
-            <a class="btn secondary" href="<?php echo e(i18n_url('tips')); ?>"><?php echo e(t('apartment.section1.cta_tips')); ?></a>
-            <a class="btn" href="<?php echo e(i18n_url('rules')); ?>"><?php echo e(t('apartment.section1.cta_rules')); ?></a>
-          </div>
-        </div>
-
-        <div>
-          <div class="showcase-card">
-            <img loading="lazy" decoding="async" src="/assets/images/gallery/divano_letto.jpg" alt="<?php echo e(t('apartment.captions.living')); ?>">
-
-            <div class="showcase-badges">
-              <div class="mini-tile">
-                <div class="tile-icon" aria-hidden="true" style="width:40px;height:40px;border-radius:14px;">🚇</div>
-                <div>
-                  <h3><?php echo e(t('apartment.section1.metro_title')); ?></h3>
-                  <p><?php echo e(t('apartment.section1.metro_text')); ?></p>
-                </div>
-              </div>
-              <div class="mini-tile">
-                <div class="tile-icon" aria-hidden="true" style="width:40px;height:40px;border-radius:14px;">☕</div>
-                <div>
-                  <h3><?php echo e(t('apartment.section1.details_title')); ?></h3>
-                  <p><?php echo e(t('apartment.section1.details_text')); ?></p>
-                </div>
-              </div>
-            </div>
-          </div>
+    <div class="container split">
+      <div>
+        <h2><?php echo e(t('apartment.section1.title')); ?></h2>
+        <p class="lead"><?php echo e(t('apartment.section1.text')); ?></p>
+        <?php include __DIR__ . '/partials/facts.php'; ?>
+        <div class="actions" style="margin-top:28px;">
+          <a class="btn primary" href="<?php echo e(i18n_url('booking')); ?>"><?php echo e(t('apartment.hero.cta_availability')); ?></a>
+          <a class="btn" href="<?php echo e(i18n_url('rules')); ?>"><?php echo e(t('apartment.section1.cta_rules')); ?></a>
         </div>
       </div>
-    </div>
-    <div class="container" style="margin-top:18px;">
-      <?php include __DIR__ . '/partials/price-match.php'; ?>
+      <div class="photo-pair">
+        <img src="/assets/images/gallery/giardino_2_800.jpg" width="800" height="450" loading="lazy" decoding="async" alt="<?php echo e(t('apartment.captions.outdoor')); ?>">
+        <img src="/assets/images/gallery/thumbs/divano_letto.jpg" width="480" height="320" loading="lazy" decoding="async" alt="<?php echo e(t('apartment.captions.living')); ?>">
+      </div>
     </div>
   </section>
 
-  <section class="section-pad section-muted" id="gallery">
+  <section class="section-pad section-muted" id="gallery" aria-labelledby="gallery-title">
     <div class="container">
-      <div class="section-title left">
-        <div class="script-title"><?php echo e(t('apartment.gallery.title')); ?></div>
-        <div class="section-subtitle"><?php echo e(t('apartment.gallery.subtitle')); ?></div>
+      <div class="section-head">
+        <h2 id="gallery-title"><?php echo e(t('apartment.gallery.title')); ?></h2>
+        <p><?php echo e(t('apartment.gallery.subtitle')); ?></p>
       </div>
-
-      <div class="gallery" data-lightbox>
+      <div class="gallery" data-lightbox="apartment">
         <?php foreach ($gallery as $p):
           $file = basename($p);
           $key = apt_caption_key($file);
           $alt = t('apartment.captions.' . $key);
           if ($alt === 'apartment.captions.' . $key) $alt = t('apartment.captions.photo');
-
-          // Choose the best available thumbnail source (thumbs folder, responsive variant, or original).
           $thumb = apt_best_thumb_url($file);
-          if ($thumb === '') continue; // Safety: never output broken images.
+          if ($thumb === '') continue;
         ?>
-          <a href="/assets/images/gallery/<?php echo e($file); ?>" aria-label="<?php echo e(t('ui.open_photo')); ?>">
+          <a href="/assets/images/gallery/<?php echo e($file); ?>" aria-label="<?php echo e(t('ui.open_photo')); ?>: <?php echo e($alt); ?>" data-alt="<?php echo e($alt); ?>">
             <img loading="lazy" decoding="async" src="<?php echo e($thumb); ?>" alt="<?php echo e($alt); ?>">
           </a>
         <?php endforeach; ?>
       </div>
     </div>
   </section>
-</main>
 
+  <section class="section-pad">
+    <div class="container">
+      <?php include __DIR__ . '/partials/price-match.php'; ?>
+    </div>
+  </section>
+</main>
 <?php include __DIR__ . '/partials/footer.php'; ?>

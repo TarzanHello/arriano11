@@ -77,4 +77,16 @@ return [
       ['h' => 'Cómo llegar desde los aeropuertos y Termini', 'html' => '<strong>Desde Fiumicino:</strong> tren Leonardo Express hasta Termini (unos 30 minutos) y luego tranvía 14 o un trayecto corto en taxi. El taxi directo tarda 45–60 minutos y se paga con taxímetro (la tarifa fija del aeropuerto solo vale dentro de las Murallas Aurelianas).<br><strong>Desde Ciampino:</strong> autobús lanzadera hasta Termini y luego tranvía 14, o taxi (unos 30 minutos).<br><strong>Desde Termini:</strong> tranvía 14 dirección Togliatti, o metro A hasta San Giovanni y luego metro C.'],
     ],
   ],
+
+  // Redesign v2 (Oct 2026)
+  'v2' => [
+    'title' => 'De tu puerta al Coliseo, sin transbordos',
+    'start' => 'Tu casa en Roma',
+    'walk' => '3–5 minutos a pie',
+    'metro_a' => 'Transbordo al metro A',
+    'colosseo' => 'Unos 15 minutos puerta a puerta',
+    'place' => 'Pigneto, Roma',
+    'skip' => 'Ir al contenido',
+    'photos' => 'Fotos del apartamento',
+  ],
 ];

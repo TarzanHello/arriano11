@@ -25,7 +25,7 @@ $pageHero = [
 ];
 include __DIR__ . '/partials/page-hero.php';
 
-$updated = $isIt ? date('d/m/Y') : date('Y-m-d');
+$updated = $isIt ? '18/10/2026' : '2026-10-18'; // update when the text changes
 ?>
 
 <main class="site-main">

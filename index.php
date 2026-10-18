@@ -2,398 +2,201 @@
 require_once __DIR__ . '/lib/lib.php';
 include __DIR__ . '/partials/header.php';
 
-/**
- * Home page layout aligned to the "Modern Cozy" stylesheet.
- * (Fix: / and home hero layout was using old classes like hero-grid not present in CSS)
- */
+// Home — redesign v2 (Oct 2026). Texts come from the existing i18n keys (14 languages).
 
-$heroSlides = [
-  ['src' => '/assets/images/gallery/camera_da_letto_wide.jpg', 'alt' => t('apartment.captions.bedroom')],
-  ['src' => '/assets/images/gallery/living_wide.jpg', 'alt' => t('apartment.captions.living')],
-  ['src' => '/assets/images/gallery/giardino_1.jpg', 'alt' => t('apartment.captions.outdoor')],
-];
-
-$showcaseImg = ['src' => '/assets/images/gallery/living_1.jpg', 'alt' => t('apartment.captions.living')];
-
-$rooms = [
-  [
-    'src' => '/assets/images/gallery/camera_da_letto_3.jpg',
-    'alt' => t('apartment.captions.bedroom'),
-    'title' => t('home.spaces.room1_title'),
-    'desc' => t('home.spaces.room1_text'),
-    'icon' => 'bed',
-  ],
-  [
-    'src' => '/assets/images/gallery/giardino_2.jpg',
-    'alt' => t('apartment.captions.outdoor'),
-    'title' => t('home.spaces.room2_title'),
-    'desc' => t('home.spaces.room2_text'),
-    'icon' => 'terrace',
-  ],
-];
-
-$galleryPreview = [
-  ['file' => 'living_2.jpg', 'alt' => t('apartment.captions.living')],
-  ['file' => 'camera_da_letto_2.jpg', 'alt' => t('apartment.captions.bedroom')],
-  ['file' => 'giardino_1.jpg', 'alt' => t('apartment.captions.outdoor')],
-  ['file' => 'bagno_2.jpg', 'alt' => t('apartment.captions.bathroom')],
-  ['file' => 'cucina_top.jpg', 'alt' => t('apartment.captions.kitchen')],
-  ['file' => 'macchina_caffe.jpg', 'alt' => t('apartment.captions.coffee')],
-  ['file' => 'proiettore.jpg', 'alt' => t('apartment.captions.projector')],
-  ['file' => 'divano_letto_2.jpg', 'alt' => t('apartment.captions.living')],
-];
-
-// Responsive image srcset helper (16:9 gallery assets).
-// Requires *_480, *_800, *_1200 image variants to exist next to the 1600w original.
+// Responsive image srcset helper (16:9 gallery assets with *_480/_800/_1200 variants).
 function responsive_srcset_16x9($src) {
   $ext = pathinfo($src, PATHINFO_EXTENSION);
   if (!$ext) return '';
   $base = substr($src, 0, -(strlen($ext) + 1));
-  $set = [
-    $base . '_480.' . $ext . ' 480w',
-    $base . '_800.' . $ext . ' 800w',
-    $base . '_1200.' . $ext . ' 1200w',
-    $src . ' 1600w',
-  ];
+  $set = [];
+  foreach (['480', '800', '1200'] as $w) {
+    if (file_exists(__DIR__ . $base . '_' . $w . '.' . $ext)) $set[] = $base . '_' . $w . '.' . $ext . ' ' . $w . 'w';
+  }
+  $set[] = $src . ' 1600w';
   return implode(', ', $set);
 }
+
+$heroImg = '/assets/images/gallery/giardino_2.jpg';
+$address = (string)($store['settings']['address'] ?? '');
+$addressDisplay = $address ?: 'Via Arriano 11, 00176 Roma';
+$mapUrl = 'https://www.google.com/maps/search/?api=1&query=' . urlencode($addressDisplay);
+$cinHome = trim((string)($store['settings']['cin'] ?? ''));
+$today = date('Y-m-d');
+$tomorrow = date('Y-m-d', strtotime('+1 day'));
+
+$filmstrip = [
+  ['file' => 'giardino_1.jpg', 'alt' => t('apartment.captions.outdoor')],
+  ['file' => 'camera_da_letto_wide.jpg', 'alt' => t('apartment.captions.bedroom')],
+  ['file' => 'living_wide.jpg', 'alt' => t('apartment.captions.living')],
+  ['file' => 'cucina_top.jpg', 'alt' => t('apartment.captions.kitchen')],
+  ['file' => 'camera_da_letto_3.jpg', 'alt' => t('apartment.captions.bedroom')],
+  ['file' => 'bagno_2.jpg', 'alt' => t('apartment.captions.bathroom')],
+  ['file' => 'divano_letto_2.jpg', 'alt' => t('apartment.captions.living')],
+  ['file' => 'macchina_caffe.jpg', 'alt' => t('apartment.captions.coffee')],
+  ['file' => 'proiettore.jpg', 'alt' => t('apartment.captions.projector')],
+];
+function home_thumb($file) {
+  $base = preg_replace('/\.jpg$/i', '', $file);
+  if (file_exists(__DIR__ . '/assets/images/gallery/' . $base . '_480.jpg')) return '/assets/images/gallery/' . $base . '_480.jpg';
+  if (file_exists(__DIR__ . '/assets/images/gallery/thumbs/' . $file)) return '/assets/images/gallery/thumbs/' . $file;
+  return '/assets/images/gallery/' . $file;
+}
+
+$guide = i18n_get('neighborhood_guide');
 ?>
 
-<!-- HERO (wide images only) -->
-<section class="hero-cover hero-modern" aria-label="Hero">
-  <div class="hero-media" aria-hidden="true">
-    <div class="carousel hero-carousel" data-carousel>
-      <div class="carousel-track">
-        <?php foreach ($heroSlides as $i => $s): ?>
-          <?php $isFirst = ($i === 0); ?>
-          <div class="carousel-slide">
-            <img
-              loading="<?php echo $isFirst ? 'eager' : 'lazy'; ?>"
-              fetchpriority="<?php echo $isFirst ? 'high' : 'low'; ?>"
-              decoding="async"
-              width="1600"
-              height="900"
-              src="<?php echo e($s['src']); ?>"
-              srcset="<?php echo e(responsive_srcset_16x9($s['src'])); ?>"
-              sizes="100vw"
-              alt="<?php echo e($s['alt']); ?>">
-          </div>
-        <?php endforeach; ?>
-      </div>
-      <button class="carousel-btn prev" type="button" aria-label="<?php echo e(t('ui.previous_photo')); ?>">‹</button>
-      <button class="carousel-btn next" type="button" aria-label="<?php echo e(t('ui.next_photo')); ?>">›</button>
-      <div class="carousel-dots" aria-hidden="true"></div>
+<main class="site-main" id="main">
+
+  <!-- Hero: the terrace, with the headline pasted on like a street poster -->
+  <section class="hero-home">
+    <div class="hero-home-media">
+      <img src="<?php echo e($heroImg); ?>" srcset="<?php echo e(responsive_srcset_16x9($heroImg)); ?>" sizes="100vw"
+        width="1600" height="900" alt="<?php echo e(t('apartment.captions.outdoor')); ?>" fetchpriority="high" decoding="async">
     </div>
+    <div class="container hero-home-inner">
+      <h1><?php echo strip_tags(t('home.hero.title'), '<br>'); ?></h1>
+      <p class="lead"><?php echo e(t('meta.home.description')); ?></p>
+    </div>
+  </section>
+
+  <!-- Quick availability: opens the booking calendar with the dates already selected -->
+  <div class="container quick-book">
+    <form action="<?php echo e(i18n_url('booking')); ?>" method="get" aria-label="<?php echo e(t('booking.availability_title')); ?>">
+      <label>
+        <span><?php echo e(t('booking.labels.checkin')); ?></span>
+        <input type="date" name="start" min="<?php echo e($today); ?>" required>
+      </label>
+      <label>
+        <span><?php echo e(t('booking.labels.checkout')); ?></span>
+        <input type="date" name="end" min="<?php echo e($tomorrow); ?>" required>
+      </label>
+      <label>
+        <span><?php echo e(t('booking.labels.guests')); ?></span>
+        <select name="guests">
+          <option value="1">1</option>
+          <option value="2" selected>2</option>
+          <option value="3">3</option>
+        </select>
+      </label>
+      <button class="btn primary" type="submit"><?php echo e(t('home.spaces.cta_availability')); ?></button>
+    </form>
   </div>
 
-  <div class="hero-overlay">
+  <!-- Route: the real Metro C trip from the door to the Colosseum -->
+  <section class="route" aria-labelledby="route-title">
     <div class="container">
-      <div class="hero-content">
-        <div class="hero-kicker"><?php echo e($siteName ?? t('nav.brand')); ?></div>
-        <h1 class="hero-title"><?php echo t('home.hero.title'); ?></h1>
-        <p class="hero-lead"><?php echo e(t('home.hero.lead')); ?></p>
-        <div class="hero-actions">
+      <h2 id="route-title"><?php echo e(t('v2.title')); ?></h2>
+      <ol class="route-line">
+        <li><span class="route-dot" aria-hidden="true"></span><span class="route-name">Via Arriano 11</span><span class="route-note"><?php echo e(t('v2.start')); ?></span></li>
+        <li><span class="route-dot" aria-hidden="true"></span><span class="route-name">Metro C</span><span class="route-note"><?php echo e(t('v2.walk')); ?></span></li>
+        <li><span class="route-dot" aria-hidden="true"></span><span class="route-name">San Giovanni</span><span class="route-note"><?php echo e(t('v2.metro_a')); ?></span></li>
+        <li><span class="route-dot" aria-hidden="true"></span><span class="route-name">Colosseo</span><span class="route-note"><?php echo e(t('v2.colosseo')); ?></span></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- The apartment -->
+  <section class="section-pad">
+    <div class="container split">
+      <div>
+        <h2><?php echo e(t('home.intro.title')); ?></h2>
+        <p class="lead"><?php echo e(t('apartment.section1.text')); ?></p>
+        <?php include __DIR__ . '/partials/facts.php'; ?>
+        <div class="actions" style="margin-top:28px;">
           <a class="btn primary" href="<?php echo e(i18n_url('booking')); ?>"><?php echo e(t('home.hero.cta_primary')); ?></a>
-          <a class="btn ghost" href="<?php echo e(i18n_url('apartment')); ?>"><?php echo e(t('home.hero.cta_secondary')); ?></a>
+          <a class="btn" href="<?php echo e(i18n_url('apartment')); ?>"><?php echo e(t('home.hero.cta_secondary')); ?></a>
         </div>
       </div>
+      <div class="photo-pair">
+        <img src="/assets/images/gallery/camera_da_letto_wide_800.jpg" width="800" height="450" loading="lazy" decoding="async" alt="<?php echo e(t('apartment.captions.bedroom')); ?>">
+        <img src="/assets/images/gallery/living_1_480.jpg" width="480" height="270" loading="lazy" decoding="async" alt="<?php echo e(t('apartment.captions.living')); ?>">
+      </div>
     </div>
+  </section>
+
+  <!-- Film strip: the photos, like frames of a Pasolini reel -->
+  <section class="filmstrip" aria-label="<?php echo e(t('v2.photos')); ?>">
+    <div class="filmstrip-track" data-lightbox="home">
+      <?php foreach ($filmstrip as $f): ?>
+        <a href="/assets/images/gallery/<?php echo e($f['file']); ?>" aria-label="<?php echo e(t('ui.open_photo')); ?>: <?php echo e($f['alt']); ?>" data-alt="<?php echo e($f['alt']); ?>">
+          <img src="<?php echo e(home_thumb($f['file'])); ?>" alt="<?php echo e($f['alt']); ?>" loading="lazy" decoding="async" width="450" height="300">
+        </a>
+      <?php endforeach; ?>
+    </div>
+  </section>
+  <div class="container filmstrip-foot">
+    <p class="muted" style="margin:0;"><?php echo e(t('home.gallery.subtitle')); ?></p>
+    <a class="btn" href="<?php echo e(i18n_url('apartment')); ?>#gallery"><?php echo e(t('home.gallery.cta_all_photos')); ?></a>
   </div>
-</section>
 
-<?php
-  // SEO/entity reinforcement: keep a short, explicit “official site” block in server-side HTML.
-  // Localized on every home language version to strengthen entity reconciliation across alternates.
-  $mapQuery = $address ?: 'Via Arriano 11, 00176 Roma';
-  $mapUrl = 'https://www.google.com/maps/search/?api=1&query=' . urlencode($mapQuery);
-
-  $addressDisplay = $address ?: 'Via Arriano 11, 00176 Roma';
-  $officialHeading = t('home.official.heading');
-  $officialTextHtml = t('home.official.text_html', [
-    'name' => e($siteName ?? 'Via Arriano 11'),
-    'address' => e($addressDisplay),
-  ]);
-  $addrLabel = t('home.official.address_label');
-  $mapLabel = t('home.official.map_label');
-  $licenseLabel = t('home.official.license_label');
-?>
-<section class="section-pad section-muted" aria-label="<?php echo e($officialHeading); ?>">
-  <div class="container">
-    <div class="card" style="padding:18px;">
-      <h2 class="section-heading" style="margin:0 0 8px;"><?php echo e($officialHeading); ?></h2>
-      <p class="muted" style="max-width:80ch; margin:0 0 10px;">
-        <?php echo $officialTextHtml; ?>
-      </p>
-      <p class="small" style="margin:0;">
-        <strong><?php echo e($addrLabel); ?>:</strong> <span><?php echo e($addressDisplay); ?></span>
-        · <a href="<?php echo e($mapUrl); ?>" target="_blank" rel="noopener"><?php echo e($mapLabel); ?></a>
-        · <strong><?php echo e($licenseLabel); ?>:</strong> 6603
-        <?php $cinHome = trim((string)($store['settings']['cin'] ?? '')); ?>
-        <?php if ($cinHome !== ''): ?>
-          · <strong><abbr title="Codice Identificativo Nazionale">CIN</abbr>:</strong> <?php echo e($cinHome); ?>
-        <?php endif; ?>
-      </p>
-    </div>
-    <div style="margin-top:14px;">
+  <!-- Best price promise -->
+  <section class="section-pad">
+    <div class="container">
       <?php include __DIR__ . '/partials/price-match.php'; ?>
     </div>
-  </div>
-</section>
-
-<main class="site-main">
-  <!-- SECTION: Intro -->
-  <section class="section-pad" aria-label="<?php echo e(t('home.intro.title')); ?>">
-    <div class="container">
-      <div class="split-showcase">
-        <div class="showcase-text">
-          <h2 class="section-heading"><?php echo e(t('home.intro.title')); ?></h2>
-          <p class="muted"><?php echo e(t('home.intro.text')); ?></p>
-
-          <div class="tile-grid" aria-label="<?php echo e(t('home.intro.title')); ?>">
-            <div class="tile">
-              <div class="tile-icon" aria-hidden="true">📶</div>
-              <div>
-                <h3><?php echo e(t('home.intro.tile_wifi_title')); ?></h3>
-                <p><?php echo e(t('home.intro.tile_wifi_text')); ?></p>
-              </div>
-            </div>
-
-            <div class="tile">
-              <div class="tile-icon" aria-hidden="true">📍</div>
-              <div>
-                <h3><?php echo e(t('home.intro.tile_location_title')); ?></h3>
-                <p><?php echo e(t('home.intro.tile_location_text')); ?></p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="showcase-media">
-          <div class="showcase-card">
-            <img loading="lazy" decoding="async" width="1600" height="900" src="<?php echo e($showcaseImg['src']); ?>"
-              srcset="<?php echo e(responsive_srcset_16x9($showcaseImg['src'])); ?>"
-              sizes="(max-width: 900px) 100vw, 50vw"
-              alt="<?php echo e($showcaseImg['alt']); ?>">
-
-            <div class="showcase-badges" aria-label="<?php echo e(t('home.intro.title')); ?>">
-              <div class="mini-tile">
-                <div class="tile-icon" aria-hidden="true">
-                  🛏️
-                </div>
-                <div>
-                  <h3><?php echo e(t('home.intro.badge_comfort_title')); ?></h3>
-                  <p><?php echo e(t('home.intro.badge_comfort_text')); ?></p>
-                </div>
-              </div>
-
-              <div class="mini-tile">
-                <div class="tile-icon" aria-hidden="true">
-                  🌿
-                </div>
-                <div>
-                  <h3><?php echo e(t('home.intro.badge_outdoor_title')); ?></h3>
-                  <p><?php echo e(t('home.intro.badge_outdoor_text')); ?></p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="center-actions" style="margin-top:16px;">
-            <a class="btn primary" href="<?php echo e(i18n_url('apartment')); ?>#gallery"><?php echo e(t('home.intro.see_more_photos')); ?></a>
-          </div>
-        </div>
-      </div>
-    </div>
   </section>
 
-  <!-- SECTION: Spaces -->
-  <section class="section-pad section-muted" aria-label="<?php echo e(t('home.spaces.title')); ?>">
-    <div class="container">
-      <div class="section-head">
-        <h2 class="section-heading"><?php echo e(t('home.spaces.title')); ?></h2>
-        <p class="muted"><?php echo e(t('home.spaces.subtitle')); ?></p>
-      </div>
-
-      <div class="rooms-grid">
-        <?php foreach ($rooms as $r): ?>
-          <article class="room-xl">
-            <div class="room-xl-media">
-              <img loading="lazy" decoding="async" width="1600" height="900" src="<?php echo e($r['src']); ?>"
-                srcset="<?php echo e(responsive_srcset_16x9($r['src'])); ?>"
-                sizes="(max-width: 900px) 100vw, 50vw"
-                alt="<?php echo e($r['alt']); ?>">
-            </div>
-            <div class="room-xl-body">
-              <div class="room-xl-head">
-                <div class="room-xl-icon" aria-hidden="true">
-                  <?php if ($r['icon'] === 'bed'): ?>
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v10"/><path d="M21 17V7"/><path d="M3 14h18"/><path d="M7 14V9h10v5"/></svg>
-                  <?php else: ?>
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M7 21v-8a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v8"/><path d="M9 9V5a3 3 0 0 1 6 0v4"/></svg>
-                  <?php endif; ?>
-                </div>
-                <h3><?php echo e($r['title']); ?></h3>
-              </div>
-              <p class="muted"><?php echo e($r['desc']); ?></p>
-            </div>
-          </article>
-        <?php endforeach; ?>
-      </div>
-
-      <div class="center-actions" style="margin-top:18px;">
-        <a class="btn primary" href="<?php echo e(i18n_url('booking')); ?>"><?php echo e(t('home.spaces.cta_availability')); ?></a>
-        <a class="btn" href="<?php echo e(i18n_url('contact')); ?>"><?php echo e(t('home.spaces.cta_contact')); ?></a>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECTION: Services -->
-  <section class="section-pad" aria-label="<?php echo e(t('home.services.title')); ?>">
-    <div class="container">
-      <div class="panel-grid">
-        <div class="card panel">
-          <h2 class="section-heading" style="margin-top:0;"><?php echo e(t('home.services.title')); ?></h2>
-          <p class="muted"><?php echo e(t('home.services.text')); ?></p>
-
-          <div class="amenities-grid" role="list">
-            <div class="amenity" role="listitem">
-              <div class="amenity-icon" aria-hidden="true">📶</div>
-              <div>
-                <div class="amenity-title"><?php echo e(t('home.services.amenity_wifi_title')); ?></div>
-                <div class="amenity-sub"><?php echo e(t('home.services.amenity_wifi_sub')); ?></div>
-              </div>
-            </div>
-
-            <div class="amenity" role="listitem">
-              <div class="amenity-icon" aria-hidden="true">🍽️</div>
-              <div>
-                <div class="amenity-title"><?php echo e(t('home.services.amenity_kitchen_title')); ?></div>
-                <div class="amenity-sub"><?php echo e(t('home.services.amenity_kitchen_sub')); ?></div>
-              </div>
-            </div>
-
-            <div class="amenity" role="listitem">
-              <div class="amenity-icon" aria-hidden="true">📍</div>
-              <div>
-                <div class="amenity-title"><?php echo e(t('home.services.amenity_location_title')); ?></div>
-                <div class="amenity-sub"><?php echo e(t('home.services.amenity_location_sub')); ?></div>
-              </div>
-            </div>
-
-            <div class="amenity" role="listitem">
-              <div class="amenity-icon" aria-hidden="true">✉️</div>
-              <div>
-                <div class="amenity-title"><?php echo e(t('home.services.amenity_support_title')); ?></div>
-                <div class="amenity-sub"><?php echo e(t('home.services.amenity_support_sub')); ?></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card panel panel-highlight">
-          <h2 class="section-heading" style="margin-top:0;"><?php echo e(t('home.services.panel_title')); ?></h2>
-          <p class="muted"><?php echo e(t('home.services.panel_text')); ?></p>
-
-          <div class="center-actions" style="justify-content:flex-start; margin-top:14px;">
-            <a class="btn primary" href="<?php echo e(i18n_url('booking')); ?>"><?php echo e(t('home.services.panel_cta_calendar')); ?></a>
-            <a class="btn" href="<?php echo e(i18n_url('contact')); ?>"><?php echo e(t('home.services.panel_cta_write')); ?></a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECTION: Verified reviews (guest-only) -->
+  <!-- Verified reviews (only when there are approved ones) -->
   <?php
     $allReviews = load_reviews();
     $approvedReviews = reviews_approved($allReviews);
-    // Newest first
-    usort($approvedReviews, function($a, $b) {
-      return (int)($b['created_at'] ?? 0) <=> (int)($a['created_at'] ?? 0);
-    });
+    usort($approvedReviews, function($a, $b) { return (int)($b['created_at'] ?? 0) <=> (int)($a['created_at'] ?? 0); });
     $stats = reviews_stats($allReviews);
-    $avg = (float)($stats['avg'] ?? 0);
     $count = (int)($stats['count'] ?? 0);
-    $show = array_slice($approvedReviews, 0, 6);
-
-    $avgLabel = number_format($avg, 1);
-    if (current_lang() === 'it') {
-      $avgLabel = str_replace('.', ',', $avgLabel);
-    }
+    $avgLabel = number_format((float)($stats['avg'] ?? 0), 1, current_lang() === 'it' ? ',' : '.', '');
   ?>
-  <section class="section-pad section-muted" aria-label="<?php echo e(t('reviews.section_title')); ?>">
+  <?php if ($count > 0): ?>
+  <section class="section-pad section-muted" aria-labelledby="reviews-title">
     <div class="container">
       <div class="section-head">
-        <h2 class="section-heading"><?php echo e(t('reviews.section_title')); ?></h2>
-        <p class="muted"><?php echo e(strtr(t('reviews.section_lead'), ['{site}' => $siteName])); ?></p>
+        <h2 id="reviews-title"><?php echo e(t('reviews.section_title')); ?></h2>
+        <p><?php echo e(t('reviews.avg_label')); ?>: <strong><?php echo e($avgLabel); ?>/5</strong>, <?php echo e($count); ?> <?php echo e(t('reviews.count_label')); ?></p>
       </div>
-
-      <?php if ($count <= 0): ?>
-        <div class="card" style="padding:18px;">
-          <p class="muted" style="margin:0;"><?php echo e(t('reviews.no_reviews_yet')); ?></p>
-        </div>
-      <?php else: ?>
-        <div class="notice" style="margin:0 0 14px;">
-          <strong><?php echo e(t('reviews.avg_label')); ?>:</strong> <?php echo e($avgLabel); ?>/5 · <strong><?php echo e($count); ?></strong> <?php echo e(t('reviews.count_label')); ?>
-        </div>
-
-        <div class="reviews-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px;">
-          <?php foreach ($show as $r): ?>
-            <?php
-              $author = trim((string)($r['author'] ?? '')) ?: 'Guest';
-              $rating = (int)($r['rating'] ?? 0);
-              if ($rating < 1 || $rating > 5) $rating = 0;
-              $date = (string)($r['date_published'] ?? '');
-              $body = trim((string)($r['body'] ?? ''));
-              $stars = ($rating > 0) ? str_repeat('★', $rating) . str_repeat('☆', 5 - $rating) : '';
-            ?>
-            <article class="card" style="padding:16px;">
-              <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
-                <div>
-                  <div style="font-weight:900; letter-spacing:.01em;"><?php echo e($author); ?></div>
-                  <div class="small muted"><?php echo e($date ?: ''); ?></div>
-                </div>
-                <div class="small" aria-label="Rating" style="white-space:nowrap;"><?php echo e($stars); ?></div>
-              </div>
-              <p class="muted" style="margin:10px 0 0; white-space:pre-line;"><?php echo e($body); ?></p>
-            </article>
-          <?php endforeach; ?>
-        </div>
-
-        <style>
-          @media (max-width: 980px){
-            .reviews-grid{ grid-template-columns:repeat(2,1fr) !important; }
-          }
-          @media (max-width: 640px){
-            .reviews-grid{ grid-template-columns:1fr !important; }
-          }
-        </style>
-      <?php endif; ?>
-    </div>
-  </section>
-
-  <!-- SECTION: Gallery preview -->
-  <section class="section-pad section-muted section-gallery-preview" aria-label="<?php echo e(t('home.gallery.title')); ?>">
-    <div class="container">
-      <div class="section-head">
-        <h2 class="section-heading"><?php echo e(t('home.gallery.title')); ?></h2>
-        <p class="muted"><?php echo e(t('home.gallery.subtitle')); ?></p>
-      </div>
-
-      <div class="mini-gallery" data-lightbox>
-        <?php foreach ($galleryPreview as $g): ?>
-          <a href="/assets/images/gallery/<?php echo e($g['file']); ?>" aria-label="<?php echo e(t('ui.open_photo')); ?>">
-            <img src="/assets/images/gallery/thumbs/<?php echo e($g['file']); ?>" alt="<?php echo e($g['alt']); ?>" loading="lazy" decoding="async">
-          </a>
+      <div class="reviews-grid">
+        <?php foreach (array_slice($approvedReviews, 0, 6) as $r): ?>
+          <?php
+            $rating = (int)($r['rating'] ?? 0);
+            if ($rating < 1 || $rating > 5) $rating = 0;
+          ?>
+          <article class="review">
+            <div class="review-stars" aria-label="<?php echo e($rating); ?>/5"><?php echo e(str_repeat('★', $rating) . str_repeat('☆', 5 - $rating)); ?></div>
+            <p style="white-space:pre-line; margin:8px 0;"><?php echo e(trim((string)($r['body'] ?? ''))); ?></p>
+            <p class="small muted" style="margin:0;"><strong><?php echo e(trim((string)($r['author'] ?? '')) ?: 'Guest'); ?></strong> <?php echo e((string)($r['date_published'] ?? '')); ?></p>
+          </article>
         <?php endforeach; ?>
       </div>
-
-      <div class="center-actions" style="margin-top:18px;">
-        <a class="btn" href="<?php echo e(i18n_url('apartment')); ?>#gallery"><?php echo e(t('home.gallery.cta_all_photos')); ?></a>
-        <a class="btn primary" href="<?php echo e(i18n_url('booking')); ?>"><?php echo e(t('home.gallery.cta_book')); ?></a>
-      </div>
     </div>
   </section>
+  <?php endif; ?>
+
+  <!-- The neighbourhood -->
+  <section class="section-pad section-ink band-quartiere" aria-labelledby="quartiere-title">
+    <div class="container split">
+      <div>
+        <h2 id="quartiere-title"><?php echo e(is_array($guide) ? (string)($guide['title'] ?? t('nav.neighborhood')) : t('nav.neighborhood')); ?></h2>
+        <?php if (is_array($guide) && !empty($guide['intro'])): ?>
+          <p class="lead"><?php echo e((string)$guide['intro']); ?></p>
+        <?php endif; ?>
+        <div class="actions" style="margin-top:24px;">
+          <a class="btn primary" href="<?php echo e(i18n_url('neighborhood')); ?>"><?php echo e(t('nav.neighborhood')); ?></a>
+          <a class="btn" href="<?php echo e(i18n_url('tips')); ?>"><?php echo e(t('nav.tips')); ?></a>
+        </div>
+      </div>
+      <img src="/assets/images/gallery/giardino_1_800.jpg" width="800" height="450" loading="lazy" decoding="async" alt="<?php echo e(t('apartment.captions.outdoor')); ?>">
+    </div>
+  </section>
+
+  <!-- Official information (entity data for Google, legal identifiers) -->
+  <section class="section-pad section-muted official" aria-labelledby="official-title">
+    <div class="container">
+      <h2 id="official-title" style="font-size:clamp(24px, 2.6vw, 32px);"><?php echo e(t('home.official.heading')); ?></h2>
+      <p style="max-width:75ch;"><?php echo t('home.official.text_html', ['name' => e($siteName), 'address' => e($addressDisplay)]); ?></p>
+      <p><strong><?php echo e(t('home.official.address_label')); ?>:</strong> <?php echo e($addressDisplay); ?> (<a href="<?php echo e($mapUrl); ?>" target="_blank" rel="noopener"><?php echo e(t('home.official.map_label')); ?></a>)</p>
+      <p><strong><?php echo e(t('home.official.license_label')); ?>:</strong> 6603<?php if ($cinHome !== ''): ?>, <strong><abbr title="Codice Identificativo Nazionale">CIN</abbr>:</strong> <?php echo e($cinHome); ?><?php endif; ?></p>
+    </div>
+  </section>
+
 </main>
 
 <?php include __DIR__ . '/partials/footer.php'; ?>

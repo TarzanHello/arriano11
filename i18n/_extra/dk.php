@@ -77,4 +77,16 @@ return [
       ['h' => 'Sådan kommer du hertil fra lufthavnene og Termini', 'html' => '<strong>Fra Fiumicino:</strong> toget Leonardo Express til Termini (ca. 30 minutter), derefter sporvogn 14 eller en kort taxatur. En direkte taxa tager 45–60 minutter og kører efter taxameter (lufthavnens faste pris gælder kun inden for Aurelianmuren).<br><strong>Fra Ciampino:</strong> shuttlebus til Termini, derefter sporvogn 14, eller taxa (ca. 30 minutter).<br><strong>Fra Termini:</strong> sporvogn 14 mod Togliatti eller metro A til San Giovanni og derefter metro C.'],
     ],
   ],
+
+  // Redesign v2 (Oct 2026)
+  'v2' => [
+    'title' => 'Fra døren til Colosseum, uden skift',
+    'start' => 'Dit hjem i Rom',
+    'walk' => '3–5 minutters gang',
+    'metro_a' => 'Skift til metro A',
+    'colosseo' => 'Ca. 15 minutter fra dør til dør',
+    'place' => 'Pigneto, Rom',
+    'skip' => 'Gå til indhold',
+    'photos' => 'Billeder af lejligheden',
+  ],
 ];
