@@ -97,6 +97,7 @@ include __DIR__ . '/partials/page-hero.php';
         <a class="btn primary" href="<?php echo e(i18n_url('booking')); ?>"><?php echo e(t('neighborhood.hero.cta_book')); ?></a>
         <a class="btn" href="<?php echo e(i18n_url('tips')); ?>"><?php echo e(t('neighborhood.hero.cta_tips')); ?></a>
         <a class="btn" href="<?php echo e(i18n_url('apartment')); ?>"><?php echo e(t('nav.apartment')); ?></a>
+        <a class="btn" href="<?php echo e(i18n_url('policlinico', i18n_route_lang('policlinico', current_lang()))); ?>"><?php echo e(t('policlinico.nav')); ?></a>
       </div>
     </article>
   </div>

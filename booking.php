@@ -28,7 +28,7 @@ $ctaText = $stripeEnabled ? t('booking.cta.pay') : t('booking.cta.request');
 $depositLine = $stripeEnabled ? t('booking.availability_help_deposit', ['pct' => $depositPctDisplay]) : '';
 
 $pageHero = [
-  'title' => t('booking.hero.title'),
+  'title' => copy_get('booking_hero_title') ?? t('booking.hero.title'),
   'lead'  => t('booking.hero.lead'),
   'image' => '/assets/images/gallery/camera_da_letto_wide.jpg',
   'actions' => [

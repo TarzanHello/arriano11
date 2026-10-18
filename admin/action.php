@@ -303,6 +303,13 @@ switch ($action) {
     redirect_tab('sync', null, $errMsg);
     break;
 
+  case 'indexnow_submit':
+    store_unlock();
+    [$okIn, $msgIn] = indexnow_submit(indexnow_public_urls());
+    if ($okIn) redirect_tab('settings', $msgIn);
+    redirect_tab('settings', null, $msgIn);
+    break;
+
   case 'regen_ical_token':
     // Regenerate the private token used for iCal export (sito -> Booking)
     $store['settings']['ical_export_secret'] = bin2hex(random_bytes_fallback(16));

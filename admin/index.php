@@ -1206,6 +1206,16 @@ function month_title_it($ym) {
 
           <hr style="border:none; border-top:1px solid var(--border); margin:18px 0;">
 
+          <h3 style="margin:0 0 10px;">Motori di ricerca</h3>
+          <p class="muted" style="margin:0 0 10px;">Dopo aver cambiato testi o pagine, avvisa Bing (e gli altri motori che usano IndexNow) che il sito è stato aggiornato. Google invece legge la sitemap da Search Console.</p>
+          <form method="post" action="/admin/action.php" style="margin-bottom:14px;">
+            <input type="hidden" name="csrf" value="<?php echo e($csrf); ?>">
+            <input type="hidden" name="action" value="indexnow_submit">
+            <button class="btn" type="submit">Segnala le pagine a Bing (IndexNow)</button>
+          </form>
+
+          <hr style="border:none; border-top:1px solid var(--border); margin:18px 0;">
+
           <h3 style="margin:0 0 10px;">Sicurezza</h3>
           <form method="post" action="/admin/action.php" style="margin-top:10px; margin-bottom:14px;">
             <input type="hidden" name="csrf" value="<?php echo e($csrf); ?>">

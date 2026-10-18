@@ -2508,6 +2508,52 @@ function build_ics_from_store($store) {
   return $ical->export();
 }
 
+// ------------------------------------------------------------
+// IndexNow (Bing, Yandex, Seznam, Naver…): tells search engines that pages changed.
+// The key file /8ecd5181059299648e78c93308fd48bf.txt must stay in the site root.
+// ------------------------------------------------------------
+const VIA_INDEXNOW_KEY = '8ecd5181059299648e78c93308fd48bf';
+
+function indexnow_public_urls() {
+  require_once __DIR__ . '/i18n.php';
+  $routes = ['home', 'apartment', 'neighborhood', 'tips', 'rules', 'contact', 'booking', 'policlinico', 'privacy', 'cookies'];
+  $base = rtrim(base_url(), '/');
+  $urls = [];
+  foreach ($routes as $r) {
+    foreach (i18n_route_languages($r) as $l) {
+      $urls[] = $base . i18n_url($r, $l);
+    }
+  }
+  return array_values(array_unique($urls));
+}
+
+// Returns [ok, message]
+function indexnow_submit($urls) {
+  if (!function_exists('curl_init')) return [false, 'cURL non disponibile sul server.'];
+  $host = trusted_host();
+  $payload = json_encode([
+    'host' => $host,
+    'key' => VIA_INDEXNOW_KEY,
+    'keyLocation' => 'https://' . $host . '/' . VIA_INDEXNOW_KEY . '.txt',
+    'urlList' => array_values($urls),
+  ], JSON_UNESCAPED_SLASHES);
+  $ch = curl_init('https://api.indexnow.org/indexnow');
+  curl_setopt($ch, CURLOPT_POST, true);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+  curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json; charset=utf-8']);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+  curl_exec($ch);
+  $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+  $err = curl_error($ch);
+  curl_close($ch);
+  if ($code === 200 || $code === 202) return [true, 'Inviate ' . count($urls) . ' pagine a IndexNow (Bing e altri motori).'];
+  if ($code === 0) return [false, 'Connessione a IndexNow non riuscita: ' . $err];
+  if ($code === 403) return [false, 'IndexNow: chiave non trovata. Controlla che il file ' . VIA_INDEXNOW_KEY . '.txt sia nella cartella principale del sito.'];
+  return [false, 'IndexNow ha risposto con codice ' . $code . '.'];
+}
+
 function format_currency($amount, $currency) {
   $amount = (float)$amount;
   $currency = strtoupper((string)$currency);

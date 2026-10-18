@@ -76,7 +76,7 @@ usort($gallery, function($a, $b) use ($aptOrder) {
 });
 
 $pageHero = [
-  'title' => t('apartment.hero.title'),
+  'title' => copy_get('apt_hero_title') ?? t('apartment.hero.title'),
   'lead'  => t('apartment.hero.lead'),
   'image' => '/assets/images/gallery/living_wide.jpg',
   'actions' => [
@@ -91,8 +91,8 @@ include __DIR__ . '/partials/page-hero.php';
   <section class="section-pad">
     <div class="container split">
       <div>
-        <h2><?php echo e(t('apartment.section1.title')); ?></h2>
-        <p class="lead"><?php echo e(t('apartment.section1.text')); ?></p>
+        <h2><?php echo e(copy_get('apt_title') ?? t('apartment.section1.title')); ?></h2>
+        <p class="lead"><?php echo e(copy_get('apt_text') ?? t('apartment.section1.text')); ?></p>
         <?php include __DIR__ . '/partials/facts.php'; ?>
         <div class="actions" style="margin-top:28px;">
           <a class="btn primary" href="<?php echo e(i18n_url('booking')); ?>"><?php echo e(t('apartment.hero.cta_availability')); ?></a>
@@ -105,6 +105,22 @@ include __DIR__ . '/partials/page-hero.php';
       </div>
     </div>
   </section>
+
+  <?php $rooms = copy_get('rooms'); ?>
+  <?php if (is_array($rooms) && $rooms): ?>
+  <section class="section-pad section-ink rooms-band" aria-label="<?php echo e((string)copy_get('apt_title')); ?>">
+    <div class="container">
+      <dl class="rooms-list">
+        <?php foreach ($rooms as $r): ?>
+          <div>
+            <dt><?php echo e((string)($r['h'] ?? '')); ?></dt>
+            <dd><?php echo e((string)($r['p'] ?? '')); ?></dd>
+          </div>
+        <?php endforeach; ?>
+      </dl>
+    </div>
+  </section>
+  <?php endif; ?>
 
   <section class="section-pad section-muted" id="gallery" aria-labelledby="gallery-title">
     <div class="container">
@@ -134,5 +150,6 @@ include __DIR__ . '/partials/page-hero.php';
       <?php include __DIR__ . '/partials/price-match.php'; ?>
     </div>
   </section>
+  <?php $faqSchema = false; include __DIR__ . '/partials/faq.php'; ?>
 </main>
 <?php include __DIR__ . '/partials/footer.php'; ?>

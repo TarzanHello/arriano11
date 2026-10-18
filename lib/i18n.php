@@ -297,3 +297,49 @@ function hreflang_links_for_route($route) {
   ];
   return $links;
 }
+
+// ------------------------------------------------------------
+// Page copy v2 (Oct 2026): richer texts written per language in /i18n/copy/{lang}.php.
+// Returns null when the current language has no specific text, so templates can fall
+// back to the previous translation instead of mixing languages.
+// ------------------------------------------------------------
+function copy_get($key, $vars = []) {
+  static $cache = [];
+  $lang = current_lang();
+  if (!array_key_exists($lang, $cache)) {
+    $f = __DIR__ . '/../i18n/copy/' . preg_replace('/[^a-z]/', '', $lang) . '.php';
+    $data = file_exists($f) ? (require $f) : [];
+    $cache[$lang] = is_array($data) ? $data : [];
+  }
+  $cur = $cache[$lang];
+  foreach (explode('.', (string)$key) as $part) {
+    if (!is_array($cur) || !array_key_exists($part, $cur)) return null;
+    $cur = $cur[$part];
+  }
+  if ($vars) $cur = copy_fill($cur, $vars);
+  return $cur;
+}
+
+function copy_fill($value, $vars) {
+  if (is_array($value)) {
+    foreach ($value as $k => $v) $value[$k] = copy_fill($v, $vars);
+    return $value;
+  }
+  if (!is_string($value)) return $value;
+  foreach ($vars as $k => $v) $value = str_replace('{' . $k . '}', (string)$v, $value);
+  return $value;
+}
+
+// Real values from the settings, used inside FAQ answers.
+function copy_vars($store) {
+  $s = is_array($store) ? ($store['settings'] ?? []) : [];
+  $tax = (float)($s['city_tax_per_person_per_night'] ?? 6);
+  return [
+    'min_nights' => (int)($s['min_nights'] ?? 3),
+    'checkin' => (string)($s['check_in_time'] ?? '15:00'),
+    'checkout' => (string)($s['check_out_time'] ?? '11:00'),
+    'tax' => (fmod($tax, 1.0) == 0.0) ? (string)(int)$tax : number_format($tax, 2, ',', ''),
+    'tax_max' => (int)($s['tourist_tax_max_nights'] ?? 10),
+  ];
+}
+

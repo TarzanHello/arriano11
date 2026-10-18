@@ -100,8 +100,8 @@ $guide = i18n_get('neighborhood_guide');
   <section class="section-pad">
     <div class="container split">
       <div>
-        <h2><?php echo e(t('home.intro.title')); ?></h2>
-        <p class="lead"><?php echo e(t('apartment.section1.text')); ?></p>
+        <h2><?php echo e(copy_get('home_intro_title') ?? t('home.intro.title')); ?></h2>
+        <p class="lead"><?php echo e(copy_get('home_intro_text') ?? t('apartment.section1.text')); ?></p>
         <?php include __DIR__ . '/partials/facts.php'; ?>
         <div class="actions" style="margin-top:28px;">
           <a class="btn primary" href="<?php echo e(i18n_url('booking')); ?>"><?php echo e(t('home.hero.cta_primary')); ?></a>
@@ -129,6 +129,24 @@ $guide = i18n_get('neighborhood_guide');
     <p class="muted" style="margin:0;"><?php echo e(t('home.gallery.subtitle')); ?></p>
     <a class="btn" href="<?php echo e(i18n_url('apartment')); ?>#gallery"><?php echo e(t('home.gallery.cta_all_photos')); ?></a>
   </div>
+
+  <!-- Why book direct (copy v2) -->
+  <?php $why = copy_get('why'); ?>
+  <?php if (is_array($why) && $why): ?>
+  <section class="section-pad why-direct" aria-labelledby="why-title">
+    <div class="container">
+      <h2 id="why-title"><?php echo e((string)copy_get('why_title')); ?></h2>
+      <div class="why-grid">
+        <?php foreach ($why as $w): ?>
+          <div class="why-item">
+            <h3><?php echo e((string)($w['h'] ?? '')); ?></h3>
+            <p><?php echo e((string)($w['p'] ?? '')); ?></p>
+          </div>
+        <?php endforeach; ?>
+      </div>
+    </div>
+  </section>
+  <?php endif; ?>
 
   <!-- Best price promise -->
   <section class="section-pad">
@@ -186,6 +204,9 @@ $guide = i18n_get('neighborhood_guide');
       <img src="/assets/images/gallery/giardino_1_800.jpg" width="800" height="450" loading="lazy" decoding="async" alt="<?php echo e(t('apartment.captions.outdoor')); ?>">
     </div>
   </section>
+
+  <!-- FAQ (copy v2) + FAQPage structured data -->
+  <?php include __DIR__ . '/partials/faq.php'; ?>
 
   <!-- Official information (entity data for Google, legal identifiers) -->
   <section class="section-pad section-muted official" aria-labelledby="official-title">

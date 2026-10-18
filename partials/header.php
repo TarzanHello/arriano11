@@ -43,7 +43,15 @@ if ($metaTitle) {
 }
 
 // Social share image (WhatsApp, Facebook, Telegram…): a real photo, not the logo.
-$ogImage = rtrim(base_url(), '/') . '/assets/images/gallery/camera_da_letto_wide_1200.jpg';
+// One representative photo per page (shown when the link is shared)
+$ogImages = [
+  'home' => 'giardino_2_1200.jpg',
+  'apartment' => 'living_wide_1200.jpg',
+  'neighborhood' => 'giardino_1_1200.jpg',
+  'booking' => 'camera_da_letto_wide_1200.jpg',
+  'policlinico' => 'camera_da_letto_wide_1200.jpg',
+];
+$ogImage = rtrim(base_url(), '/') . '/assets/images/gallery/' . ($ogImages[$route] ?? 'giardino_2_1200.jpg');
 $ogLocale = str_replace('-', '_', html_lang($lang));
 
 $canonical = abs_url_for_route($route, $lang);
@@ -370,6 +378,24 @@ send_security_headers([
       endif;
 ?>
     <script type="application/ld+json"><?php echo json_encode($graph, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?></script>
+  <?php elseif (!$isNoIndex): ?>
+    <?php
+      // Inner pages: declare the page and link it to the property entity defined on the home,
+      // with the page photo as primary image (helps Google tie every page to the same place).
+      $innerGraph = [
+        '@context' => 'https://schema.org',
+        '@type' => 'WebPage',
+        '@id' => $canonical . '#webpage',
+        'url' => $canonical,
+        'name' => $title,
+        'inLanguage' => html_lang($lang),
+        'isPartOf' => ['@id' => abs_url_for_route('home', 'it') . '#website'],
+        'about' => ['@id' => abs_url_for_route('home', 'it') . '#vacationrental'],
+        'primaryImageOfPage' => ['@type' => 'ImageObject', 'url' => $ogImage],
+      ];
+      if ($metaDesc) $innerGraph['description'] = $metaDesc;
+    ?>
+    <script type="application/ld+json"><?php echo json_encode($innerGraph, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?></script>
   <?php endif; ?>
 
   <script nonce="<?php echo e(csp_nonce()); ?>">

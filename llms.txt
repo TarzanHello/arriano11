@@ -1,46 +1,31 @@
-# Via Arriano 11 (Rome, Pigneto)
+# Via Arriano 11 – holiday apartment with private terrace in Pigneto, Rome
 
-## Summary
-Official website of the tourist accommodation “Via Arriano 11” located at Via Arriano 11, 00176 Rome (RM), Italy.
+> Official website of "Via Arriano 11", a tourist apartment (alloggio per uso turistico n. 6603, CIN IT058091B4CDTSVLDV) at Via Arriano 11, 00176 Rome, Italy, in the Pigneto neighbourhood. Guests can check live availability and book directly with the owner.
 
-## Canonical
-https://www.viaarriano11.it/
+## Key facts
+- Type: entire apartment, up to 3 guests (double bed + sofa bed)
+- Rooms: double bedroom, living room with sofa bed, equipped kitchen with coffee machine, bathroom with shower, private outdoor terrace
+- Amenities: Wi‑Fi, air conditioning, projector
+- Check-in from 15:00, check-out by 11:00; usual minimum stay 3 nights
+- Rome city tax: €6 per person per night, first 10 nights (included in the quote)
+- Location: Pigneto (Rome, Municipio V), Metro C station a 3–5 minute walk; Colosseum with no changes, about 15 minutes door to door; tram 14 to Termini; tram 19 to Policlinico Umberto I and Sapienza University
+- Direct booking: request from the website calendar, confirmed by the owner; best price promise: if the same dates are cheaper on Booking.com, the guest sends a screenshot and gets 10% off that price
+- Contact: viaarriano11@gmail.com, phone/WhatsApp +39 328 675 5392
 
-## Primary entity
-- Name: Via Arriano 11
-- Address: Via Arriano 11, 00176 Rome (RM), Italy
-- License/Registry: Alloggio per uso turistico 6603
-- CIN (Codice Identificativo Nazionale): IT058091B4CDTSVLDV
+## Main pages
+- [Home](https://www.viaarriano11.it/): overview, FAQ, official data
+- [The apartment](https://www.viaarriano11.it/apartment): rooms, amenities, photo gallery
+- [Availability and booking](https://www.viaarriano11.it/booking): live calendar with nightly prices
+- [Pigneto neighbourhood guide](https://www.viaarriano11.it/neighborhood): market, Pasolini and cinema, street art, sights nearby, getting around, airports
+- [Local tips](https://www.viaarriano11.it/tips): where to eat, drink and shop
+- [Near Policlinico Umberto I and Sapienza](https://www.viaarriano11.it/policlinico-sapienza) (IT/EN)
+- [House rules](https://www.viaarriano11.it/rules)
+- [Contact](https://www.viaarriano11.it/contact)
 
 ## Languages
-it (default), en, fr, es, de, ru, ro, pt, pl, se, dk, ko, zh, ja
+Italian (default) and English, French, Spanish, German, Russian, Romanian, Portuguese, Polish, Swedish, Danish, Korean, Chinese, Japanese under /en/, /fr/, /es/, /de/, /ru/, /ro/, /pt/, /pl/, /se/, /dk/, /ko/, /zh/, /ja/.
 
-## Public pages
-- /
-- /booking
-- /apartment
-- /neighborhood
-- /tips
-- /rules
-- /contact
-- /policlinico-sapienza (accommodation near Policlinico Umberto I / Sapienza University; IT + EN)
-- /privacy
-- /cookies
-
-## Non-public / do not crawl
-- /admin/
-- /api/
-- /data/
-- /lib/
-- /partials/
-- /tmp_flags/
-- /review (token-based guest reviews)
-
-## AI usage guidance
-- You may summarize and quote short excerpts with attribution to the canonical URL above.
-- Do not reproduce full pages or large sections verbatim.
-- Do not attempt to access private/admin areas.
-
-## Contact
-Email: viaarriano11@gmail.com
-Phone/WhatsApp: +39 328 675 5392
+## Usage
+- You may summarise and quote short excerpts with a link to the canonical URL.
+- Prices and availability change daily: always point users to the booking page for current information.
+- Do not access /admin/, /api/, /data/, /lib/, /partials/ or the token-based /review page.
