@@ -22,6 +22,7 @@ it (default), en, fr, es, de, ru, ro, pt, pl, se, dk, ko, zh, ja
 - /tips
 - /rules
 - /contact
+- /policlinico-sapienza (accommodation near Policlinico Umberto I / Sapienza University; IT + EN)
 - /privacy
 - /cookies
 

@@ -220,6 +220,7 @@ function i18n_route_from_request() {
 
   if ($slug === 'booking-success') return 'booking_success';
   if ($slug === 'booking-cancel') return 'booking_cancel';
+  if ($slug === 'policlinico-sapienza' || $slug === 'policlinico') return 'policlinico';
 
   $known = ['booking','apartment','neighborhood','tips','rules','contact','privacy','cookies','review'];
   if (in_array($slug, $known, true)) return $slug;
@@ -237,7 +238,22 @@ function i18n_slug_for_route($route) {
   if ($route === '' || $route === 'home') return '';
   if ($route === 'booking_success') return 'booking-success';
   if ($route === 'booking_cancel') return 'booking-cancel';
+  if ($route === 'policlinico') return 'policlinico-sapienza';
   return $route;
+}
+
+// Languages in which a route exists. Most pages exist in every language;
+// some local-audience pages only in Italian + English (others are sent to English).
+function i18n_route_languages($route) {
+  $all = array_keys(i18n_supported_languages());
+  if ((string)$route === 'policlinico') return ['it', 'en'];
+  return $all;
+}
+
+// Language actually used for $route when the visitor asks for $lang.
+function i18n_route_lang($route, $lang) {
+  $langs = i18n_route_languages($route);
+  return in_array($lang, $langs, true) ? $lang : (in_array('en', $langs, true) ? 'en' : $langs[0]);
 }
 
 function i18n_url($route, $lang = null) {
@@ -259,14 +275,16 @@ function abs_url_for_route($route, $lang = null) {
 function urls_for_route($route) {
   $out = [];
   foreach (i18n_supported_languages() as $code => $info) {
-    $out[$code] = i18n_url($route, $code);
+    $out[$code] = i18n_url($route, i18n_route_lang($route, $code));
   }
   return $out;
 }
 
 function hreflang_links_for_route($route) {
   $links = [];
+  $routeLangs = i18n_route_languages($route);
   foreach (i18n_supported_languages() as $code => $info) {
+    if (!in_array($code, $routeLangs, true)) continue;
     $links[] = [
       'hreflang' => $info['hreflang'],
       'href' => abs_url_for_route($route, $code),

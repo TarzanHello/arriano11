@@ -23,6 +23,12 @@ $metaKey = i18n_meta_key_for_route($route);
 $metaTitle = t('meta.' . $metaKey . '.title');
 $metaDesc = t('meta.' . $metaKey . '.description');
 
+// Pages whose texts live in their own block
+if ($route === 'policlinico') {
+  $metaTitle = t('policlinico.meta_title');
+  $metaDesc = t('policlinico.meta_desc');
+}
+
 // If a translation key is missing, t() returns the key itself.
 // Avoid leaking translation keys into SEO tags.
 if (is_string($metaTitle) && strpos($metaTitle, 'meta.') === 0) $metaTitle = '';
@@ -401,7 +407,7 @@ send_security_headers([
           </button>
           <div class="lang-menu" data-lang-menu role="listbox" aria-label="<?php echo e(t('ui.language')); ?>">
             <?php foreach(i18n_supported_languages() as $code => $info): ?>
-              <a class="lang-item <?php echo ($code === $lang) ? 'is-active' : ''; ?>" href="<?php echo e(i18n_url($route, $code)); ?>" data-lang="<?php echo e($code); ?>" role="option" aria-selected="<?php echo ($code === $lang) ? 'true' : 'false'; ?>">
+              <a class="lang-item <?php echo ($code === $lang) ? 'is-active' : ''; ?>" href="<?php echo e($urlsMap[$code] ?? i18n_url($route, $code)); ?>" data-lang="<?php echo e($code); ?>" role="option" aria-selected="<?php echo ($code === $lang) ? 'true' : 'false'; ?>">
                 <img src="/assets/flags/<?php echo e($info['flag']); ?>.svg" alt="" width="22" height="16">
                 <span><?php echo e($info['label']); ?></span>
               </a>

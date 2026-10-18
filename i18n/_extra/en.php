@@ -106,4 +106,24 @@ return [
       ['h' => 'How to get here from the airports and Termini', 'html' => '<strong>From Fiumicino:</strong> Leonardo Express train to Termini (about 30 minutes), then tram 14 or a short taxi ride. A direct taxi takes 45–60 minutes and is charged by the meter (the airport fixed fare only applies inside the Aurelian Walls).<br><strong>From Ciampino:</strong> shuttle bus to Termini, then tram 14, or a taxi (about 30 minutes).<br><strong>From Termini:</strong> tram 14 towards Togliatti, or Metro A to San Giovanni and then Metro C.'],
     ],
   ],
+
+  // Page: accommodation near Policlinico Umberto I / Sapienza (Oct 2026) — IT + EN only
+  'policlinico' => [
+    'meta_title' => 'Accommodation near Policlinico Umberto I & Sapienza, Rome',
+    'meta_desc' => 'Apartment for 3 guests in Pigneto, convenient for Policlinico Umberto I hospital, Sapienza University (Città Universitaria) and San Lorenzo: direct tram 19, terrace, kitchen and Wi‑Fi. Book with the owner.',
+    'nav' => 'Near Policlinico & Sapienza',
+    'hero_title' => 'Accommodation near Policlinico Umberto I and Sapienza University',
+    'hero_lead' => 'Apartment for 3 guests in Pigneto with a terrace and kitchen: convenient for Policlinico Umberto I hospital, Sapienza’s Città Universitaria and San Lorenzo.',
+    'cta_book' => 'Check availability',
+    'cta_whatsapp' => 'Chat on WhatsApp',
+    'whatsapp_text' => 'Hi! I need to come to Rome for the Policlinico / Sapienza University. I would like information about Via Arriano 11.',
+    'sections' => [
+      ['h' => 'Who it is for', 'html' => 'For anyone who needs to stay a few days near <strong>Policlinico Umberto I</strong> (appointments, day hospital, a relative in hospital), for parents accompanying their children to <strong>Sapienza University</strong> for admission tests, exams or graduation, for conference guests at the Città Universitaria, or for those who want to enjoy <strong>San Lorenzo</strong> while staying in a quiet home.'],
+      ['h' => 'Getting to the Policlinico and Sapienza', 'html' => '<strong>Tram 19</strong> starts from Via Prenestina, runs past Porta Maggiore and Scalo San Lorenzo and reaches <strong>Viale Regina Elena</strong>, next to Sapienza’s Città Universitaria and Policlinico Umberto I. By taxi it usually takes 10–15 minutes, traffic permitting. Before you travel, check the ATAC website for works on the line: sometimes the tram is replaced by buses.'],
+      ['h' => 'Arriving by train at Termini', 'html' => 'From Termini station <strong>tram 14</strong> runs to Pigneto along Via Prenestina; alternatively take <strong>Metro A</strong> to San Giovanni and then <strong>Metro C</strong>, whose station is a 3–5 minute walk from the apartment.'],
+      ['h' => 'Why an apartment instead of a hotel', 'html' => 'A <strong>fully equipped kitchen</strong> to cook simple meals or follow a diet, <strong>air conditioning</strong>, <strong>Wi‑Fi</strong> for work or study, a <strong>private terrace</strong> to unwind after a day at the hospital or university, and room for three people. And you deal directly with the owner, on WhatsApp too.'],
+      ['h' => 'Stays of several weeks', 'html' => 'For a relative’s long hospital stay, an internship or a study period, write to us with your dates: we will check availability for longer stays together.'],
+      ['h' => 'The neighbourhood', 'html' => 'In Pigneto you have supermarkets, pharmacies, cafés and restaurants a few steps away, and Metro C takes you to the Colosseum with no changes. Read our <a href="{neighborhood_url}">neighbourhood guide</a>.'],
+    ],
+  ],
 ];

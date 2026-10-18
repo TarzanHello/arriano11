@@ -97,6 +97,14 @@ Options -Indexes
   RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/booking-success$ booking-success.php?lang=$1 [L,QSA]
   RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/booking-cancel$ booking-cancel.php?lang=$1 [L,QSA]
 
+  # Page "Alloggio vicino Policlinico / Sapienza" (IT + EN; other languages redirect to EN in PHP)
+  RewriteRule ^policlinico-sapienza/+$ /policlinico-sapienza [R=301,L]
+  RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/policlinico-sapienza/+$ /$1/policlinico-sapienza [R=301,L]
+  RewriteCond %{THE_REQUEST} \s/+policlinico\.php[?\s] [NC]
+  RewriteRule ^policlinico\.php$ /policlinico-sapienza [R=301,L,QSA]
+  RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/policlinico-sapienza$ policlinico.php?lang=$1 [L,QSA]
+  RewriteRule ^policlinico-sapienza$ policlinico.php [L,QSA]
+
   # Clean URLs for default language
   RewriteRule ^(booking|apartment|neighborhood|tips|rules|contact|privacy|cookies|review)$ $1.php [L,QSA]
   RewriteRule ^booking-success$ booking-success.php [L,QSA]

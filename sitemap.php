@@ -19,6 +19,7 @@ $routes = [
   'booking' => 'booking.php',
   'privacy' => 'privacy.php',
   'cookies' => 'cookies.php',
+  'policlinico' => 'policlinico.php',
 ];
 
 $langs = i18n_supported_languages();
@@ -59,11 +60,14 @@ foreach ($routes as $route => $file) {
   if ($route === 'apartment') $imgs = $images;
 
   // One <url> per language version, each listing all alternates (Google's recommended format)
+  $routeLangs = i18n_route_languages($route);
   foreach ($langs as $code => $info) {
+    if (!in_array($code, $routeLangs, true)) continue;
     $loc = $base . i18n_url($route, $code);
     echo "  <url>\n";
     echo '    <loc>' . htmlspecialchars($loc, ENT_QUOTES, 'UTF-8') . "</loc>\n";
     foreach ($langs as $code2 => $info2) {
+      if (!in_array($code2, $routeLangs, true)) continue;
       $href = $base . i18n_url($route, $code2);
       $hreflang = (string)($info2['hreflang'] ?? $code2);
       echo '    <xhtml:link rel="alternate" hreflang="' . htmlspecialchars($hreflang, ENT_QUOTES, 'UTF-8') . '" href="' . htmlspecialchars($href, ENT_QUOTES, 'UTF-8') . '" />' . "\n";

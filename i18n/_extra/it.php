@@ -106,4 +106,24 @@ return [
       ['h' => 'Come arrivare da aeroporti e Termini', 'html' => '<strong>Da Fiumicino:</strong> treno Leonardo Express fino a Termini (circa 30 minuti), poi tram 14 o un breve tratto in taxi. Il taxi diretto impiega 45–60 minuti e si paga a tassametro (la tariffa fissa dall’aeroporto vale solo dentro le Mura Aureliane).<br><strong>Da Ciampino:</strong> bus navetta fino a Termini, poi tram 14, oppure taxi (circa 30 minuti).<br><strong>Da Termini:</strong> tram 14 direzione Togliatti, oppure Metro A fino a San Giovanni e poi Metro C.'],
     ],
   ],
+
+  // Page: accommodation near Policlinico Umberto I / Sapienza (Oct 2026) — IT + EN only
+  'policlinico' => [
+    'meta_title' => 'Alloggio vicino al Policlinico Umberto I e alla Sapienza, Roma',
+    'meta_desc' => 'Appartamento per 3 persone al Pigneto, comodo per il Policlinico Umberto I, la Città Universitaria della Sapienza e San Lorenzo: tram 19 diretto, terrazzo, cucina e Wi‑Fi. Prenota con il proprietario.',
+    'nav' => 'Vicino a Policlinico e Sapienza',
+    'hero_title' => 'Alloggio vicino al Policlinico Umberto I e alla Sapienza',
+    'hero_lead' => 'Appartamento per 3 persone al Pigneto, con terrazzo e cucina: comodo per visite al Policlinico Umberto I, per la Città Universitaria e per San Lorenzo.',
+    'cta_book' => 'Verifica disponibilità',
+    'cta_whatsapp' => 'Scrivici su WhatsApp',
+    'whatsapp_text' => 'Ciao! Devo venire a Roma per il Policlinico / la Sapienza. Vorrei informazioni su Via Arriano 11.',
+    'sections' => [
+      ['h' => 'Per chi è pensato', 'html' => 'Per chi deve stare qualche giorno vicino al <strong>Policlinico Umberto I</strong> (visite, day hospital, ricovero di un familiare), per i genitori che accompagnano i figli alla <strong>Sapienza</strong> per test d’ingresso, esami o lauree, per chi partecipa a convegni nella Città Universitaria o vuole vivere <strong>San Lorenzo</strong> restando in una casa tranquilla.'],
+      ['h' => 'Come arrivare al Policlinico e alla Sapienza', 'html' => 'Il <strong>tram 19</strong> parte da Via Prenestina, passa per Porta Maggiore e lo Scalo San Lorenzo e arriva in <strong>Viale Regina Elena</strong>, accanto alla Città Universitaria della Sapienza e al Policlinico Umberto I. In taxi sono di solito 10–15 minuti, traffico permettendo. Prima di partire controlla sul sito ATAC eventuali lavori sulla linea: a volte il tram è sostituito da bus.'],
+      ['h' => 'Se arrivi in treno a Termini', 'html' => 'Dalla stazione Termini il <strong>tram 14</strong> porta al Pigneto lungo Via Prenestina; in alternativa prendi la <strong>Metro A</strong> fino a San Giovanni e poi la <strong>Metro C</strong>, la cui fermata è a 3–5 minuti a piedi dall’appartamento.'],
+      ['h' => 'Perché un appartamento invece di un hotel', 'html' => 'Una <strong>cucina attrezzata</strong> per preparare pasti semplici o seguire una dieta, <strong>aria condizionata</strong>, <strong>Wi‑Fi</strong> per lavorare o studiare, un <strong>terrazzo privato</strong> per staccare dopo una giornata in ospedale o in facoltà, e spazio per tre persone. E parli direttamente con il proprietario, anche su WhatsApp.'],
+      ['h' => 'Soggiorni di più settimane', 'html' => 'Per la degenza lunga di un familiare, un tirocinio o un periodo di studio scrivici con le date: verifichiamo insieme la disponibilità per soggiorni prolungati.'],
+      ['h' => 'Il quartiere', 'html' => 'Al Pigneto hai supermercati, farmacie, bar e ristoranti a pochi passi, e la Metro C porta senza cambi fino al Colosseo. Leggi la <a href="{neighborhood_url}">guida al quartiere</a>.'],
+    ],
+  ],
 ];
