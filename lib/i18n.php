@@ -5,6 +5,7 @@
 if (!function_exists('base_url')) {
   require_once __DIR__ . '/lib.php';
 }
+require_once __DIR__ . '/articles.php';
 
 $GLOBALS['_VIA_LANG'] = $GLOBALS['_VIA_LANG'] ?? 'it';
 $GLOBALS['_VIA_I18N'] = $GLOBALS['_VIA_I18N'] ?? [];
@@ -221,6 +222,12 @@ function i18n_route_from_request() {
   if ($slug === 'booking-success') return 'booking_success';
   if ($slug === 'booking-cancel') return 'booking_cancel';
   if ($slug === 'policlinico-sapienza' || $slug === 'policlinico') return 'policlinico';
+  if ($slug === 'guide') return 'guides';
+  if (strpos($slug, 'guide/') === 0) {
+    $art = article_route_for_slug(substr($slug, 6));
+    if ($art !== '') return $art;
+    return 'guides';
+  }
 
   $known = ['booking','apartment','neighborhood','tips','rules','contact','privacy','cookies','review'];
   if (in_array($slug, $known, true)) return $slug;
@@ -233,12 +240,16 @@ function i18n_current_route() {
   return i18n_route_from_request();
 }
 
-function i18n_slug_for_route($route) {
+function i18n_slug_for_route($route, $lang = null) {
   $route = (string)$route;
   if ($route === '' || $route === 'home') return '';
   if ($route === 'booking_success') return 'booking-success';
   if ($route === 'booking_cancel') return 'booking-cancel';
   if ($route === 'policlinico') return 'policlinico-sapienza';
+  if ($route === 'guides') return 'guide';
+  if (is_article_route($route)) {
+    return 'guide/' . article_slug($route, $lang === null ? current_lang() : $lang);
+  }
   return $route;
 }
 
@@ -247,6 +258,7 @@ function i18n_slug_for_route($route) {
 function i18n_route_languages($route) {
   $all = array_keys(i18n_supported_languages());
   if ((string)$route === 'policlinico') return ['it', 'en'];
+  if (is_guides_route($route)) return VIA_ARTICLE_LANGS;
   return $all;
 }
 
@@ -261,7 +273,7 @@ function i18n_url($route, $lang = null) {
   $langs = i18n_supported_languages();
   if (!isset($langs[$lang])) $lang = 'it';
 
-  $slug = i18n_slug_for_route($route);
+  $slug = i18n_slug_for_route($route, $lang);
   if ($lang === 'it') {
     return ($slug === '') ? '/' : '/' . $slug;
   }

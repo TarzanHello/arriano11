@@ -46,6 +46,7 @@ if ($email === '') {
       <div>
         <div class="footer-title" style="font-size:20px;"><?php echo e(t('v2.place')); ?></div>
         <div class="footer-links">
+          <a href="<?php echo e(i18n_url('guides', i18n_route_lang('guides', current_lang()))); ?>"><?php echo e(guides_ui('crumb', i18n_route_lang('guides', current_lang()))); ?></a>
           <a href="<?php echo e(i18n_url('policlinico', i18n_route_lang('policlinico', current_lang()))); ?>"><?php echo e(t('policlinico.nav')); ?></a>
           <a href="<?php echo e(i18n_url('privacy')); ?>"><?php echo e(t('footer.privacy')); ?></a>
           <a href="<?php echo e(i18n_url('cookies')); ?>"><?php echo e(t('footer.cookies')); ?></a>

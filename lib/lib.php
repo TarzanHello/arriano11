@@ -2516,7 +2516,7 @@ const VIA_INDEXNOW_KEY = '8ecd5181059299648e78c93308fd48bf';
 
 function indexnow_public_urls() {
   require_once __DIR__ . '/i18n.php';
-  $routes = ['home', 'apartment', 'neighborhood', 'tips', 'rules', 'contact', 'booking', 'policlinico', 'privacy', 'cookies'];
+  $routes = array_merge(['home', 'apartment', 'neighborhood', 'tips', 'rules', 'contact', 'booking', 'policlinico', 'guides'], array_keys(via_articles()), ['privacy', 'cookies']);
   $base = rtrim(base_url(), '/');
   $urls = [];
   foreach ($routes as $r) {

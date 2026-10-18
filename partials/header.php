@@ -28,6 +28,15 @@ if ($route === 'policlinico') {
   $metaTitle = t('policlinico.meta_title');
   $metaDesc = t('policlinico.meta_desc');
 }
+if ($route === 'guides') {
+  $metaTitle = guides_ui('hub_meta_title', $lang);
+  $metaDesc = guides_ui('hub_meta_desc', $lang);
+}
+$articleData = is_article_route($route) ? article_content($route, $lang) : [];
+if ($articleData) {
+  $metaTitle = (string)($articleData['meta_title'] ?? '');
+  $metaDesc = (string)($articleData['meta_desc'] ?? '');
+}
 
 // If a translation key is missing, t() returns the key itself.
 // Avoid leaking translation keys into SEO tags.
@@ -50,7 +59,12 @@ $ogImages = [
   'neighborhood' => 'giardino_1_1200.jpg',
   'booking' => 'camera_da_letto_wide_1200.jpg',
   'policlinico' => 'camera_da_letto_wide_1200.jpg',
+  'guides' => 'giardino_1_1200.jpg',
 ];
+if (is_article_route($route)) {
+  $artMeta = via_articles()[$route];
+  $ogImages[$route] = $artMeta['image'] . (file_exists(__DIR__ . '/../assets/images/gallery/' . $artMeta['image'] . '_1200.jpg') ? '_1200.jpg' : '.jpg');
+}
 $ogImage = rtrim(base_url(), '/') . '/assets/images/gallery/' . ($ogImages[$route] ?? 'giardino_2_1200.jpg');
 $ogLocale = str_replace('-', '_', html_lang($lang));
 
@@ -107,7 +121,7 @@ send_security_headers([
   <?php endif; ?>
   <meta property="og:url" content="<?php echo e($canonical); ?>">
   <meta property="og:site_name" content="<?php echo e($siteName); ?>">
-  <meta property="og:type" content="website">
+  <meta property="og:type" content="<?php echo is_article_route($route) ? 'article' : 'website'; ?>">
   <meta property="og:locale" content="<?php echo e($ogLocale); ?>">
   <?php foreach (i18n_supported_languages() as $ogCode => $ogInfo): ?>
     <?php if ($ogCode !== $lang): ?>

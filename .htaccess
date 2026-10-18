@@ -105,6 +105,18 @@ Options -Indexes
   RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/policlinico-sapienza$ policlinico.php?lang=$1 [L,QSA]
   RewriteRule ^policlinico-sapienza$ policlinico.php [L,QSA]
 
+  # Guides: hub /guide and articles /guide/{slug} (it, en, fr, de, es, pt, ru; others redirect to EN in PHP)
+  RewriteRule ^guide/+$ /guide [R=301,L]
+  RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/guide/+$ /$1/guide [R=301,L]
+  RewriteRule ^guide/([a-z0-9-]+)/+$ /guide/$1 [R=301,L]
+  RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/guide/([a-z0-9-]+)/+$ /$1/guide/$2 [R=301,L]
+  RewriteCond %{THE_REQUEST} \s/+(guides|article)\.php[?\s] [NC]
+  RewriteRule ^(guides|article)\.php$ /guide [R=301,L]
+  RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/guide$ guides.php?lang=$1 [L,QSA]
+  RewriteRule ^guide$ guides.php [L,QSA]
+  RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/guide/([a-z0-9-]+)$ article.php?lang=$1&slug=$2 [L,QSA]
+  RewriteRule ^guide/([a-z0-9-]+)$ article.php?slug=$1 [L,QSA]
+
   # Clean URLs for default language
   RewriteRule ^(booking|apartment|neighborhood|tips|rules|contact|privacy|cookies|review)$ $1.php [L,QSA]
   RewriteRule ^booking-success$ booking-success.php [L,QSA]

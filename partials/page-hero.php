@@ -28,7 +28,11 @@ $phLabels = [
   'cookies' => t('footer.cookies'),
   'policlinico' => t('policlinico.nav'),
 ];
-$phCrumb = $phLabels[$phRoute] ?? $phTitle;
+if ($phRoute === 'guides' && function_exists('guides_ui')) $phLabels['guides'] = guides_ui('crumb');
+$phCrumb = (string)($pageHero['crumb'] ?? ($phLabels[$phRoute] ?? $phTitle));
+// Optional intermediate crumbs: [['label' => .., 'route' => ..], ...]
+$phMid = $pageHero['crumbs'] ?? [];
+if (!is_array($phMid)) $phMid = [];
 $phIndexable = !in_array($phRoute, ['booking_success', 'booking_cancel', 'review'], true);
 
 if ($phIndexable && $phRoute !== '' && $phRoute !== 'home') {
@@ -37,9 +41,12 @@ if ($phIndexable && $phRoute !== '' && $phRoute !== 'home') {
     '@type' => 'BreadcrumbList',
     'itemListElement' => [
       ['@type' => 'ListItem', 'position' => 1, 'name' => $phSite, 'item' => abs_url_for_route('home')],
-      ['@type' => 'ListItem', 'position' => 2, 'name' => $phCrumb, 'item' => abs_url_for_route($phRoute)],
     ],
   ];
+  foreach ($phMid as $m) {
+    $phLd['itemListElement'][] = ['@type' => 'ListItem', 'position' => count($phLd['itemListElement']) + 1, 'name' => (string)$m['label'], 'item' => abs_url_for_route((string)$m['route'])];
+  }
+  $phLd['itemListElement'][] = ['@type' => 'ListItem', 'position' => count($phLd['itemListElement']) + 1, 'name' => $phCrumb, 'item' => abs_url_for_route($phRoute)];
   echo '<script type="application/ld+json">' . json_encode($phLd, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>' . "\n";
 }
 ?>
@@ -51,6 +58,9 @@ if ($phIndexable && $phRoute !== '' && $phRoute !== 'home') {
     <nav class="breadcrumbs" aria-label="Breadcrumb">
       <ol>
         <li><a href="<?php echo e(i18n_url('home')); ?>"><?php echo e(t('nav.home')); ?></a></li>
+        <?php foreach ($phMid as $m): ?>
+          <li><a href="<?php echo e(i18n_url((string)$m['route'])); ?>"><?php echo e((string)$m['label']); ?></a></li>
+        <?php endforeach; ?>
         <li aria-current="page"><?php echo e($phCrumb); ?></li>
       </ol>
     </nav>

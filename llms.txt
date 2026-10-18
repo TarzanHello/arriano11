@@ -19,6 +19,10 @@
 - [Pigneto neighbourhood guide](https://www.viaarriano11.it/neighborhood): market, Pasolini and cinema, street art, sights nearby, getting around, airports
 - [Local tips](https://www.viaarriano11.it/tips): where to eat, drink and shop
 - [Near Policlinico Umberto I and Sapienza](https://www.viaarriano11.it/policlinico-sapienza) (IT/EN)
+- [Guides](https://www.viaarriano11.it/en/guide) (IT, EN, FR, DE, ES, PT, RU):
+  - [How to get to Pigneto from Fiumicino, Ciampino and Termini](https://www.viaarriano11.it/en/guide/how-to-get-to-pigneto)
+  - [Is Pigneto safe? An honest answer from locals](https://www.viaarriano11.it/en/guide/is-pigneto-safe)
+  - [Pigneto and Torpignattara street art walk](https://www.viaarriano11.it/en/guide/pigneto-street-art-walk)
 - [House rules](https://www.viaarriano11.it/rules)
 - [Contact](https://www.viaarriano11.it/contact)
 

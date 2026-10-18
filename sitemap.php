@@ -20,7 +20,11 @@ $routes = [
   'privacy' => 'privacy.php',
   'cookies' => 'cookies.php',
   'policlinico' => 'policlinico.php',
+  'guides' => 'guides.php',
 ];
+foreach (array_keys(via_articles()) as $artRoute) {
+  $routes[$artRoute] = 'article.php';
+}
 
 $langs = i18n_supported_languages();
 $base = rtrim(base_url(), '/');
@@ -53,11 +57,13 @@ echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="h
 
 foreach ($routes as $route => $file) {
   $mtime = max((int)@filemtime(__DIR__ . '/' . $file), $i18nMtime, $headerMtime);
+  if (is_article_route($route)) $mtime = max($mtime, article_mtime($route));
   $lastmod = $mtime > 0 ? date('Y-m-d', $mtime) : date('Y-m-d');
 
   $imgs = [];
   if ($route === 'home') $imgs = $homeImages;
   if ($route === 'apartment') $imgs = $images;
+  if (is_article_route($route)) $imgs = ['/assets/images/gallery/' . via_articles()[$route]['image'] . '.jpg'];
 
   // One <url> per language version, each listing all alternates (Google's recommended format)
   $routeLangs = i18n_route_languages($route);
@@ -76,7 +82,7 @@ foreach ($routes as $route => $file) {
     echo '    <xhtml:link rel="alternate" hreflang="x-default" href="' . htmlspecialchars($xDefault, ENT_QUOTES, 'UTF-8') . '" />' . "\n";
     echo '    <lastmod>' . $lastmod . "</lastmod>\n";
     // Images only on the Italian (canonical entity) version to avoid 14 duplicates
-    if ($code === 'it') {
+    if ($code === 'it' && !is_article_route($route)) {
       foreach ($imgs as $img) {
         echo "    <image:image><image:loc>" . htmlspecialchars($base . $img, ENT_QUOTES, 'UTF-8') . "</image:loc></image:image>\n";
       }

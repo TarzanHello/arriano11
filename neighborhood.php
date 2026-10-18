@@ -100,6 +100,19 @@ include __DIR__ . '/partials/page-hero.php';
         <a class="btn" href="<?php echo e(i18n_url('policlinico', i18n_route_lang('policlinico', current_lang()))); ?>"><?php echo e(t('policlinico.nav')); ?></a>
       </div>
     </article>
+
+    <?php $nbGuideLang = i18n_route_lang('guides', current_lang()); ?>
+    <nav class="guide-related" aria-label="<?php echo e(guides_ui('more_guides', $nbGuideLang)); ?>">
+      <h2 class="section-heading"><?php echo e(guides_ui('more_guides', $nbGuideLang)); ?></h2>
+      <div class="guide-cards">
+        <?php foreach (via_articles() as $nbR => $nbA): $nbC = article_content($nbR, $nbGuideLang); ?>
+          <a class="guide-card" href="<?php echo e(i18n_url($nbR, $nbGuideLang)); ?>"<?php echo $nbGuideLang !== current_lang() ? ' hreflang="en"' : ''; ?>>
+            <span class="guide-card-title"><?php echo e((string)($nbC['crumb'] ?? $nbC['title'] ?? '')); ?></span>
+            <span class="guide-card-text"><?php echo e((string)($nbC['card'] ?? '')); ?></span>
+          </a>
+        <?php endforeach; ?>
+      </div>
+    </nav>
   </div>
 </section>
 <?php endif; ?>
