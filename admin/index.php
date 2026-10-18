@@ -735,7 +735,7 @@ function month_title_it($ym) {
 
         <div class="card" style="padding:18px;">
           <h2 style="margin:0 0 8px;">Prenotazioni</h2>
-          <p class="muted" style="margin:0 0 14px;">Richieste, pagamenti e prenotazioni confermate.</p>
+          <p class="muted" style="margin:0 0 14px;">Richieste, pagamenti e prenotazioni confermate. Le richieste <strong>da gestire</strong> non bloccano il calendario finché non le confermi.</p>
 
           <?php if (!$bookings): ?>
             <div class="notice">Nessuna prenotazione trovata.</div>
@@ -782,6 +782,9 @@ function month_title_it($ym) {
                       if ($isBookingCom && $guest === '') $guest = '(dati su Booking.com)';
 
                       $guestLine = e($guest ?: '—');
+                      if ($status === 'pending' && !is_range_available_excluding($store, (string)($bk['start'] ?? ''), (string)($bk['end'] ?? ''), (string)($bk['id'] ?? ''))) {
+                        $guestLine .= '<div class="small" style="color:#b91c1c; font-weight:800;">⚠ Date non più libere (già confermata un\'altra prenotazione)</div>';
+                      }
                       if (!empty($bk['needs_check'])) {
                         $guestLine .= '<div class="small" style="color:#b91c1c; font-weight:800;">⚠ Pagata ma date in conflitto: verificare</div>';
                       }

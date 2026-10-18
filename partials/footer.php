@@ -37,6 +37,7 @@ if ($email === '') {
         <div class="footer-links">
           <a href="<?php echo e(i18n_url('home')); ?>"><?php echo e(t('nav.home')); ?></a>
           <a href="<?php echo e(i18n_url('apartment')); ?>"><?php echo e(t('nav.apartment')); ?></a>
+          <a href="<?php echo e(i18n_url('neighborhood')); ?>"><?php echo e(t('nav.neighborhood')); ?></a>
           <a href="<?php echo e(i18n_url('booking')); ?>"><?php echo e(t('nav.book')); ?></a>
           <a href="<?php echo e(i18n_url('contact')); ?>"><?php echo e(t('nav.contact')); ?></a>
           <a href="<?php echo e(i18n_url('rules')); ?>"><?php echo e(t('nav.rules')); ?></a>
@@ -64,6 +65,20 @@ if ($email === '') {
 </footer>
 
 <!-- Cookie banner + preferences (shown only until a choice is saved) -->
+<?php
+  // WhatsApp quick contact (direct channel, no intermediaries).
+  $waDigits = preg_replace('/\D+/', '', $phone);
+  if ($waDigits !== '' && strpos($waDigits, '39') !== 0) $waDigits = '39' . $waDigits;
+  $waText = t('ui.whatsapp_text');
+  $waLabel = t('ui.whatsapp_label');
+?>
+<?php if ($waDigits !== '' && $waText !== 'ui.whatsapp_text'): ?>
+  <a class="wa-float" href="https://wa.me/<?php echo e($waDigits); ?>?text=<?php echo e(rawurlencode($waText)); ?>" target="_blank" rel="noopener" aria-label="<?php echo e($waLabel); ?>" title="<?php echo e($waLabel); ?>">
+    <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path fill="currentColor" d="M16 3C9 3 3.3 8.6 3.3 15.6c0 2.5.7 4.8 2 6.8L3 29l6.8-2.2c1.9 1 4 1.6 6.2 1.6 7 0 12.7-5.7 12.7-12.7S23 3 16 3zm0 23.2c-2 0-3.9-.6-5.6-1.6l-.4-.2-4 1.3 1.3-3.9-.3-.4c-1.1-1.7-1.7-3.7-1.7-5.8C5.3 9.8 10.1 5.1 16 5.1s10.6 4.8 10.6 10.6S21.9 26.2 16 26.2zm5.8-7.9c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-1 1.2-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.5-1.6-.9-.8-1.6-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.5c.2.2 2.4 3.6 5.7 5 .8.3 1.4.5 1.9.7.8.2 1.5.2 2.1.1.6-.1 1.9-.8 2.2-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></svg>
+    <span class="wa-float-label"><?php echo e($waLabel); ?></span>
+  </a>
+<?php endif; ?>
+
 <div class="cookie-banner" data-cookie-banner data-consent-version="1" hidden>
   <div class="cookie-card" role="dialog" aria-live="polite" aria-label="Cookie banner">
     <div class="cookie-copy">

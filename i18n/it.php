@@ -5,19 +5,20 @@ return [
     'home' => [
       // SEO (branded query): keep the brand first via the global title template.
       // This part must clearly signal "official site" + the exact locality.
-      'title' => 'Roma (Pigneto) – Sito ufficiale',
-      'description' => 'Sito ufficiale di Via Arriano 11 (Roma, Pigneto – 00176). Appartamento con spazio esterno privato, Wi‑Fi e cucina attrezzata. Verifica disponibilità e prenota diretto.'
+      // SEO: generic query first (what people search on Google), brand at the end.
+      'title' => 'Casa vacanze al Pigneto con giardino, Roma',
+      'description' => 'Appartamento per 3 persone al Pigneto (Roma) con spazio esterno privato, aria condizionata, Wi‑Fi e cucina. Vicino alla Metro C: Colosseo in circa 15 minuti. Prenota direttamente con il proprietario.'
     ],
     'apartment' => [
-      'title' => 'L\'appartamento',
+      'title' => 'Appartamento al Pigneto per 3 ospiti: foto e servizi',
       'description' => 'Scopri Via Arriano 11: ambienti luminosi, cucina attrezzata, aria condizionata e area esterna privata nel quartiere Pigneto, Roma.'
     ],
     'neighborhood' => [
-      'title' => 'Il quartiere: Pigneto',
+      'title' => 'Pigneto, Roma: guida al quartiere',
       'description' => 'Pigneto: street art, locali e botteghe. Con Metro C sei a circa 15 minuti dal Colosseo.'
     ],
     'tips' => [
-      'title' => 'Consigli nel quartiere',
+      'title' => 'Dove mangiare e bere al Pigneto: consigli dell\'host',
       'description' => 'Dove mangiare, bere e fare la spesa al Pigneto: una selezione di posti utili nei dintorni.'
     ],
     'rules' => [
@@ -29,8 +30,8 @@ return [
       'description' => 'Contatta Via Arriano 11 per informazioni e richieste: telefono ed email.'
     ],
     'booking' => [
-      'title' => 'Prenota',
-      'description' => 'Seleziona check-in e check-out, verifica disponibilità e completa la prenotazione.'
+      'title' => 'Disponibilità e prezzi – prenota diretto',
+      'description' => 'Calendario in tempo reale con i prezzi per notte: scegli check-in e check-out e prenota direttamente l\'appartamento al Pigneto, senza intermediari.'
     ],
     'booking_success' => [
       'title' => 'Prenotazione confermata',
@@ -56,6 +57,8 @@ return [
   ],
 
   'ui' => [
+    'whatsapp_label' => 'Scrivici su WhatsApp',
+    'whatsapp_text' => 'Ciao! Vorrei informazioni su Via Arriano 11 (Roma, Pigneto).',
     'enable_js' => 'Abilita JavaScript per utilizzare il calendario di prenotazione.',
     'close' => 'Chiudi',
     'previous_photo' => 'Foto precedente',
@@ -77,7 +80,7 @@ return [
     ],
     'hero' => [
       // H1: put the branded/address query in the heading.
-      'title' => 'Via Arriano 11<br>Appartamento a Roma (Pigneto)',
+      'title' => 'Via Arriano 11<br>Casa vacanze con giardino al Pigneto, Roma',
       'lead' => 'Sito ufficiale dell’alloggio turistico in Via Arriano 11, 00176 Roma. Comfort essenziali e spazio esterno privato.',
       'cta_primary' => 'Prenota ora',
       'cta_secondary' => 'Scopri l\'appartamento',

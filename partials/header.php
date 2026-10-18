@@ -28,11 +28,17 @@ $metaDesc = t('meta.' . $metaKey . '.description');
 if (is_string($metaTitle) && strpos($metaTitle, 'meta.') === 0) $metaTitle = '';
 if (is_string($metaDesc) && strpos($metaDesc, 'meta.') === 0) $metaDesc = '';
 
-// SEO: keep the brand at the beginning of every title.
+// SEO: put what people actually search first ("casa vacanze Pigneto…") and the brand
+// at the end. Brand-first titles only rank for people who already know the name
+// (typically guests who found the apartment on Booking).
 $title = $siteName;
 if ($metaTitle) {
-  $title = $siteName . ' · ' . $metaTitle;
+  $title = $metaTitle . ' | ' . $siteName;
 }
+
+// Social share image (WhatsApp, Facebook, Telegram…): a real photo, not the logo.
+$ogImage = rtrim(base_url(), '/') . '/assets/images/gallery/camera_da_letto_wide_1200.jpg';
+$ogLocale = str_replace('-', '_', html_lang($lang));
 
 $canonical = abs_url_for_route($route, $lang);
 $hreflangs = hreflang_links_for_route($route);
@@ -71,6 +77,8 @@ send_security_headers([
   <?php endif; ?>
   <?php if($isNoIndex): ?>
     <meta name="robots" content="noindex, nofollow">
+  <?php else: ?>
+    <meta name="robots" content="index, follow, max-image-preview:large">
   <?php endif; ?>
 
   <link rel="canonical" href="<?php echo e($canonical); ?>">
@@ -86,7 +94,22 @@ send_security_headers([
   <meta property="og:url" content="<?php echo e($canonical); ?>">
   <meta property="og:site_name" content="<?php echo e($siteName); ?>">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="<?php echo e(rtrim(base_url(), '/') . '/assets/brand/logo.png'); ?>">
+  <meta property="og:locale" content="<?php echo e($ogLocale); ?>">
+  <?php foreach (i18n_supported_languages() as $ogCode => $ogInfo): ?>
+    <?php if ($ogCode !== $lang): ?>
+      <meta property="og:locale:alternate" content="<?php echo e(str_replace('-', '_', (string)$ogInfo['hreflang'])); ?>">
+    <?php endif; ?>
+  <?php endforeach; ?>
+  <meta property="og:image" content="<?php echo e($ogImage); ?>">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="675">
+  <meta property="og:image:alt" content="<?php echo e($siteName . ' – Roma, Pigneto'); ?>">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<?php echo e($title); ?>">
+  <?php if($metaDesc): ?>
+    <meta name="twitter:description" content="<?php echo e($metaDesc); ?>">
+  <?php endif; ?>
+  <meta name="twitter:image" content="<?php echo e($ogImage); ?>">
 <meta name="theme-color" content="#f97316">
   <link rel="icon" href="/favicon.ico">
 
@@ -237,7 +260,7 @@ send_security_headers([
                 ],
                 'occupancy' => [
                   '@type' => 'QuantitativeValue',
-                  'value' => (int)($store['settings']['max_guests'] ?? 4),
+                  'value' => max_guests_allowed($store),
                 ],
                 // For vacation rentals, Google expects amenityFeature.name values in English.
                 // Only include values we are sure about.

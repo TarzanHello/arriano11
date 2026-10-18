@@ -424,7 +424,7 @@ function load_store() {
     'check_out_time' => '11:00',
     'tourist_tax_per_person_per_night' => 6,
     'tourist_tax_max_nights' => 10,
-    'max_guests' => 4,
+    'max_guests' => 3,
     'admin_user' => 'admin',
     // NOTE: admin_pass_hash is intentionally NOT defaulted to a known value for security.
     'booking_email' => '',
@@ -1577,11 +1577,20 @@ function get_min_nights_for_arrival($store, $arrivalYmd) {
   return (int)($store['settings']['min_nights'] ?? 1);
 }
 
+// Maximum number of guests accepted by the apartment (owner decision: 3).
+const VIA_MAX_GUESTS = 3;
+
+function max_guests_allowed($store = null) {
+  $v = is_array($store) ? (int)($store['settings']['max_guests'] ?? VIA_MAX_GUESTS) : VIA_MAX_GUESTS;
+  if ($v < 1 || $v > VIA_MAX_GUESTS) $v = VIA_MAX_GUESTS;
+  return $v;
+}
+
 function normalize_guests($guests, $default = 2) {
   if ($guests === null || $guests === '') return (int)$default;
   if (!is_numeric($guests)) return null;
   $g = (int)$guests;
-  if ($g < 1 || $g > 3) return null;
+  if ($g < 1 || $g > VIA_MAX_GUESTS) return null;
   return $g;
 }
 
@@ -1664,6 +1673,24 @@ function quote_stay($store, $start, $end, $guests = 2) {
   ];
 }
 
+// Booking statuses that occupy the calendar.
+// - 'booked': confirmed (by the admin, by Stripe payment, or imported from Booking)
+// - 'payment_pending': temporary hold while the guest is on the Stripe page (max ~30 min)
+// Requests waiting for the owner ('pending') do NOT block dates until confirmed
+// (owner decision, Oct 2026). Several requests may therefore overlap: the admin
+// confirms one, and the others are flagged as no longer available.
+function booking_blocks_calendar($bk, $now = null) {
+  if (!is_array($bk)) return false;
+  $status = (string)($bk['status'] ?? '');
+  if ($status === 'booked') return true;
+  if ($status === 'payment_pending') {
+    $now = $now ?? time();
+    $exp = (int)($bk['expires_at'] ?? 0);
+    return !($exp > 0 && $exp < $now);
+  }
+  return false;
+}
+
 // State of the NIGHT that starts on $dateYmd (from that day to the next morning).
 // Returns: 'past' | 'closed' | 'booked' | 'free'.
 // A booking start→end occupies the nights start, start+1, ..., end-1 (the end day is the
@@ -1697,14 +1724,7 @@ function night_state($store, $dateYmd) {
 
   $now = time();
   foreach (($store['bookings'] ?? []) as $bk) {
-    $status = (string)($bk['status'] ?? '');
-    if (!in_array($status, ['booked', 'pending', 'payment_pending'], true)) continue;
-
-    // Skip expired payment holds
-    if ($status === 'payment_pending') {
-      $exp = (int)($bk['expires_at'] ?? 0);
-      if ($exp > 0 && $exp < $now) continue;
-    }
+    if (!booking_blocks_calendar($bk, $now)) continue;
 
     $s = normalize_ymd($bk['start'] ?? '');
     $e = normalize_ymd($bk['end'] ?? '');
@@ -2398,18 +2418,10 @@ function build_ics_from_store($store) {
     $hasEvent = true;
   };
 
-  // Export confirmed bookings (and pending holds) as busy events.
+  // Export confirmed bookings and active payment holds as busy events
+  // (unconfirmed requests are not exported: they do not block dates).
   foreach (($store['bookings'] ?? []) as $bk) {
-    $status = (string)($bk['status'] ?? '');
-    if (!in_array($status, ['booked', 'pending', 'payment_pending'], true)) continue;
-
-    // Skip expired payment holds
-    if ($status === 'payment_pending') {
-      $exp = (int)($bk['expires_at'] ?? 0);
-      if ($exp > 0 && $exp < time()) {
-        continue;
-      }
-    }
+    if (!booking_blocks_calendar($bk)) continue;
 
     $s = normalize_ymd($bk['start'] ?? '');
     $e = normalize_ymd($bk['end'] ?? '');

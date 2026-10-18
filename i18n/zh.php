@@ -54,6 +54,8 @@ return [
   ],
 
   'ui' => [
+    'whatsapp_label' => '通过 WhatsApp 联系我们',
+    'whatsapp_text' => '您好！我想了解 Via Arriano 11（罗马，Pigneto）的信息。',
     'enable_js' => '请启用 JavaScript 以使用预订日历。',
     'close' => '关闭',
     'previous_photo' => '上一张照片',

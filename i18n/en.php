@@ -3,19 +3,20 @@
 return [
   'meta' => [
     'home' => [
-      'title' => 'Rome (Pigneto) – Official site',
-      'description' => 'Official website of Via Arriano 11 (Rome, Pigneto – 00176). Apartment with private outdoor space, Wi‑Fi and a fully equipped kitchen. Check availability and book direct.'
+      // SEO: generic query first, brand at the end.
+      'title' => 'Pigneto holiday apartment with garden, Rome',
+      'description' => 'Apartment for 3 guests in Rome’s Pigneto with a private outdoor space, air conditioning, Wi‑Fi and kitchen. Near Metro C: Colosseum in about 15 minutes. Book directly with the owner.'
     ],
     'apartment' => [
-      'title' => 'The apartment',
+      'title' => 'Pigneto apartment for 3 guests: photos & amenities',
       'description' => 'Discover Via Arriano 11: bright spaces, a fully equipped kitchen, air conditioning and a private outdoor area in Rome’s Pigneto neighbourhood.'
     ],
     'neighborhood' => [
-      'title' => 'The neighbourhood: Pigneto',
+      'title' => 'Pigneto, Rome: neighbourhood guide',
       'description' => 'Pigneto: street art, cafés and local shops. With Metro C you can reach the Colosseum in about 15 minutes.'
     ],
     'tips' => [
-      'title' => 'Local tips',
+      'title' => 'Where to eat & drink in Pigneto: host tips',
       'description' => 'Where to eat, drink and shop around Pigneto: a hand-picked list of useful places nearby.'
     ],
     'rules' => [
@@ -27,8 +28,8 @@ return [
       'description' => 'Get in touch with Via Arriano 11 for information and special requests: phone and email.'
     ],
     'booking' => [
-      'title' => 'Book',
-      'description' => 'Choose check-in and check-out dates, check availability and complete your booking.'
+      'title' => 'Availability & prices – book direct',
+      'description' => 'Live calendar with nightly prices: pick your dates and book the Pigneto apartment directly with the owner, no middleman.'
     ],
     'booking_success' => [
       'title' => 'Booking confirmed',
@@ -54,6 +55,8 @@ return [
   ],
 
   'ui' => [
+    'whatsapp_label' => 'Chat on WhatsApp',
+    'whatsapp_text' => 'Hi! I would like some information about Via Arriano 11 (Rome, Pigneto).',
     'enable_js' => 'Please enable JavaScript to use the booking calendar.',
     'close' => 'Close',
     'previous_photo' => 'Previous photo',
@@ -73,7 +76,7 @@ return [
       'license_label' => 'Tourist accommodation',
     ],
     'hero' => [
-      'title' => 'Via Arriano 11<br>Apartment in Rome (Pigneto)',
+      'title' => 'Via Arriano 11<br>Holiday apartment with garden in Pigneto, Rome',
       'lead' => 'Official website of the tourist accommodation at Via Arriano 11, 00176 Rome. Essential comforts and a private outdoor space.',
       'cta_primary' => 'Book now',
       'cta_secondary' => 'Discover the apartment',

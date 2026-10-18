@@ -54,6 +54,8 @@ return [
   ],
 
   'ui' => [
+    'whatsapp_label' => 'WhatsApp으로 문의하기',
+    'whatsapp_text' => '안녕하세요! Via Arriano 11(로마, 피녜토)에 대해 문의드립니다.',
     'enable_js' => '예약 달력을 사용하려면 JavaScript를 활성화하세요.',
     'close' => '닫기',
     'previous_photo' => '이전 사진',

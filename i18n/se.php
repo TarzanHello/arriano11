@@ -54,6 +54,8 @@ return [
   ],
 
   'ui' => [
+    'whatsapp_label' => 'Skriv till oss på WhatsApp',
+    'whatsapp_text' => 'Hej! Jag vill gärna ha information om Via Arriano 11 (Rom, Pigneto).',
     'enable_js' => 'Aktivera JavaScript för att använda bokningskalendern.',
     'close' => 'Stäng',
     'previous_photo' => 'Föregående foto',

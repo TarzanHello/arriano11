@@ -54,6 +54,8 @@ return [
   ],
 
   'ui' => [
+    'whatsapp_label' => 'WhatsAppで問い合わせ',
+    'whatsapp_text' => 'こんにちは！Via Arriano 11（ローマ、ピニェート）について教えてください。',
     'enable_js' => '予約カレンダーを利用するには JavaScript を有効にしてください。',
     'close' => '閉じる',
     'previous_photo' => '前の写真',

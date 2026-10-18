@@ -54,6 +54,8 @@ return [
   ],
 
   'ui' => [
+    'whatsapp_label' => 'Escríbenos por WhatsApp',
+    'whatsapp_text' => '¡Hola! Quisiera información sobre Via Arriano 11 (Roma, Pigneto).',
     'enable_js' => 'Activa JavaScript para usar el calendario de reservas.',
     'close' => 'Cerrar',
     'previous_photo' => 'Foto anterior',
