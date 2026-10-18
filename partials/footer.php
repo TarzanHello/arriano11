@@ -54,6 +54,13 @@ if ($email === '') {
       <div class="small" style="opacity:.92;">
         <?php echo e(t('footer.owner')); ?>
       </div>
+      <?php $cin = trim((string)($store['settings']['cin'] ?? '')); ?>
+      <?php if ($cin !== ''): ?>
+        <div class="small footer-cin" style="opacity:.92;">
+          <abbr title="Codice Identificativo Nazionale">CIN</abbr>: <strong><?php echo e($cin); ?></strong>
+          <span aria-hidden="true">·</span> <?php echo e(t('home.official.license_label')); ?> n. 6603
+        </div>
+      <?php endif; ?>
       <div class="small footer-legal" style="opacity:.92;">
         <a href="<?php echo e(i18n_url('privacy')); ?>"><?php echo e(t('footer.privacy')); ?></a>
         <span aria-hidden="true">·</span>

@@ -278,7 +278,7 @@ send_security_headers([
                   // Outdoor private space (best match in Google list: patio)
                   ['@type' => 'LocationFeatureSpecification', 'name' => 'patio', 'value' => true],
                   // License number (recommended field for some regions)
-                  ['@type' => 'LocationFeatureSpecification', 'name' => 'licenseNum', 'value' => 'Rome: 6603'],
+                  ['@type' => 'LocationFeatureSpecification', 'name' => 'licenseNum', 'value' => (string)($store['settings']['cin'] ?? 'IT058091B4CDTSVLDV')],
                 ],
               ],
               'sameAs' => [

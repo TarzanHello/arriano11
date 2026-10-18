@@ -10,6 +10,7 @@ https://www.viaarriano11.it/
 - Name: Via Arriano 11
 - Address: Via Arriano 11, 00176 Rome (RM), Italy
 - License/Registry: Alloggio per uso turistico 6603
+- CIN (Codice Identificativo Nazionale): IT058091B4CDTSVLDV
 
 ## Languages
 it (default), en, fr, es, de, ru, ro, pt, pl, se, dk, ko, zh, ja

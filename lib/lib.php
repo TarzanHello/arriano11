@@ -443,6 +443,8 @@ function load_store() {
     'ical_export_public_enabled' => 0,
     'default_lang' => 'it',
     'ga4_id' => '',
+    // CIN – Codice Identificativo Nazionale (mandatory on every listing/advert, D.L. 145/2023)
+    'cin' => 'IT058091B4CDTSVLDV',
   ];
 
   foreach ($defaults as $k => $v) {

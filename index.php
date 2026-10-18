@@ -128,6 +128,10 @@ function responsive_srcset_16x9($src) {
         <strong><?php echo e($addrLabel); ?>:</strong> <span><?php echo e($addressDisplay); ?></span>
         · <a href="<?php echo e($mapUrl); ?>" target="_blank" rel="noopener"><?php echo e($mapLabel); ?></a>
         · <strong><?php echo e($licenseLabel); ?>:</strong> 6603
+        <?php $cinHome = trim((string)($store['settings']['cin'] ?? '')); ?>
+        <?php if ($cinHome !== ''): ?>
+          · <strong><abbr title="Codice Identificativo Nazionale">CIN</abbr>:</strong> <?php echo e($cinHome); ?>
+        <?php endif; ?>
       </p>
     </div>
     <div style="margin-top:14px;">
