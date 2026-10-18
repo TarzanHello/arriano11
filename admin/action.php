@@ -96,6 +96,13 @@ switch ($action) {
     if ($hold > 240) $hold = 240;
     $store['settings']['stripe_hold_minutes'] = $hold;
 
+    // Google Analytics 4 measurement ID (e.g. G-ABC123XYZ). Empty = disabled.
+    $ga4 = strtoupper(trim((string)($_POST['ga4_id'] ?? '')));
+    if ($ga4 !== '' && !preg_match('/^G-[A-Z0-9]{4,20}$/', $ga4)) {
+      redirect_tab('settings', null, 'ID Google Analytics non valido: deve iniziare con G- (es. G-ABC123XYZ).');
+    }
+    $store['settings']['ga4_id'] = $ga4;
+
     $store['settings']['stripe_secret_key'] = trim((string)($_POST['stripe_secret_key'] ?? ''));
     $store['settings']['stripe_webhook_secret'] = trim((string)($_POST['stripe_webhook_secret'] ?? ''));
 

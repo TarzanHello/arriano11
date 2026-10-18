@@ -54,4 +54,13 @@ return [
     'cta_cookies' => 'Cookie 政策',
     'cta_privacy' => '隐私',
   ],
+  // Price match promise (Oct 2026)
+  'pricematch' => [
+    'title' => '最优价格保证',
+    'text' => '在 Booking 上找到同样日期更便宜的价格？请通过 WhatsApp 或电子邮件发送截图给我们，我们将在该价格基础上再优惠 10%。',
+    'cta_whatsapp' => '通过 WhatsApp 发送',
+    'cta_email' => '通过电子邮件发送',
+    'whatsapp_text' => '您好！我在 Booking 上找到了 Via Arriano 11 更低的价格。现发送截图以获得 10% 优惠。',
+    'email_subject' => '在 Booking 上找到更低价格',
+  ],
 ];

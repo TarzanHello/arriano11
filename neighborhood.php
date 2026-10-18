@@ -75,6 +75,34 @@ include __DIR__ . '/partials/page-hero.php';
   </div>
 </section>
 
+<?php
+  // Full neighbourhood guide (Oct 2026): this page is the one Google shows most
+  // ("quartier pigneto rome", "bairro pigneto roma"…), so it needs real content.
+  $guide = i18n_get('neighborhood_guide');
+?>
+<?php if (is_array($guide) && !empty($guide['sections']) && is_array($guide['sections'])): ?>
+<section class="section-pad section-muted" aria-label="<?php echo e((string)($guide['title'] ?? '')); ?>">
+  <div class="container">
+    <article class="card guide" style="padding:22px;">
+      <h2 style="margin-top:0;"><?php echo e((string)($guide['title'] ?? '')); ?></h2>
+      <?php if (!empty($guide['intro'])): ?>
+        <p class="guide-intro"><?php echo e((string)$guide['intro']); ?></p>
+      <?php endif; ?>
+      <?php foreach ($guide['sections'] as $gs): ?>
+        <?php if (!is_array($gs)) continue; ?>
+        <h2><?php echo e((string)($gs['h'] ?? '')); ?></h2>
+        <p><?php echo (string)($gs['html'] ?? ''); /* trusted static translation HTML */ ?></p>
+      <?php endforeach; ?>
+      <div class="actions" style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
+        <a class="btn primary" href="<?php echo e(i18n_url('booking')); ?>"><?php echo e(t('neighborhood.hero.cta_book')); ?></a>
+        <a class="btn" href="<?php echo e(i18n_url('tips')); ?>"><?php echo e(t('neighborhood.hero.cta_tips')); ?></a>
+        <a class="btn" href="<?php echo e(i18n_url('apartment')); ?>"><?php echo e(t('nav.apartment')); ?></a>
+      </div>
+    </article>
+  </div>
+</section>
+<?php endif; ?>
+
 </main>
 
 <?php include __DIR__ . '/partials/footer.php'; ?>

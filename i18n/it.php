@@ -6,16 +6,16 @@ return [
       // SEO (branded query): keep the brand first via the global title template.
       // This part must clearly signal "official site" + the exact locality.
       // SEO: generic query first (what people search on Google), brand at the end.
-      'title' => 'Casa vacanze al Pigneto con giardino, Roma',
-      'description' => 'Appartamento per 3 persone al Pigneto (Roma) con spazio esterno privato, aria condizionata, Wi‑Fi e cucina. Vicino alla Metro C: Colosseo in circa 15 minuti. Prenota direttamente con il proprietario.'
+      'title' => 'Casa vacanze al Pigneto con terrazzo, Roma',
+      'description' => 'Appartamento per 3 persone al Pigneto (Roma) con terrazzo privato, aria condizionata, Wi‑Fi e cucina. Metro C a 3-5 minuti a piedi, Colosseo senza cambi. Prenota direttamente con il proprietario.'
     ],
     'apartment' => [
-      'title' => 'Appartamento al Pigneto per 3 ospiti: foto e servizi',
+      'title' => 'Appartamento al Pigneto con terrazzo per 3 ospiti: foto e servizi',
       'description' => 'Scopri Via Arriano 11: ambienti luminosi, cucina attrezzata, aria condizionata e area esterna privata nel quartiere Pigneto, Roma.'
     ],
     'neighborhood' => [
-      'title' => 'Pigneto, Roma: guida al quartiere',
-      'description' => 'Pigneto: street art, locali e botteghe. Con Metro C sei a circa 15 minuti dal Colosseo.'
+      'title' => 'Quartiere Pigneto, Roma: guida, storia e cosa fare',
+      'description' => 'Guida al Pigneto: Via del Pigneto e il mercato, Pasolini e il cinema, street art, dove mangiare e come arrivare da Termini e dagli aeroporti.'
     ],
     'tips' => [
       'title' => 'Dove mangiare e bere al Pigneto: consigli dell\'host',
@@ -80,7 +80,7 @@ return [
     ],
     'hero' => [
       // H1: put the branded/address query in the heading.
-      'title' => 'Via Arriano 11<br>Casa vacanze con giardino al Pigneto, Roma',
+      'title' => 'Via Arriano 11<br>Casa vacanze con terrazzo al Pigneto, Roma',
       'lead' => 'Sito ufficiale dell’alloggio turistico in Via Arriano 11, 00176 Roma. Comfort essenziali e spazio esterno privato.',
       'cta_primary' => 'Prenota ora',
       'cta_secondary' => 'Scopri l\'appartamento',

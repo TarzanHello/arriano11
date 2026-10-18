@@ -83,4 +83,27 @@ return [
     'review_invite_subject' => 'Com\'è andato il soggiorno a {site}? Lascia una recensione verificata',
     'review_invite_body' => "Ciao {name},\n\nGrazie per aver soggiornato a {site}.\n\nPuoi lasciare una recensione verificata usando questo link personale:\n{link}\n\nLa recensione verrà pubblicata dopo verifica del soggiorno.\n\nGrazie,\n{site}",
   ],
+  // Price match promise (Oct 2026)
+  'pricematch' => [
+    'title' => 'Prezzo migliore garantito',
+    'text' => 'Hai trovato questo appartamento a un prezzo più basso su Booking per le stesse date? Mandaci lo screenshot via WhatsApp o email: ti facciamo il 10% in meno su quel prezzo.',
+    'cta_whatsapp' => 'Invia su WhatsApp',
+    'cta_email' => 'Invia per email',
+    'whatsapp_text' => 'Ciao! Ho trovato Via Arriano 11 a un prezzo più basso su Booking. Vi mando lo screenshot per avere il 10% in meno.',
+    'email_subject' => 'Prezzo più basso trovato su Booking',
+  ],
+
+  // Neighbourhood guide (Oct 2026) — English is the fallback for languages without their own version
+  'neighborhood_guide' => [
+    'title' => 'Pigneto: guida completa al quartiere',
+    'intro' => 'Il Pigneto è uno dei quartieri più autentici e vivaci di Roma: appena fuori Porta Maggiore, tra Via Prenestina e Via Casilina, a pochi minuti di metro dal Colosseo. Ecco cosa sapere prima di arrivare, raccontato da chi ci vive.',
+    'sections' => [
+      ['h' => 'Via del Pigneto: mercato di giorno, aperitivo la sera', 'html' => 'Il cuore del quartiere è l’isola pedonale di <strong>Via del Pigneto</strong>. La mattina (dal lunedì al sabato) c’è il mercato rionale con frutta, verdura e spesa quotidiana; la sera bar, enoteche e piccoli ristoranti riempiono la strada di tavolini. È il posto dove escono i romani, non i gruppi organizzati.'],
+      ['h' => 'Cinema e storia: il Pigneto di Pasolini', 'html' => 'Il Pigneto è legato al cinema italiano. Pier Paolo Pasolini girò qui <em>Accattone</em> (1961) e lo storico <strong>Bar Necci</strong> (aperto dal 1924) è legato a quel film. Alcune scene di <em>Roma città aperta</em> di Rossellini furono girate nella vicina Via Montecuccoli. Passeggiando si vedono ancora le case basse e i cortili del vecchio quartiere popolare.'],
+      ['h' => 'Street art e vita di quartiere', 'html' => 'Murales e street art coprono i muri del Pigneto e della vicina Torpignattara: una passeggiata nelle vie laterali è una galleria a cielo aperto, gratis. Librerie indipendenti, negozi vintage e botteghe artigiane completano un quartiere con un’identità tutta sua.'],
+      ['h' => 'Cosa vedere nei dintorni', 'html' => 'A pochi minuti ci sono <strong>Porta Maggiore</strong>, con l’antico Sepolcro di Eurisace il fornaio (I secolo a.C.), e la Basilica di <strong>Santa Croce in Gerusalemme</strong>. <strong>San Giovanni in Laterano</strong> è a pochi minuti di metro e il quartiere universitario di <strong>San Lorenzo</strong> è vicinissimo.'],
+      ['h' => 'Come muoversi: Metro C', 'html' => 'La fermata della Metro C è a <strong>3–5 minuti a piedi</strong> dall’appartamento. La linea C porta <strong>senza cambi a San Giovanni</strong> (qui si cambia per la Metro A verso Spagna e Vaticano) e alla nuova stazione <strong>Colosseo/Fori Imperiali</strong>: il Colosseo è a circa 15 minuti porta a porta. Il <strong>tram 14</strong> su Via Prenestina arriva direttamente alla stazione Termini.'],
+      ['h' => 'Come arrivare da aeroporti e Termini', 'html' => '<strong>Da Fiumicino:</strong> treno Leonardo Express fino a Termini (circa 30 minuti), poi tram 14 o un breve tratto in taxi. Il taxi diretto impiega 45–60 minuti e si paga a tassametro (la tariffa fissa dall’aeroporto vale solo dentro le Mura Aureliane).<br><strong>Da Ciampino:</strong> bus navetta fino a Termini, poi tram 14, oppure taxi (circa 30 minuti).<br><strong>Da Termini:</strong> tram 14 direzione Togliatti, oppure Metro A fino a San Giovanni e poi Metro C.'],
+    ],
+  ],
 ];

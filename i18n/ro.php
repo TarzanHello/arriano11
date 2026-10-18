@@ -3,16 +3,16 @@
 return [
   'meta' => [
     'home' => [
-      'title' => 'Roma (Pigneto) – Site oficial',
-      'description' => 'Site oficial Via Arriano 11 (Roma, Pigneto – 00176). Apartament cu spațiu exterior privat, Wi‑Fi și bucătărie utilată. Verifică disponibilitatea și rezervă direct.'
+      'title' => 'Apartament în Pigneto cu terasă, Roma',
+      'description' => 'Apartament pentru 3 persoane în cartierul Pigneto (Roma) cu terasă privată, aer condiționat, Wi‑Fi și bucătărie. Metroul C la 3-5 minute de mers pe jos, Colosseumul fără schimbări. Rezervă direct de la proprietar.'
     ],
     'apartment' => [
-      'title' => 'Apartamentul',
+      'title' => 'Apartament cu terasă în Pigneto pentru 3 persoane: fotografii și facilități',
       'description' => 'Descoperă Via Arriano 11: spații luminoase, bucătărie complet echipată, aer condiționat și o zonă exterioară privată în cartierul Pigneto, Roma.'
     ],
     'neighborhood' => [
-      'title' => 'Cartierul: Pigneto',
-      'description' => 'Pigneto: street art, cafenele și magazine locale. Cu Metro C ajungi la Colosseum în aproximativ 15 minute.'
+      'title' => 'Cartierul Pigneto, Roma: ghid, istorie și ce să faci',
+      'description' => 'Ghidul cartierului Pigneto din Roma: Via del Pigneto și piața, Pasolini și cinematografia, street art, unde să mănânci și cum ajungi de la Termini și de la aeroporturi.'
     ],
     'tips' => [
       'title' => 'Recomandări locale',
@@ -27,7 +27,7 @@ return [
       'description' => 'Contactează Via Arriano 11 pentru informații și cereri speciale: telefon și email.'
     ],
     'booking' => [
-      'title' => 'Rezervă',
+      'title' => 'Disponibilitate și prețuri – rezervare directă',
       'description' => 'Alege datele de sosire și plecare, verifică disponibilitatea și finalizează rezervarea.'
     ],
     'booking_success' => [

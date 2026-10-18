@@ -54,4 +54,27 @@ return [
     'cta_cookies' => 'Cookie-Richtlinie',
     'cta_privacy' => 'Datenschutz',
   ],
+  // Price match promise (Oct 2026)
+  'pricematch' => [
+    'title' => 'Bestpreis-Garantie',
+    'text' => 'Sie haben diese Wohnung für dieselben Daten günstiger auf Booking gefunden? Schicken Sie uns einen Screenshot per WhatsApp oder E-Mail – wir geben Ihnen 10 % Rabatt auf diesen Preis.',
+    'cta_whatsapp' => 'Per WhatsApp senden',
+    'cta_email' => 'Per E-Mail senden',
+    'whatsapp_text' => 'Hallo! Ich habe Via Arriano 11 günstiger auf Booking gefunden. Hier ist der Screenshot für 10 % Rabatt.',
+    'email_subject' => 'Günstigerer Preis auf Booking gefunden',
+  ],
+
+  // Neighbourhood guide (Oct 2026) — English is the fallback for languages without their own version
+  'neighborhood_guide' => [
+    'title' => 'Pigneto: der komplette Stadtteil-Guide',
+    'intro' => 'Pigneto ist eines der authentischsten und lebendigsten Viertel Roms: direkt hinter der Porta Maggiore, zwischen Via Prenestina und Via Casilina, nur wenige Metrominuten vom Kolosseum entfernt. Das sollten Sie vor der Anreise wissen – erzählt von Menschen, die hier leben.',
+    'sections' => [
+      ['h' => 'Via del Pigneto: Markt am Morgen, Aperitivo am Abend', 'html' => 'Das Herz des Viertels ist die Fußgängerzone der <strong>Via del Pigneto</strong>. Morgens (Montag bis Samstag) findet hier ein Wochenmarkt mit Obst, Gemüse und Dingen des täglichen Bedarfs statt; abends füllen Bars, Weinbars und kleine Restaurants die Straße mit Tischen. Hier gehen Römer aus, keine Reisegruppen.'],
+      ['h' => 'Kino und Geschichte: Pasolinis Pigneto', 'html' => 'Pigneto ist eng mit dem italienischen Kino verbunden. Pier Paolo Pasolini drehte hier <em>Accattone</em> (1961), und die historische <strong>Bar Necci</strong> (seit 1924) ist mit diesem Film verbunden. Szenen aus Rossellinis <em>Rom, offene Stadt</em> entstanden in der nahen Via Montecuccoli. Beim Spaziergang sieht man noch die niedrigen Häuser und Innenhöfe des alten Arbeiterviertels.'],
+      ['h' => 'Street Art und Viertelleben', 'html' => 'Wandbilder und Street Art bedecken die Mauern von Pigneto und dem benachbarten Torpignattara: ein Spaziergang durch die Seitenstraßen ist eine kostenlose Open-Air-Galerie. Unabhängige Buchläden, Vintage-Shops und Handwerksbetriebe runden ein Viertel mit eigener Identität ab.'],
+      ['h' => 'Sehenswertes in der Nähe', 'html' => 'Wenige Minuten entfernt liegen die <strong>Porta Maggiore</strong> mit dem antiken Grabmal des Bäckers Eurysaces (1. Jh. v. Chr.) und die Basilika <strong>Santa Croce in Gerusalemme</strong>. <strong>San Giovanni in Laterano</strong> ist wenige Metrominuten entfernt, das Universitätsviertel <strong>San Lorenzo</strong> liegt ganz in der Nähe.'],
+      ['h' => 'Unterwegs: Metro C', 'html' => 'Die Metro-C-Station ist <strong>3–5 Gehminuten</strong> von der Wohnung entfernt. Die Linie C fährt <strong>ohne Umsteigen nach San Giovanni</strong> (Umstieg in die Metro A Richtung Spanische Treppe und Vatikan) und zur neuen Station <strong>Colosseo/Fori Imperiali</strong>: Das Kolosseum ist rund 15 Minuten von Tür zu Tür entfernt. Die <strong>Straßenbahn 14</strong> auf der Via Prenestina fährt direkt zum Bahnhof Termini.'],
+      ['h' => 'Anreise von den Flughäfen und Termini', 'html' => '<strong>Ab Fiumicino:</strong> Leonardo Express bis Termini (ca. 30 Minuten), dann Straßenbahn 14 oder eine kurze Taxifahrt. Ein direktes Taxi braucht 45–60 Minuten und fährt nach Taxameter (der Flughafen-Festpreis gilt nur innerhalb der Aurelianischen Mauer).<br><strong>Ab Ciampino:</strong> Shuttlebus bis Termini, dann Straßenbahn 14, oder Taxi (ca. 30 Minuten).<br><strong>Ab Termini:</strong> Straßenbahn 14 Richtung Togliatti oder Metro A bis San Giovanni und dann Metro C.'],
+    ],
+  ],
 ];

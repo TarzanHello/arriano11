@@ -54,4 +54,13 @@ return [
     'cta_cookies' => 'Cookiepolitik',
     'cta_privacy' => 'Privatliv',
   ],
+  // Price match promise (Oct 2026)
+  'pricematch' => [
+    'title' => 'Bedste pris-garanti',
+    'text' => 'Har du fundet lejligheden billigere på Booking for de samme datoer? Send os et skærmbillede via WhatsApp eller e-mail, så giver vi dig 10 % rabat på den pris.',
+    'cta_whatsapp' => 'Send via WhatsApp',
+    'cta_email' => 'Send via e-mail',
+    'whatsapp_text' => 'Hej! Jeg har fundet Via Arriano 11 billigere på Booking. Her er skærmbilledet for at få 10 % rabat.',
+    'email_subject' => 'Lavere pris fundet på Booking',
+  ],
 ];

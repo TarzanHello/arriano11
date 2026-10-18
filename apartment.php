@@ -150,6 +150,9 @@ include __DIR__ . '/partials/page-hero.php';
         </div>
       </div>
     </div>
+    <div class="container" style="margin-top:18px;">
+      <?php include __DIR__ . '/partials/price-match.php'; ?>
+    </div>
   </section>
 
   <section class="section-pad section-muted" id="gallery">

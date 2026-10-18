@@ -54,4 +54,13 @@ return [
     'cta_cookies' => '쿠키 정책',
     'cta_privacy' => '개인정보',
   ],
+  // Price match promise (Oct 2026)
+  'pricematch' => [
+    'title' => '최저가 보장',
+    'text' => '같은 날짜에 Booking에서 더 저렴한 가격을 찾으셨나요? WhatsApp이나 이메일로 스크린샷을 보내주시면 그 가격에서 10% 할인해 드립니다.',
+    'cta_whatsapp' => 'WhatsApp으로 보내기',
+    'cta_email' => '이메일로 보내기',
+    'whatsapp_text' => '안녕하세요! Booking에서 Via Arriano 11을 더 저렴하게 찾았습니다. 10% 할인을 위해 스크린샷을 보냅니다.',
+    'email_subject' => 'Booking에서 더 저렴한 가격 발견',
+  ],
 ];

@@ -152,6 +152,12 @@ if ($email === '') {
 <?php if ($routeNow === 'booking'): ?>
   <script src="/assets/js/calendar.js?v=<?php echo e((string)$v_calendar); ?>" defer></script>
 <?php endif; ?>
+<?php $gaId = (string)($store['settings']['ga4_id'] ?? ''); ?>
+<?php if (preg_match('/^G-[A-Z0-9]{4,20}$/', $gaId)): ?>
+  <?php $v_an = @filemtime(__DIR__ . '/../assets/js/analytics.js') ?: 1; ?>
+  <script nonce="<?php echo e(csp_nonce()); ?>">window.__VIA_GA_ID = <?php echo json_encode($gaId); ?>;</script>
+  <script src="/assets/js/analytics.js?v=<?php echo e((string)$v_an); ?>" defer></script>
+<?php endif; ?>
 <script src="/assets/js/cookie-consent.js?v=<?php echo e((string)$v_cookie); ?>" defer></script>
 </body>
 </html>

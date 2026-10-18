@@ -1153,6 +1153,13 @@ function month_title_it($ym) {
               <div class="small muted" style="margin-top:6px;">Usalo per importare le prenotazioni e bloccare le date.</div>
             </div>
 
+            <h3 style="margin:18px 0 10px;">Statistiche (Google Analytics 4)</h3>
+            <div>
+              <label>ID misurazione Google Analytics</label>
+              <input name="ga4_id" value="<?php echo e((string)($s['ga4_id'] ?? '')); ?>" placeholder="G-XXXXXXXXXX" pattern="[Gg]-[A-Za-z0-9]{4,20}">
+              <div class="small muted" style="margin-top:6px;">Lo trovi in Google Analytics → Amministrazione → Stream di dati → il tuo sito. Si attiva solo per i visitatori che accettano i cookie analitici. Lascia vuoto per disattivare.</div>
+            </div>
+
             <h3 style="margin:18px 0 10px;">Pagamento (Stripe)</h3>
             <div class="notice" style="margin-bottom:12px;">
               Per confermare una prenotazione con pagamento online:

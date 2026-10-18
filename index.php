@@ -130,6 +130,9 @@ function responsive_srcset_16x9($src) {
         · <strong><?php echo e($licenseLabel); ?>:</strong> 6603
       </p>
     </div>
+    <div style="margin-top:14px;">
+      <?php include __DIR__ . '/partials/price-match.php'; ?>
+    </div>
   </div>
 </section>
 

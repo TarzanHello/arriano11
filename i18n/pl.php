@@ -3,16 +3,16 @@
 return [
   'meta' => [
     'home' => [
-      'title' => 'Rzym (Pigneto) – Oficjalna strona',
-      'description' => 'Oficjalna strona Via Arriano 11 (Rzym, Pigneto – 00176). Apartament z prywatną przestrzenią na zewnątrz, Wi‑Fi i wyposażoną kuchnią. Sprawdź dostępność i rezerwuj bezpośrednio.'
+      'title' => 'Apartament na Pigneto z tarasem, Rzym',
+      'description' => 'Apartament dla 3 osób w dzielnicy Pigneto (Rzym) z prywatnym tarasem, klimatyzacją, Wi‑Fi i kuchnią. Metro C 3-5 minut pieszo, do Koloseum bez przesiadek. Rezerwuj bezpośrednio u właściciela.'
     ],
     'apartment' => [
-      'title' => 'Apartament',
+      'title' => 'Apartament z tarasem na Pigneto dla 3 osób: zdjęcia i udogodnienia',
       'description' => 'Poznaj Via Arriano 11: jasne wnętrza, w pełni wyposażona kuchnia, klimatyzacja i prywatny ogródek w rzymskiej dzielnicy Pigneto.'
     ],
     'neighborhood' => [
-      'title' => 'Okolica: Pigneto',
-      'description' => 'Pigneto: street art, kawiarnie i lokalne sklepy. Metrem C do Koloseum dotrzesz w około 15 minut.'
+      'title' => 'Dzielnica Pigneto, Rzym: przewodnik, historia i atrakcje',
+      'description' => 'Przewodnik po dzielnicy Pigneto w Rzymie: Via del Pigneto i targ, Pasolini i kino, street art, gdzie zjeść i jak dojechać z Termini i z lotnisk.'
     ],
     'tips' => [
       'title' => 'Lokalne porady',
@@ -27,7 +27,7 @@ return [
       'description' => 'Skontaktuj się z Via Arriano 11 w sprawie informacji i próśb specjalnych: telefon i e‑mail.'
     ],
     'booking' => [
-      'title' => 'Rezerwuj',
+      'title' => 'Dostępność i ceny – rezerwacja bezpośrednia',
       'description' => 'Wybierz daty zameldowania i wymeldowania, sprawdź dostępność i dokończ rezerwację.'
     ],
     'booking_success' => [

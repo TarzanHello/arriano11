@@ -54,4 +54,13 @@ return [
     'cta_cookies' => 'Cookieポリシー',
     'cta_privacy' => 'プライバシー',
   ],
+  // Price match promise (Oct 2026)
+  'pricematch' => [
+    'title' => 'ベストプライス保証',
+    'text' => '同じ日程でBookingの方が安い料金を見つけましたか？ WhatsAppまたはメールでスクリーンショットをお送りください。その料金からさらに10％割引いたします。',
+    'cta_whatsapp' => 'WhatsAppで送る',
+    'cta_email' => 'メールで送る',
+    'whatsapp_text' => 'こんにちは！BookingでVia Arriano 11のより安い料金を見つけました。10％割引のためにスクリーンショットを送ります。',
+    'email_subject' => 'Bookingでより安い料金を見つけました',
+  ],
 ];

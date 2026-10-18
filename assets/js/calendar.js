@@ -294,6 +294,7 @@
         // Keep currency in sync
         if(data.currency) state.currency = data.currency;
         renderQuote(data);
+        try{ if(window.viaTrack) window.viaTrack('view_quote', { currency: state.currency, value: data.total, nights: data.nights }); }catch(e){}
       })
       .catch(function(err){
         if(quoteEl) quoteEl.textContent = (t('booking.messages.request_failed') || '') + ' ' + (err.message || '');
@@ -699,11 +700,13 @@
             }
 
             if(data.mode === 'checkout' && data.checkout_url){
+              try{ if(window.viaTrack) window.viaTrack('begin_checkout', { currency: state.currency, nights: check.nights }); }catch(e){}
               setMsg(t('booking.messages.redirecting_to_payment') || '', '');
               window.location.href = data.checkout_url;
               return;
             }
 
+            try{ if(window.viaTrack) window.viaTrack('generate_lead', { method: 'booking_request', nights: check.nights }); }catch(e){}
             setMsg(t('booking.messages.request_sent') || '', '');
             clearSelection();
             if(formEl) formEl.reset();

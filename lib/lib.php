@@ -174,8 +174,9 @@ function send_security_headers($options = []) {
   $csp[] = "img-src 'self' data: https:";
   $csp[] = "font-src 'self' data:";
   $csp[] = "style-src 'self' 'unsafe-inline'";
-  $csp[] = "script-src 'self' 'nonce-" . $nonce . "'";
-  $csp[] = "connect-src 'self'";
+  // Google Analytics 4 (loaded only after cookie consent, see assets/js/analytics.js)
+  $csp[] = "script-src 'self' 'nonce-" . $nonce . "' https://www.googletagmanager.com";
+  $csp[] = "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com";
   if (is_https_request()) {
     $csp[] = "upgrade-insecure-requests";
     $csp[] = "block-all-mixed-content";
@@ -441,6 +442,7 @@ function load_store() {
     'ical_export_secret' => '',
     'ical_export_public_enabled' => 0,
     'default_lang' => 'it',
+    'ga4_id' => '',
   ];
 
   foreach ($defaults as $k => $v) {

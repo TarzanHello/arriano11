@@ -64,7 +64,16 @@ $updated = $isIt ? date('d/m/Y') : date('Y-m-d');
             Se non acconsenti, il sito resta pienamente utilizzabile.
           </p>
           <p>
-            Al momento, i cookie facoltativi non sono necessari per usare il sito. Se in futuro dovessimo attivarli, aggiorneremo questa informativa.
+            Se acconsenti ai cookie analitici, usiamo <strong>Google Analytics 4</strong> (Google Ireland Ltd.) per contare le visite in forma aggregata
+            e capire quali pagine sono utili. Senza consenso Google Analytics non viene caricato.
+          </p>
+          <ul>
+            <li><strong>_ga</strong> — <strong>Durata</strong>: fino a 2 anni — <strong>Finalità</strong>: distinguere i visitatori in forma statistica.</li>
+            <li><strong>_ga_&lt;ID&gt;</strong> — <strong>Durata</strong>: fino a 2 anni — <strong>Finalità</strong>: mantenere lo stato della sessione di navigazione.</li>
+          </ul>
+          <p>
+            Non usiamo Google Analytics per pubblicità o profilazione (segnali pubblicitari disattivati). Informativa di Google:
+            <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a>.
           </p>
 
           <h2>4. Terze parti (pagamenti)</h2>
@@ -114,7 +123,16 @@ $updated = $isIt ? date('d/m/Y') : date('Y-m-d');
             If you do not consent, the website remains fully usable.
           </p>
           <p>
-            At the moment, optional cookies are not required to use the site. If we enable them in the future, we will update this policy.
+            If you accept analytics cookies, we use <strong>Google Analytics 4</strong> (Google Ireland Ltd.) to count visits in aggregate form
+            and understand which pages are useful. Without your consent Google Analytics is not loaded.
+          </p>
+          <ul>
+            <li><strong>_ga</strong> — <strong>Duration</strong>: up to 2 years — <strong>Purpose</strong>: distinguish visitors for statistics.</li>
+            <li><strong>_ga_&lt;ID&gt;</strong> — <strong>Duration</strong>: up to 2 years — <strong>Purpose</strong>: keep the browsing session state.</li>
+          </ul>
+          <p>
+            We do not use Google Analytics for advertising or profiling (advertising signals disabled). Google's policy:
+            <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a>.
           </p>
 
           <h2>4. Third parties (payments)</h2>

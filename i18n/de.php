@@ -3,16 +3,16 @@
 return [
   'meta' => [
     'home' => [
-      'title' => 'Rom (Pigneto) – Offizielle Website',
-      'description' => 'Offizielle Website von Via Arriano 11 (Rom, Pigneto – 00176). Apartment mit privatem Außenbereich, WLAN und ausgestatteter Küche. Verfügbarkeit prüfen und direkt buchen.'
+      'title' => 'Ferienwohnung im Pigneto mit Terrasse, Rom',
+      'description' => 'Ferienwohnung für 3 Personen im Viertel Pigneto (Rom) mit privater Terrasse, Klimaanlage, WLAN und Küche. Metro C 3-5 Gehminuten entfernt, Kolosseum ohne Umsteigen. Direkt beim Eigentümer buchen.'
     ],
     'apartment' => [
-      'title' => 'Das Apartment',
+      'title' => 'Ferienwohnung im Pigneto mit Terrasse für 3 Gäste: Fotos & Ausstattung',
       'description' => 'Entdecke Via Arriano 11: helle Räume, eine voll ausgestattete Küche, Klimaanlage und einen privaten Außenbereich im römischen Viertel Pigneto.'
     ],
     'neighborhood' => [
-      'title' => 'Das Viertel: Pigneto',
-      'description' => 'Pigneto: Street Art, Cafés und kleine Läden. Mit der Metro C bist du in etwa 15 Minuten am Kolosseum.'
+      'title' => 'Pigneto, Rom: Stadtteil-Guide, Geschichte & Tipps',
+      'description' => 'Guide zum Viertel Pigneto in Rom: Via del Pigneto und Markt, Pasolini und Kino, Street Art, Essen & Trinken und Anreise von Termini und den Flughäfen.'
     ],
     'tips' => [
       'title' => 'Lokale Tipps',
@@ -27,7 +27,7 @@ return [
       'description' => 'Kontaktiere Via Arriano 11 für Informationen und besondere Wünsche: Telefon und E‑Mail.'
     ],
     'booking' => [
-      'title' => 'Buchen',
+      'title' => 'Verfügbarkeit & Preise – direkt buchen',
       'description' => 'Wähle Check-in und Check-out, prüfe die Verfügbarkeit und schließe deine Buchung ab.'
     ],
     'booking_success' => [

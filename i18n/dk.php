@@ -3,16 +3,16 @@
 return [
   'meta' => [
     'home' => [
-      'title' => 'Rom (Pigneto) – Officiel hjemmeside',
-      'description' => 'Officiel hjemmeside for Via Arriano 11 (Rom, Pigneto – 00176). Lejlighed med privat udendørsareal, Wi‑Fi og fuldt udstyret køkken. Tjek ledighed og book direkte.'
+      'title' => 'Ferielejlighed i Pigneto med terrasse, Rom',
+      'description' => 'Lejlighed til 3 personer i bydelen Pigneto (Rom) med privat terrasse, aircondition, Wi‑Fi og køkken. Metro C 3-5 minutters gang, Colosseum uden skift. Book direkte hos ejeren.'
     ],
     'apartment' => [
-      'title' => 'Lejligheden',
+      'title' => 'Lejlighed med terrasse i Pigneto til 3 gæster: billeder og faciliteter',
       'description' => 'Oplev Via Arriano 11: lyse rum, fuldt udstyret køkken, aircondition og privat udendørsområde i Roms kvarter Pigneto.'
     ],
     'neighborhood' => [
-      'title' => 'Kvarteret: Pigneto',
-      'description' => 'Pigneto: street art, caféer og lokale butikker. Med Metro C når du Colosseum på ca. 15 minutter.'
+      'title' => 'Pigneto, Rom: guide til bydelen, historie og oplevelser',
+      'description' => 'Guide til Pigneto i Rom: Via del Pigneto og markedet, Pasolini og film, gadekunst, hvor man spiser og hvordan man kommer hertil fra Termini og lufthavnene.'
     ],
     'tips' => [
       'title' => 'Lokale tips',
@@ -27,7 +27,7 @@ return [
       'description' => 'Kontakt Via Arriano 11 for information og særlige ønsker: telefon og e-mail.'
     ],
     'booking' => [
-      'title' => 'Book',
+      'title' => 'Ledighed og priser – book direkte',
       'description' => 'Vælg check-in og check-out, se ledighed og gennemfør din booking.'
     ],
     'booking_success' => [

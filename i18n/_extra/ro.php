@@ -54,4 +54,13 @@ return [
     'cta_cookies' => 'Politica de cookies',
     'cta_privacy' => 'Confidențialitate',
   ],
+  // Price match promise (Oct 2026)
+  'pricematch' => [
+    'title' => 'Cel mai bun preț garantat',
+    'text' => 'Ai găsit acest apartament mai ieftin pe Booking pentru aceleași date? Trimite-ne o captură de ecran pe WhatsApp sau email și îți facem 10% reducere din acel preț.',
+    'cta_whatsapp' => 'Trimite pe WhatsApp',
+    'cta_email' => 'Trimite pe email',
+    'whatsapp_text' => 'Bună! Am găsit Via Arriano 11 mai ieftin pe Booking. Vă trimit captura de ecran pentru reducerea de 10%.',
+    'email_subject' => 'Preț mai mic găsit pe Booking',
+  ],
 ];

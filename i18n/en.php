@@ -4,16 +4,16 @@ return [
   'meta' => [
     'home' => [
       // SEO: generic query first, brand at the end.
-      'title' => 'Pigneto holiday apartment with garden, Rome',
-      'description' => 'Apartment for 3 guests in Rome’s Pigneto with a private outdoor space, air conditioning, Wi‑Fi and kitchen. Near Metro C: Colosseum in about 15 minutes. Book directly with the owner.'
+      'title' => 'Pigneto holiday apartment with terrace, Rome',
+      'description' => 'Apartment for 3 guests in Rome’s Pigneto with a private terrace, air conditioning, Wi‑Fi and kitchen. Metro C 3-5 minutes’ walk, Colosseum with no changes. Book directly with the owner.'
     ],
     'apartment' => [
-      'title' => 'Pigneto apartment for 3 guests: photos & amenities',
+      'title' => 'Pigneto apartment with terrace for 3 guests: photos & amenities',
       'description' => 'Discover Via Arriano 11: bright spaces, a fully equipped kitchen, air conditioning and a private outdoor area in Rome’s Pigneto neighbourhood.'
     ],
     'neighborhood' => [
-      'title' => 'Pigneto, Rome: neighbourhood guide',
-      'description' => 'Pigneto: street art, cafés and local shops. With Metro C you can reach the Colosseum in about 15 minutes.'
+      'title' => 'Pigneto, Rome: neighbourhood guide & things to do',
+      'description' => 'Guide to Pigneto: Via del Pigneto and its market, Pasolini and cinema, street art, where to eat and how to get here from Termini and the airports.'
     ],
     'tips' => [
       'title' => 'Where to eat & drink in Pigneto: host tips',
@@ -76,7 +76,7 @@ return [
       'license_label' => 'Tourist accommodation',
     ],
     'hero' => [
-      'title' => 'Via Arriano 11<br>Holiday apartment with garden in Pigneto, Rome',
+      'title' => 'Via Arriano 11<br>Holiday apartment with terrace in Pigneto, Rome',
       'lead' => 'Official website of the tourist accommodation at Via Arriano 11, 00176 Rome. Essential comforts and a private outdoor space.',
       'cta_primary' => 'Book now',
       'cta_secondary' => 'Discover the apartment',

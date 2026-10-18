@@ -3,16 +3,16 @@
 return [
   'meta' => [
     'home' => [
-      'title' => 'Roma (Pigneto) – Sitio oficial',
-      'description' => 'Sitio oficial de Via Arriano 11 (Roma, Pigneto – 00176). Apartamento con espacio exterior privado, Wi‑Fi y cocina equipada. Comprueba disponibilidad y reserva directo.'
+      'title' => 'Apartamento en Pigneto con terraza, Roma',
+      'description' => 'Apartamento para 3 personas en el barrio Pigneto (Roma) con terraza privada, aire acondicionado, Wi‑Fi y cocina. Metro C a 3-5 minutos a pie, Coliseo sin transbordos. Reserva directamente con el propietario.'
     ],
     'apartment' => [
-      'title' => 'El apartamento',
+      'title' => 'Apartamento en Pigneto con terraza para 3 personas: fotos y servicios',
       'description' => 'Descubre Via Arriano 11: espacios luminosos, cocina equipada, aire acondicionado y zona exterior privada en el barrio Pigneto de Roma.'
     ],
     'neighborhood' => [
-      'title' => 'El barrio: Pigneto',
-      'description' => 'Pigneto: street art, cafés y pequeñas tiendas. Con la Metro C, el Coliseo está a unos 15 minutos.'
+      'title' => 'Barrio Pigneto, Roma: guía, historia y qué hacer',
+      'description' => 'Guía del barrio Pigneto en Roma: Via del Pigneto y su mercado, Pasolini y el cine, arte urbano, dónde comer y cómo llegar desde Termini y los aeropuertos.'
     ],
     'tips' => [
       'title' => 'Consejos del barrio',
@@ -27,7 +27,7 @@ return [
       'description' => 'Contacta con Via Arriano 11 para información y solicitudes: teléfono y email.'
     ],
     'booking' => [
-      'title' => 'Reservar',
+      'title' => 'Disponibilidad y precios – reserva directa',
       'description' => 'Elige fechas de entrada y salida, comprueba la disponibilidad y completa tu reserva.'
     ],
     'booking_success' => [

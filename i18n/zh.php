@@ -3,16 +3,16 @@
 return [
   'meta' => [
     'home' => [
-      'title' => '罗马（Pigneto）– 官方网站',
-      'description' => 'Via Arriano 11（罗马 Pigneto – 00176）官方网站。带私密户外空间的公寓，提供 Wi‑Fi 和设施齐全的厨房。查看可订日期并直接预订。'
+      'title' => '罗马 Pigneto 区带露台的度假公寓',
+      'description' => '位于罗马 Pigneto 区的公寓，最多可住 3 人，带私人露台、空调、Wi‑Fi 和厨房。步行 3-5 分钟到地铁 C 线，无需换乘直达斗兽场。可直接向房东预订。'
     ],
     'apartment' => [
-      'title' => '公寓',
+      'title' => 'Pigneto 带露台公寓（最多 3 人）：照片与设施',
       'description' => '了解 Via Arriano 11：明亮空间、设备齐全的厨房、空调以及私人户外区域，坐落于罗马Pigneto街区。'
     ],
     'neighborhood' => [
-      'title' => '街区：Pigneto',
-      'description' => 'Pigneto：街头艺术、咖啡馆与本地小店。乘坐地铁C线约15分钟即可到达斗兽场。'
+      'title' => '罗马 Pigneto 区指南：历史与玩法',
+      'description' => '罗马 Pigneto 区指南：Pigneto 街与市场、帕索里尼与电影、街头艺术、美食推荐，以及从特米尼车站和机场如何到达。'
     ],
     'tips' => [
       'title' => '周边推荐',
@@ -27,7 +27,7 @@ return [
       'description' => '联系 Via Arriano 11 获取信息与特殊需求：电话与邮箱。'
     ],
     'booking' => [
-      'title' => '预订',
+      'title' => '空房与价格 – 直接预订',
       'description' => '选择入住与退房日期，查看可用性并完成预订。'
     ],
     'booking_success' => [
