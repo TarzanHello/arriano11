@@ -2,6 +2,7 @@
 // Rome itineraries (Oct 2026, patch 10).
 // /itinerari                 → hub: choose 3, 4 or 5 days, or reopen a saved itinerary with its code
 // /itinerari/roma-N-giorni   → builder: map, day tabs, three levels, selectable stops, save with a code
+// Patch 12: the visitor's own stops in the builder, game leaderboard on the hub.
 // Data in lib/itineraries.php, texts in i18n/itineraries/{lang}.php.
 require_once __DIR__ . '/lib/lib.php';
 require_once __DIR__ . '/lib/i18n.php';
@@ -108,6 +109,45 @@ $codeError = isset($_GET['codice_errato']);
       </div>
     </div>
   </section>
+
+  <?php // Leaderboard of the itinerary game (patch 12)
+    $board = itin_board_public(20);
+    $badgeIcons = itin_badges();
+  ?>
+  <section class="section-pad" id="itinBoard">
+    <div class="container">
+      <div class="itin-board card">
+        <h2 class="itin-board-title"><?php echo e($U['board_title']); ?></h2>
+        <p><?php echo e($U['board_intro']); ?></p>
+        <?php if (!$board): ?>
+          <p class="itin-board-empty"><?php echo e($U['board_empty']); ?></p>
+        <?php else: ?>
+          <div class="itin-board-wrap">
+            <table class="itin-board-table">
+              <thead><tr>
+                <th scope="col">#</th>
+                <th scope="col"><?php echo e($U['board_col_nick']); ?></th>
+                <th scope="col"><?php echo e($U['board_col_points']); ?></th>
+                <th scope="col"><?php echo e($U['board_col_stops']); ?></th>
+                <th scope="col"><?php echo e($U['board_col_badges']); ?></th>
+              </tr></thead>
+              <tbody>
+                <?php $rk = 0; foreach ($board as $row): $rk++; ?>
+                  <tr<?php echo $rk <= 3 ? ' class="is-top"' : ''; ?>>
+                    <td><?php echo $rk; ?></td>
+                    <td class="itin-board-nick"><?php echo e((string)$row['nick']); ?></td>
+                    <td><strong><?php echo (int)$row['points']; ?></strong></td>
+                    <td><?php echo (int)$row['stops']; ?></td>
+                    <td class="itin-board-badges"><?php foreach ((array)$row['badges'] as $bk): if (!isset($badgeIcons[$bk])) continue; ?><span title="<?php echo e((string)($T['badges'][$bk]['name'] ?? $bk)); ?>"><?php echo $badgeIcons[$bk]; ?></span><?php endforeach; ?></td>
+                  </tr>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
+          </div>
+        <?php endif; ?>
+      </div>
+    </div>
+  </section>
 <?php else: ?>
   <section class="itin-tool-wrap">
     <div class="container">
@@ -184,7 +224,12 @@ $codeError = isset($_GET['codice_errato']);
     $payload['lang'] = current_lang();
     $payload['page'] = $itRoute;
     $payload['saveUrl'] = '/api/itinerary_save.php';
-    if ($itPlan) $payload['plan'] = ['n' => $itPlan['n'], 'days' => $itPlan['days']];
+    if ($itPlan) {
+      $payload['plan'] = ['n' => $itPlan['n'], 'days' => $itPlan['days'], 'custom' => $itPlan['custom'] ?: new stdClass()];
+      // "Modifica": saving updates the same itinerary (same code, game points stay) unless "Salva come nuovo"
+      $payload['code'] = $itPlan['code'];
+      $payload['codeDisplay'] = itin_code_display($itPlan['code']);
+    }
   ?>
   <script type="application/json" id="itinData" nonce="<?php echo e(csp_nonce()); ?>"><?php echo json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP); ?></script>
 

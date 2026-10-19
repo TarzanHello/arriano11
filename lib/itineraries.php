@@ -28,11 +28,11 @@ const VIA_ITIN_HOME = [41.88541438, 12.53654213];
 // Routes: hub + one builder page per trip length. Slugs are per language (Italian first).
 function itin_routes() {
   return [
-    'itineraries' => ['days' => 0, 'slugs' => ['it' => 'itinerari', 'en' => 'itineraries', 'fr' => 'itineraires', 'de' => 'reiserouten', 'es' => 'itinerarios', 'pt' => 'roteiros']],
-    'itin_3' => ['days' => 3, 'slugs' => ['it' => 'itinerari/roma-3-giorni', 'en' => 'itineraries/rome-3-days', 'fr' => 'itineraires/rome-3-jours', 'de' => 'reiserouten/rom-3-tage', 'es' => 'itinerarios/roma-3-dias', 'pt' => 'roteiros/roma-3-dias']],
-    'itin_4' => ['days' => 4, 'slugs' => ['it' => 'itinerari/roma-4-giorni', 'en' => 'itineraries/rome-4-days', 'fr' => 'itineraires/rome-4-jours', 'de' => 'reiserouten/rom-4-tage', 'es' => 'itinerarios/roma-4-dias', 'pt' => 'roteiros/roma-4-dias']],
-    'itin_5' => ['days' => 5, 'slugs' => ['it' => 'itinerari/roma-5-giorni', 'en' => 'itineraries/rome-5-days', 'fr' => 'itineraires/rome-5-jours', 'de' => 'reiserouten/rom-5-tage', 'es' => 'itinerarios/roma-5-dias', 'pt' => 'roteiros/roma-5-dias']],
-    'itin_saved' => ['days' => 0, 'slugs' => ['it' => 'itinerari/salvato', 'en' => 'itineraries/saved', 'fr' => 'itineraires/sauvegarde', 'de' => 'reiserouten/gespeichert', 'es' => 'itinerarios/guardado', 'pt' => 'roteiros/guardado']],
+    'itineraries' => ['days' => 0, 'slugs' => ['it' => 'itinerari', 'en' => 'itineraries', 'fr' => 'itineraires', 'de' => 'reiserouten', 'es' => 'itinerarios', 'pt' => 'roteiros', 'ru' => 'marshruty', 'ro' => 'itinerarii', 'pl' => 'trasy', 'se' => 'resrutter', 'dk' => 'ruter', 'ja' => 'itineraries', 'ko' => 'itineraries', 'zh' => 'itineraries']],
+    'itin_3' => ['days' => 3, 'slugs' => ['it' => 'itinerari/roma-3-giorni', 'en' => 'itineraries/rome-3-days', 'fr' => 'itineraires/rome-3-jours', 'de' => 'reiserouten/rom-3-tage', 'es' => 'itinerarios/roma-3-dias', 'pt' => 'roteiros/roma-3-dias', 'ru' => 'marshruty/rim-3-dnya', 'ro' => 'itinerarii/roma-3-zile', 'pl' => 'trasy/rzym-3-dni', 'se' => 'resrutter/rom-3-dagar', 'dk' => 'ruter/rom-3-dage', 'ja' => 'itineraries/rome-3-days', 'ko' => 'itineraries/rome-3-days', 'zh' => 'itineraries/rome-3-days']],
+    'itin_4' => ['days' => 4, 'slugs' => ['it' => 'itinerari/roma-4-giorni', 'en' => 'itineraries/rome-4-days', 'fr' => 'itineraires/rome-4-jours', 'de' => 'reiserouten/rom-4-tage', 'es' => 'itinerarios/roma-4-dias', 'pt' => 'roteiros/roma-4-dias', 'ru' => 'marshruty/rim-4-dnya', 'ro' => 'itinerarii/roma-4-zile', 'pl' => 'trasy/rzym-4-dni', 'se' => 'resrutter/rom-4-dagar', 'dk' => 'ruter/rom-4-dage', 'ja' => 'itineraries/rome-4-days', 'ko' => 'itineraries/rome-4-days', 'zh' => 'itineraries/rome-4-days']],
+    'itin_5' => ['days' => 5, 'slugs' => ['it' => 'itinerari/roma-5-giorni', 'en' => 'itineraries/rome-5-days', 'fr' => 'itineraires/rome-5-jours', 'de' => 'reiserouten/rom-5-tage', 'es' => 'itinerarios/roma-5-dias', 'pt' => 'roteiros/roma-5-dias', 'ru' => 'marshruty/rim-5-dney', 'ro' => 'itinerarii/roma-5-zile', 'pl' => 'trasy/rzym-5-dni', 'se' => 'resrutter/rom-5-dagar', 'dk' => 'ruter/rom-5-dage', 'ja' => 'itineraries/rome-5-days', 'ko' => 'itineraries/rome-5-days', 'zh' => 'itineraries/rome-5-days']],
+    'itin_saved' => ['days' => 0, 'slugs' => ['it' => 'itinerari/salvato', 'en' => 'itineraries/saved', 'fr' => 'itineraires/sauvegarde', 'de' => 'reiserouten/gespeichert', 'es' => 'itinerarios/guardado', 'pt' => 'roteiros/guardado', 'ru' => 'marshruty/sokhranennyy', 'ro' => 'itinerarii/salvat', 'pl' => 'trasy/zapisana', 'se' => 'resrutter/sparad', 'dk' => 'ruter/gemt', 'ja' => 'itineraries/saved', 'ko' => 'itineraries/saved', 'zh' => 'itineraries/saved']],
   ];
 }
 
@@ -263,9 +263,13 @@ function itin_hhmm($minutes) {
 }
 
 // Returns ['start','end','km','items' => [[place, arrive, leave, walkMin, walkKm, transitMin]...]]
-function itin_schedule($day, $level, $order) {
+// $custom: the visitor's own stops (plan['custom']), id => [lat, lng, dur, ...]
+function itin_schedule($day, $level, $order, $custom = []) {
   $days = itin_days();
   $places = itin_places();
+  foreach ((array)$custom as $cid => $c) {
+    $places[$cid] = ['lat' => (float)$c['lat'], 'lng' => (float)$c['lng'], 'custom' => true, 'dur' => (int)$c['dur']];
+  }
   $stations = itin_stations();
   $lv = $days[$day]['levels'][$level] ?? null;
   if (!$lv) return null;
@@ -277,7 +281,7 @@ function itin_schedule($day, $level, $order) {
   $items = [];
   foreach ($order as $p) {
     if (!isset($places[$p])) continue;
-    $sp = itin_stop_params($day, $level, $p);
+    $sp = !empty($places[$p]['custom']) ? ['dur' => $places[$p]['dur'], 'leg' => 0, 'level' => $level] : itin_stop_params($day, $level, $p);
     $here = [$places[$p]['lat'], $places[$p]['lng']];
     $walkKm = 0.0; $walkMin = 0; $transit = 0;
     if ($sp['leg'] > 0 && $items) {
@@ -378,15 +382,59 @@ function itin_new_code() {
   return '';
 }
 
+// ------------------------------------------------------------
+// The visitor's own stops (patch 12): private, saved only inside their itinerary.
+// plan['custom'] = ['u1' => ['day' => 2, 'name' => '…', 'tip' => '…', 'lat' => 41.9, 'lng' => 12.4, 'dur' => 30], …]
+// ------------------------------------------------------------
+const VIA_ITIN_CUSTOM_MAX = 12;
+const VIA_ITIN_CUSTOM_DURS = [15, 30, 45, 60, 90, 120];
+
+// Rome and surroundings (Ostia, Castelli excluded on purpose: the itineraries are walking days)
+function itin_in_rome($lat, $lng) {
+  return $lat >= 41.65 && $lat <= 42.10 && $lng >= 12.20 && $lng <= 12.90;
+}
+
+function itin_clean_text($s, $max) {
+  $s = (string)$s;
+  if ($s === '' || !preg_match('//u', $s)) return '';
+  $s = strip_tags($s);
+  $s = preg_replace('/[\x00-\x1F\x7F]+/u', ' ', $s);
+  $s = trim((string)preg_replace('/\s+/u', ' ', $s));
+  return function_exists('mb_substr') ? mb_substr($s, 0, $max, 'UTF-8') : substr($s, 0, $max);
+}
+
+function itin_clean_custom($list, $n) {
+  $out = [];
+  if (!is_array($list)) return $out;
+  foreach ($list as $key => $c) {
+    if (count($out) >= VIA_ITIN_CUSTOM_MAX) break;
+    if (!is_array($c)) continue;
+    $id = (string)($c['id'] ?? $key);
+    if (!preg_match('/^u[1-9][0-9]?$/', $id) || isset($out[$id])) continue;
+    $lat = (float)($c['lat'] ?? 0);
+    $lng = (float)($c['lng'] ?? 0);
+    if (!itin_in_rome($lat, $lng)) continue;
+    $name = itin_clean_text($c['name'] ?? '', 60);
+    if ($name === '') continue;
+    $dur = (int)($c['dur'] ?? 30);
+    if (!in_array($dur, VIA_ITIN_CUSTOM_DURS, true)) $dur = 30;
+    $day = (int)($c['day'] ?? 0);
+    if ($day < 1 || $day > $n) continue;
+    $out[$id] = ['day' => $day, 'name' => $name, 'tip' => itin_clean_text($c['tip'] ?? '', 280), 'lat' => round($lat, 6), 'lng' => round($lng, 6), 'dur' => $dur];
+  }
+  return $out;
+}
+
 // Checks a plan sent by the browser and returns a clean copy, or null.
-// Plan: ['n' => 3..5, 'days' => [ ['level' => 'easy', 'stops' => ['colosseo', ...]], ... ]]
+// Plan: ['n' => 3..5, 'days' => [ ['level' => 'easy', 'stops' => ['colosseo', 'u1', ...]], ... ], 'custom' => [...]]
 function itin_clean_plan($plan) {
   if (!is_array($plan)) return null;
   $n = (int)($plan['n'] ?? 0);
   if ($n < 3 || $n > 5) return null;
   $days = $plan['days'] ?? null;
   if (!is_array($days) || count($days) !== $n) return null;
-  $out = ['n' => $n, 'days' => []];
+  $custom = itin_clean_custom($plan['custom'] ?? [], $n);
+  $out = ['n' => $n, 'days' => [], 'custom' => $custom];
   $i = 0;
   foreach (array_values($days) as $d) {
     $i++;
@@ -397,7 +445,8 @@ function itin_clean_plan($plan) {
     $stops = [];
     foreach ((array)($d['stops'] ?? []) as $s) {
       $s = (string)$s;
-      if (isset($pool[$s]) && !in_array($s, $stops, true)) $stops[] = $s;
+      $ok = isset($pool[$s]) || (isset($custom[$s]) && $custom[$s]['day'] === $i);
+      if ($ok && !in_array($s, $stops, true)) $stops[] = $s;
       if (count($stops) >= 20) break;
     }
     $out['days'][] = ['level' => $level, 'stops' => $stops];
@@ -405,10 +454,19 @@ function itin_clean_plan($plan) {
   return $out;
 }
 
-function itin_save($plan, $lang) {
-  $code = itin_new_code();
+// $code: overwrite this existing itinerary (the visitor edited it and kept the same code: game points stay)
+function itin_save($plan, $lang, $code = '') {
+  $created = date('c');
+  $code = itin_code_normalize($code);
+  if ($code !== '') {
+    $old = itin_load($code);
+    if (!$old || (int)$old['n'] !== (int)$plan['n']) return '';
+    if ($old['created'] !== '') $created = $old['created'];
+  } else {
+    $code = itin_new_code();
+  }
   if ($code === '') return '';
-  $rec = $plan + ['v' => 1, 'lang' => (string)$lang, 'created' => date('c')];
+  $rec = $plan + ['v' => 1, 'lang' => (string)$lang, 'created' => $created, 'updated' => date('c')];
   $tmp = itin_dir() . '/' . $code . '.tmp.' . bin2hex(random_bytes(4));
   if (@file_put_contents($tmp, json_encode($rec, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), LOCK_EX) === false) return '';
   if (!@rename($tmp, itin_dir() . '/' . $code . '.json')) { @unlink($tmp); return ''; }
@@ -454,3 +512,6 @@ function itin_js_payload($nDays, $lang) {
   }
   return $out;
 }
+
+// Navigation game: points, badges, leaderboard (patch 12)
+require_once __DIR__ . '/itin_game.php';

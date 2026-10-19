@@ -46,7 +46,7 @@ $checks[] = ['Cartella /data/itineraries (itinerari salvati)', is_dir($itDir) &&
 $loadError = '';
 try {
   require_once __DIR__ . '/../lib/i18n.php';
-  foreach (['via_articles', 'itin_texts', 'itin_schedule', 'copy_get'] as $fn) {
+  foreach (['via_articles', 'itin_texts', 'itin_schedule', 'itin_game_checkin', 'copy_get'] as $fn) {
     if (!function_exists($fn)) $loadError .= 'Funzione mancante: ' . $fn . '. ';
   }
   if ($loadError === '' && function_exists('itin_texts')) {

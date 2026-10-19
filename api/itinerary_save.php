@@ -1,6 +1,7 @@
 <?php
 // Saves an itinerary built on /itinerari/roma-N-giorni and returns its code (patch 10, Oct 2026).
-// POST JSON: {"n":3,"days":[{"level":"medium","stops":["colosseo",...]},...],"lang":"it"}
+// POST JSON: {"n":3,"days":[{"level":"medium","stops":["colosseo","u1",...]},...],"custom":{"u1":{...}},"lang":"it","code":""}
+// "code" (optional, patch 12): overwrite that itinerary instead of creating a new one (game points stay).
 // Reply:     {"ok":true,"code":"K7PM-4RQX","url":"/itinerari/salvato/K7PM4RQX"}
 // Files: /data/itineraries/{CODE}.json (private, never in the repo).
 require_once __DIR__ . '/../lib/lib.php';
@@ -24,7 +25,7 @@ if ($origin !== '') {
   if ($oHost === '' || $oHost !== sanitize_host((string)($_SERVER['HTTP_HOST'] ?? ''))) itin_api_fail(403, 'Origin not allowed');
 }
 
-$raw = file_get_contents('php://input', false, null, 0, 8192);
+$raw = file_get_contents('php://input', false, null, 0, 20000);
 $in = json_decode((string)$raw, true);
 $plan = itin_clean_plan($in);
 if (!$plan) itin_api_fail(400, 'Invalid itinerary');
@@ -39,7 +40,7 @@ if (!$allowed) {
 $lang = i18n_normalize_lang((string)($in['lang'] ?? 'it'));
 if (!in_array($lang, itin_languages(), true)) $lang = itin_languages()[0];
 
-$code = itin_save($plan, $lang);
+$code = itin_save($plan, $lang, (string)($in['code'] ?? ''));
 if ($code === '') itin_api_fail(500, 'Could not save');
 
 echo json_encode([

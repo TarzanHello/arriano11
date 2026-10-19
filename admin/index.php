@@ -85,6 +85,7 @@ function month_title_it($ym) {
         <a class="<?php echo $tab==='reviews'?'is-active':''; ?>" href="?tab=reviews">Recensioni</a>
         <a class="<?php echo $tab==='sync'?'is-active':''; ?>" href="?tab=sync">Sync iCal</a>
         <a class="<?php echo $tab==='settings'?'is-active':''; ?>" href="?tab=settings">Impostazioni</a>
+        <a href="/admin/game.php">Classifica itinerari</a>
         <a href="/admin/check.php">Controllo sito</a>
       </nav>
 

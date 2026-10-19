@@ -143,7 +143,8 @@ function send_security_headers($options = []) {
   header('X-Frame-Options: SAMEORIGIN');
   header('X-Content-Type-Options: nosniff');
   header('Referrer-Policy: strict-origin-when-cross-origin');
-  header('Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(), usb=()');
+  // geolocation=(self): "Avvia percorso" on the itineraries uses the phone's GPS (patch 12); never third parties
+  header('Permissions-Policy: geolocation=(self), microphone=(), camera=(), payment=(), usb=()');
   header('Cross-Origin-Opener-Policy: same-origin');
   header('Cross-Origin-Resource-Policy: same-origin');
   header('X-Permitted-Cross-Domain-Policies: none');
