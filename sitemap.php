@@ -25,6 +25,10 @@ $routes = [
 foreach (array_keys(via_articles()) as $artRoute) {
   $routes[$artRoute] = 'article.php';
 }
+// Itineraries (patch 10): hub + builder pages (the saved itineraries are private, never listed)
+foreach (['itineraries', 'itin_3', 'itin_4', 'itin_5'] as $itRoute) {
+  $routes[$itRoute] = 'itineraries.php';
+}
 
 $langs = i18n_supported_languages();
 $base = rtrim(base_url(), '/');
@@ -58,6 +62,7 @@ echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="h
 foreach ($routes as $route => $file) {
   $mtime = max((int)@filemtime(__DIR__ . '/' . $file), $i18nMtime, $headerMtime);
   if (is_article_route($route)) $mtime = max($mtime, article_mtime($route));
+  if (is_itin_route($route)) $mtime = max($mtime, itin_mtime());
   $lastmod = $mtime > 0 ? date('Y-m-d', $mtime) : date('Y-m-d');
 
   $imgs = [];

@@ -6,6 +6,7 @@ if (!function_exists('base_url')) {
   require_once __DIR__ . '/lib.php';
 }
 require_once __DIR__ . '/articles.php';
+require_once __DIR__ . '/itineraries.php';
 
 $GLOBALS['_VIA_LANG'] = $GLOBALS['_VIA_LANG'] ?? 'it';
 $GLOBALS['_VIA_I18N'] = $GLOBALS['_VIA_I18N'] ?? [];
@@ -223,6 +224,8 @@ function i18n_route_from_request() {
   if ($slug === 'booking-cancel') return 'booking_cancel';
   if ($slug === 'policlinico-sapienza' || $slug === 'policlinico') return 'policlinico';
   if ($slug === 'guide') return 'guides';
+  $itinRoute = itin_route_for_slug($slug);
+  if ($itinRoute !== '') return $itinRoute;
   if (strpos($slug, 'guide/') === 0) {
     $art = article_route_for_slug(substr($slug, 6));
     if ($art !== '') return $art;
@@ -247,6 +250,7 @@ function i18n_slug_for_route($route, $lang = null) {
   if ($route === 'booking_cancel') return 'booking-cancel';
   if ($route === 'policlinico') return 'policlinico-sapienza';
   if ($route === 'guides') return 'guide';
+  if (is_itin_route($route)) return itin_slug($route, $lang === null ? current_lang() : $lang);
   if (is_article_route($route)) {
     return 'guide/' . article_slug($route, $lang === null ? current_lang() : $lang);
   }
@@ -259,6 +263,7 @@ function i18n_route_languages($route) {
   $all = array_keys(i18n_supported_languages());
   if ((string)$route === 'policlinico') return ['it', 'en'];
   if (is_guides_route($route)) return VIA_ARTICLE_LANGS;
+  if (is_itin_route($route)) return itin_languages();
   return $all;
 }
 

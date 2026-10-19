@@ -3,3 +3,4 @@
 data/*.json
 data/*.bak
 data/*.json.bak
+data/itineraries/

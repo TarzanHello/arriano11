@@ -46,6 +46,7 @@ if ($email === '') {
       <div>
         <div class="footer-title" style="font-size:20px;"><?php echo e(t('v2.place')); ?></div>
         <div class="footer-links">
+          <a href="<?php echo e(i18n_url('itineraries', i18n_route_lang('itineraries', current_lang()))); ?>"><?php echo e((string)itin_t('ui.nav', i18n_route_lang('itineraries', current_lang()))); ?></a>
           <a href="<?php echo e(i18n_url('guides', i18n_route_lang('guides', current_lang()))); ?>"><?php echo e(guides_ui('crumb', i18n_route_lang('guides', current_lang()))); ?></a>
           <a href="<?php echo e(i18n_url('policlinico', i18n_route_lang('policlinico', current_lang()))); ?>"><?php echo e(t('policlinico.nav')); ?></a>
           <a href="<?php echo e(i18n_url('privacy')); ?>"><?php echo e(t('footer.privacy')); ?></a>
@@ -164,6 +165,11 @@ if ($email === '') {
 <script src="/assets/js/site.js?v=<?php echo e((string)$v_site); ?>" defer></script>
 <?php if (in_array($routeNow, ['home','apartment'], true)): ?>
   <script src="/assets/js/lightbox.js?v=<?php echo e((string)$v_lightbox); ?>" defer></script>
+<?php endif; ?>
+<?php if (in_array($routeNow, ['itin_3', 'itin_4', 'itin_5', 'itin_saved'], true)): ?>
+  <?php $v_itin = @filemtime(__DIR__ . '/../assets/js/itinerary.js') ?: 1; ?>
+  <script src="/assets/vendor/leaflet/leaflet.js?v=1.9.4" defer></script>
+  <script src="/assets/js/itinerary.js?v=<?php echo e((string)$v_itin); ?>" defer></script>
 <?php endif; ?>
 <?php if ($routeNow === 'booking'): ?>
   <script src="/assets/js/calendar.js?v=<?php echo e((string)$v_calendar); ?>" defer></script>

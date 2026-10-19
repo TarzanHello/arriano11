@@ -565,3 +565,137 @@ table.calendar td{ padding:0; }
 @media (max-width: 900px){ .guide-cards{ grid-template-columns:1fr 1fr; } }
 @media (max-width: 560px){ .guide-cards{ grid-template-columns:1fr; } }
 body[class*="page-art_"] .page-hero h1{ font-size:clamp(32px, 5.2vw, 68px); }
+
+/* ---------- Itinerari a Roma (patch 10): map, day tabs, levels, stops ---------- */
+.sr-only{ position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+.itin-tool-wrap{ padding:clamp(20px, 4vw, 44px) 0 clamp(40px, 6vw, 72px); }
+.itin-tool{ display:grid; grid-template-columns:minmax(0, 1.1fr) minmax(0, 1fr); gap:clamp(18px, 3vw, 36px); align-items:start; }
+.itin-map-col{ position:sticky; top:84px; }
+.itin-map{ height:min(calc(100vh - 170px), 680px); min-height:360px; border:2px solid var(--ink); border-radius:var(--r-m); background:#dcdad3; z-index:1; }
+.itin-summary{ display:flex; flex-wrap:wrap; gap:6px 18px; margin-top:10px; font-size:15px; color:var(--ink-soft); }
+.itin-summary strong{ color:var(--ink); font-size:17px; }
+.itin-nojs{ margin-bottom:16px; }
+
+.itin-days{ display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin-bottom:18px; scrollbar-width:thin; }
+.itin-day-btn{ flex:0 0 auto; display:flex; flex-direction:column; align-items:flex-start; gap:2px; min-width:118px; padding:10px 14px; border:2px solid var(--ink); border-radius:var(--r-s); background:transparent; color:var(--ink); font:inherit; text-align:left; cursor:pointer; }
+.itin-day-btn[aria-selected="true"]{ background:var(--ink); color:#fff; }
+.itin-day-n{ font-weight:800; font-stretch:80%; font-size:18px; line-height:1.1; }
+.itin-day-t{ font-size:13px; line-height:1.2; opacity:.85; }
+.itin-day-title{ font-size:clamp(26px, 3vw, 36px); margin:0 0 6px; }
+.itin-day-intro{ color:var(--ink-soft); margin-bottom:14px; }
+
+.itin-levels{ display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-bottom:18px; }
+.itin-level{ display:flex; flex-direction:column; gap:4px; padding:12px; border:2px solid var(--line); border-radius:var(--r-m); background:var(--paper); color:var(--ink); font:inherit; text-align:left; cursor:pointer; }
+.itin-level:hover{ border-color:var(--ink); }
+.itin-level[aria-checked="true"]{ border-color:var(--spray); box-shadow:inset 0 0 0 1px var(--spray); background:#fff; }
+.itin-level-name{ font-weight:800; font-stretch:80%; font-size:19px; line-height:1.1; }
+.itin-level[aria-checked="true"] .itin-level-name{ color:var(--spray); }
+.itin-level-desc{ font-size:13px; line-height:1.35; color:var(--ink-soft); }
+
+.itin-time{ display:inline-block; min-width:52px; font-weight:800; font-variant-numeric:tabular-nums; }
+.itin-go, .itin-back{ background:var(--paper); border-left:4px solid var(--ink); border-radius:0 var(--r-s) var(--r-s) 0; padding:10px 14px; margin:0 0 10px; font-size:15px; }
+.itin-help{ margin:0 0 8px; }
+.itin-list{ list-style:none; margin:0; padding:0; }
+.itin-stop{ position:relative; padding-left:0; }
+.itin-stop-card{ background:var(--paper); border:1px solid var(--line); border-left:5px solid var(--spray); border-radius:var(--r-m); padding:12px 14px; transition:box-shadow .2s ease, transform .2s ease; }
+.itin-stop.is-meal .itin-stop-card{ border-left-color:var(--sticker); }
+.itin-stop.is-hl .itin-stop-card{ box-shadow:0 0 0 3px var(--sticker); }
+.itin-stop-head{ display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+.itin-num{ display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; background:var(--spray); color:#fff; font-weight:800; font-size:14px; flex:0 0 26px; transform:translateY(-2px); }
+.itin-stop.is-meal .itin-num{ background:var(--sticker); color:var(--ink); }
+.itin-stop-name{ font-weight:800; font-stretch:85%; font-size:19px; line-height:1.15; }
+.itin-stop-meta{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:4px 0 0 34px; font-size:14px; color:var(--ink-soft); }
+.itin-badge{ display:inline-block; padding:1px 8px; border-radius:999px; background:var(--ink); color:#fff; font-size:12px; font-weight:700; }
+.itin-badge-meal{ background:var(--sticker); color:var(--ink); }
+.itin-note{ margin:6px 0 0 34px; font-size:15px; line-height:1.45; }
+.itin-stop-actions{ display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 0 34px; }
+.itin-act{ min-height:36px; min-width:36px; padding:4px 10px; border:1.5px solid var(--ink); border-radius:var(--r-s); background:transparent; color:var(--ink); font:inherit; font-size:14px; font-weight:700; cursor:pointer; }
+.itin-act:hover:not([disabled]){ background:var(--ink); color:#fff; }
+.itin-act[disabled]{ opacity:.3; cursor:default; }
+.itin-act-guide{ border-color:var(--spray); color:var(--spray); }
+.itin-act-guide:hover{ background:var(--spray) !important; border-color:var(--spray); }
+.itin-act-remove{ margin-left:auto; border-color:var(--line); color:var(--ink-soft); }
+.itin-leg{ margin:0 0 0 18px; padding:8px 0 8px 22px; border-left:3px dotted var(--metro); font-size:13px; color:var(--ink-soft); }
+.itin-leg-transit{ border-left-style:dashed; border-left-color:var(--ink-soft); }
+.itin-back{ margin-top:0; }
+.itin-evening{ font-size:15px; }
+.itin-empty{ font-weight:700; }
+.itin-extra{ margin-top:22px; padding-top:16px; border-top:2px solid var(--ink); }
+.itin-extra-title{ font-size:20px; margin-bottom:8px; }
+.itin-extra-list{ list-style:none; margin:0 0 10px; padding:0; display:grid; gap:8px; }
+.itin-extra-list li{ display:flex; flex-wrap:wrap; align-items:center; gap:4px 12px; }
+.itin-add{ min-height:40px; padding:6px 12px; border:1.5px dashed var(--ink); border-radius:var(--r-s); background:transparent; color:var(--ink); font:inherit; font-size:15px; font-weight:700; text-align:left; cursor:pointer; }
+.itin-add:hover{ border-style:solid; background:#fff; }
+.itin-add span[aria-hidden]{ color:var(--metro); font-size:18px; }
+.itin-book{ margin-top:16px; padding:12px 14px; background:var(--wall); border-left:6px solid var(--sticker); border-radius:var(--r-s); font-size:15px; }
+.itin-ssr-list li{ margin:6px 0; }
+
+.itin-save{ margin-top:26px; padding:20px; border:2px solid var(--ink) !important; }
+.itin-save-title, .itin-retrieve-title{ font-size:26px; margin-bottom:6px; }
+.itin-code{ font-size:clamp(34px, 6vw, 48px); font-weight:800; font-stretch:75%; letter-spacing:.06em; margin:4px 0 12px; color:var(--spray); }
+.itin-saved-ok{ margin:14px 0 0; font-weight:700; }
+.itin-error, .itin-retrieve-bad{ color:var(--spray-dark); font-weight:700; margin-top:10px; }
+.btn-wa{ background:#1E8E4F; border-color:#1E8E4F; color:#fff; }
+.btn-wa:hover{ background:#176f3d; border-color:#176f3d; color:#fff; }
+
+.itin-retrieve{ max-width:640px; margin:28px auto 0; padding:22px; }
+.itin-retrieve-row{ display:flex; gap:8px; flex-wrap:wrap; }
+.itin-retrieve-row input{ flex:1 1 200px; min-height:46px; padding:8px 14px; border:2px solid var(--ink); border-radius:var(--r-s); font:inherit; font-size:20px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; background:#fff; }
+.itin-other-lengths{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+.itin-hub{ max-width:980px; margin:0 auto; }
+.itin-hub-card{ position:relative; padding-top:22px; }
+.itin-hub-num{ font-size:64px; font-weight:800; font-stretch:68%; line-height:.9; color:var(--spray); }
+
+/* Map pins (Leaflet divIcon) */
+.itin-pin{ display:flex !important; align-items:center; justify-content:center; border-radius:50%; background:var(--spray); color:#fff; border:2px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,.35); font:800 14px/1 var(--font); }
+.itin-pin-meal{ background:var(--sticker); color:var(--ink); }
+.itin-pin-home{ background:var(--ink); font-size:18px; }
+.itin-pin-station{ background:var(--metro); font-size:11px; }
+.leaflet-container{ font-family:var(--font); }
+.leaflet-popup-content{ font-size:14px; line-height:1.4; }
+
+/* Guide dialog */
+.itin-guide{ width:min(640px, calc(100vw - 24px)); max-height:min(86vh, 900px); padding:0; border:2px solid var(--ink); border-radius:var(--r-m); background:var(--paper); color:var(--ink); }
+.itin-guide::backdrop{ background:rgba(29,38,51,.55); }
+.itin-guide-inner{ position:relative; padding:24px clamp(18px, 4vw, 30px) 20px; }
+.itin-guide h2{ font-size:clamp(28px, 4vw, 40px); padding-right:44px; }
+.itin-guide h3{ font-size:18px; margin:14px 0 6px; }
+.itin-guide ul{ padding-left:20px; margin:0 0 12px; }
+.itin-guide-tip{ background:var(--wall); border-left:6px solid var(--sticker); padding:10px 12px; border-radius:var(--r-s); }
+.itin-guide-close{ position:absolute; top:10px; right:10px; width:40px; height:40px; border:2px solid var(--ink); border-radius:50%; background:#fff; font-size:24px; line-height:1; cursor:pointer; }
+
+/* Saved itinerary page */
+.itin-saved-head{ display:flex; flex-wrap:wrap; gap:14px 24px; align-items:center; justify-content:space-between; margin-bottom:22px; }
+.itin-saved-code{ font-size:clamp(30px, 5vw, 44px); font-weight:800; font-stretch:75%; letter-spacing:.06em; color:var(--spray); line-height:1; }
+.itin-saved-day{ margin-top:30px; }
+.itin-saved-day h2{ font-size:clamp(26px, 3vw, 36px); }
+.itin-saved-level{ font-size:15px; color:var(--ink-soft); margin:-4px 0 12px; }
+.itin-saved-guide{ margin:8px 0 0 34px; }
+.itin-saved-guide summary{ cursor:pointer; color:var(--spray); font-weight:700; font-size:14px; }
+.itin-saved-guide p, .itin-saved-guide ul{ font-size:15px; margin:8px 0; }
+.itin-saved-links{ display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 0; }
+.itin-saved-links .btn{ min-height:40px; font-size:14px; padding:8px 14px; }
+
+@media (max-width: 900px){
+  .itin-tool{ grid-template-columns:1fr; }
+  .itin-map-col{ position:relative; top:auto; }
+  .itin-map{ height:46vh; min-height:280px; max-height:460px; }
+}
+@media (max-width: 560px){
+  .itin-levels{ gap:6px; }
+  .itin-level{ padding:10px 8px; }
+  .itin-level-name{ font-size:17px; }
+  .itin-level-desc{ font-size:12px; }
+  .itin-stop-meta, .itin-note, .itin-stop-actions, .itin-saved-guide{ margin-left:0; }
+  .itin-act-remove{ margin-left:0; }
+}
+@media print{
+  .site-header, .site-footer, .mobile-bar, .wa-float, .itin-map-col, .itin-days, .itin-saved-links, .itin-no-print, .page-hero-media, #cookieBanner{ display:none !important; }
+  .page-hero{ background:#fff; color:#000; }
+  .page-hero::after{ display:none; }
+  .itin-tool{ display:block; }
+  .itin-saved-day, [data-day-panel][hidden]{ display:block !important; }
+  .itin-saved-guide{ display:block; }
+  .itin-saved-guide > *{ display:block !important; }
+  body{ background:#fff; }
+}

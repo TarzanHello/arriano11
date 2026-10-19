@@ -37,6 +37,11 @@ if ($articleData) {
   $metaTitle = (string)($articleData['meta_title'] ?? '');
   $metaDesc = (string)($articleData['meta_desc'] ?? '');
 }
+// Itineraries (patch 10): texts in /i18n/itineraries/{lang}.php
+if (is_itin_route($route)) {
+  $metaTitle = (string)itin_t('pages.' . $route . '.meta_title');
+  $metaDesc = (string)itin_t('pages.' . $route . '.meta_desc');
+}
 
 // If a translation key is missing, t() returns the key itself.
 // Avoid leaking translation keys into SEO tags.
@@ -60,6 +65,10 @@ $ogImages = [
   'booking' => 'camera_da_letto_wide_1200.jpg',
   'policlinico' => 'camera_da_letto_wide_1200.jpg',
   'guides' => 'giardino_1_1200.jpg',
+  'itineraries' => 'giardino_1_1200.jpg',
+  'itin_3' => 'giardino_1_1200.jpg',
+  'itin_4' => 'giardino_1_1200.jpg',
+  'itin_5' => 'giardino_1_1200.jpg',
 ];
 if (is_article_route($route)) {
   $artMeta = via_articles()[$route];
@@ -73,6 +82,12 @@ $hreflangs = hreflang_links_for_route($route);
 
 // JS payload for client-side i18n (calendar, lightbox, auto language)
 $urlsMap = urls_for_route($route);
+// A saved itinerary has its code in the address: language links and the auto-language redirect
+// (assets/js/i18n.js) must keep it, otherwise the code would be lost.
+if ($route === 'itin_saved') {
+  $svPath = '/' . trim((string)(parse_url((string)($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH) ?: ''), '/');
+  foreach ($urlsMap as $k => $v) $urlsMap[$k] = $svPath;
+}
 $jsPayload = [
   'lang' => $lang,
   'locale' => current_locale(),
@@ -86,7 +101,7 @@ $jsPayload = [
   ],
 ];
 
-$isNoIndex = in_array($route, ['booking_success', 'booking_cancel', 'review'], true);
+$isNoIndex = in_array($route, ['booking_success', 'booking_cancel', 'review', 'itin_saved'], true);
 
 // Security headers (CSP, HSTS, etc.)
 send_security_headers([
@@ -150,6 +165,10 @@ send_security_headers([
   <link rel="preload" href="/assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
   <?php $css_v = @filemtime(__DIR__ . '/../assets/css/site.css') ?: 1; ?>
   <link rel="stylesheet" href="/assets/css/site.css?v=<?php echo e((string)$css_v); ?>">
+  <?php if (in_array($route, ['itin_3', 'itin_4', 'itin_5', 'itin_saved'], true)): ?>
+    <link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin>
+    <link rel="stylesheet" href="/assets/vendor/leaflet/leaflet.css?v=1.9.4">
+  <?php endif; ?>
 
     <?php
     // Structured data:

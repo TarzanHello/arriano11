@@ -33,7 +33,7 @@ $phCrumb = (string)($pageHero['crumb'] ?? ($phLabels[$phRoute] ?? $phTitle));
 // Optional intermediate crumbs: [['label' => .., 'route' => ..], ...]
 $phMid = $pageHero['crumbs'] ?? [];
 if (!is_array($phMid)) $phMid = [];
-$phIndexable = !in_array($phRoute, ['booking_success', 'booking_cancel', 'review'], true);
+$phIndexable = !in_array($phRoute, ['booking_success', 'booking_cancel', 'review', 'itin_saved'], true);
 
 if ($phIndexable && $phRoute !== '' && $phRoute !== 'home') {
   $phLd = [
