@@ -17,7 +17,7 @@ $pageHero = [
   'kicker' => t('legal.cookies_pill'),
   'title' => t('legal.cookies_title'),
   'lead'  => t('legal.cookies_lead'),
-  'image' => '/assets/images/gallery/outdoor_wide.jpg',
+  'image' => '/assets/images/gallery/giardino_2.jpg',
   'actions' => [
     ['href' => i18n_url('privacy'), 'label' => t('legal.cta_privacy'), 'class' => 'btn primary'],
     ['href' => i18n_url('contact'), 'label' => t('legal.cta_contact'), 'class' => 'btn ghost'],
