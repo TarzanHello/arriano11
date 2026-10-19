@@ -28,11 +28,11 @@ const VIA_ITIN_HOME = [41.88541438, 12.53654213];
 // Routes: hub + one builder page per trip length. Slugs are per language (Italian first).
 function itin_routes() {
   return [
-    'itineraries' => ['days' => 0, 'slugs' => ['it' => 'itinerari', 'en' => 'itineraries']],
-    'itin_3' => ['days' => 3, 'slugs' => ['it' => 'itinerari/roma-3-giorni', 'en' => 'itineraries/rome-3-days']],
-    'itin_4' => ['days' => 4, 'slugs' => ['it' => 'itinerari/roma-4-giorni', 'en' => 'itineraries/rome-4-days']],
-    'itin_5' => ['days' => 5, 'slugs' => ['it' => 'itinerari/roma-5-giorni', 'en' => 'itineraries/rome-5-days']],
-    'itin_saved' => ['days' => 0, 'slugs' => ['it' => 'itinerari/salvato', 'en' => 'itineraries/saved']],
+    'itineraries' => ['days' => 0, 'slugs' => ['it' => 'itinerari', 'en' => 'itineraries', 'fr' => 'itineraires', 'de' => 'reiserouten', 'es' => 'itinerarios', 'pt' => 'roteiros']],
+    'itin_3' => ['days' => 3, 'slugs' => ['it' => 'itinerari/roma-3-giorni', 'en' => 'itineraries/rome-3-days', 'fr' => 'itineraires/rome-3-jours', 'de' => 'reiserouten/rom-3-tage', 'es' => 'itinerarios/roma-3-dias', 'pt' => 'roteiros/roma-3-dias']],
+    'itin_4' => ['days' => 4, 'slugs' => ['it' => 'itinerari/roma-4-giorni', 'en' => 'itineraries/rome-4-days', 'fr' => 'itineraires/rome-4-jours', 'de' => 'reiserouten/rom-4-tage', 'es' => 'itinerarios/roma-4-dias', 'pt' => 'roteiros/roma-4-dias']],
+    'itin_5' => ['days' => 5, 'slugs' => ['it' => 'itinerari/roma-5-giorni', 'en' => 'itineraries/rome-5-days', 'fr' => 'itineraires/rome-5-jours', 'de' => 'reiserouten/rom-5-tage', 'es' => 'itinerarios/roma-5-dias', 'pt' => 'roteiros/roma-5-dias']],
+    'itin_saved' => ['days' => 0, 'slugs' => ['it' => 'itinerari/salvato', 'en' => 'itineraries/saved', 'fr' => 'itineraires/sauvegarde', 'de' => 'reiserouten/gespeichert', 'es' => 'itinerarios/guardado', 'pt' => 'roteiros/guardado']],
   ];
 }
 

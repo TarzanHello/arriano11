@@ -577,7 +577,8 @@ body[class*="page-art_"] .page-hero h1{ font-size:clamp(32px, 5.2vw, 68px); }
 .itin-nojs{ margin-bottom:16px; }
 
 .itin-days{ display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin-bottom:18px; scrollbar-width:thin; }
-.itin-day-btn{ flex:0 0 auto; display:flex; flex-direction:column; align-items:flex-start; gap:2px; min-width:118px; padding:10px 14px; border:2px solid var(--ink); border-radius:var(--r-s); background:transparent; color:var(--ink); font:inherit; text-align:left; cursor:pointer; }
+.itin-map-col, .itin-ctrl-col{ min-width:0; }
+.itin-day-btn{ flex:0 0 auto; display:flex; flex-direction:column; align-items:flex-start; gap:2px; min-width:118px; max-width:200px; padding:10px 14px; border:2px solid var(--ink); border-radius:var(--r-s); background:transparent; color:var(--ink); font:inherit; text-align:left; cursor:pointer; }
 .itin-day-btn[aria-selected="true"]{ background:var(--ink); color:#fff; }
 .itin-day-n{ font-weight:800; font-stretch:80%; font-size:18px; line-height:1.1; }
 .itin-day-t{ font-size:13px; line-height:1.2; opacity:.85; }
@@ -677,7 +678,7 @@ body[class*="page-art_"] .page-hero h1{ font-size:clamp(32px, 5.2vw, 68px); }
 .itin-saved-links .btn{ min-height:40px; font-size:14px; padding:8px 14px; }
 
 @media (max-width: 900px){
-  .itin-tool{ grid-template-columns:1fr; }
+  .itin-tool{ grid-template-columns:minmax(0, 1fr); }
   .itin-map-col{ position:relative; top:auto; }
   .itin-map{ height:46vh; min-height:280px; max-height:460px; }
 }

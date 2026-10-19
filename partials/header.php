@@ -86,7 +86,10 @@ $urlsMap = urls_for_route($route);
 // (assets/js/i18n.js) must keep it, otherwise the code would be lost.
 if ($route === 'itin_saved') {
   $svPath = '/' . trim((string)(parse_url((string)($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH) ?: ''), '/');
-  foreach ($urlsMap as $k => $v) $urlsMap[$k] = $svPath;
+  $svCodeUrl = itin_code_normalize((string)basename($svPath));
+  foreach ($urlsMap as $k => $v) {
+    $urlsMap[$k] = $svCodeUrl !== '' ? i18n_url('itin_saved', i18n_route_lang('itin_saved', $k)) . '/' . $svCodeUrl : $svPath;
+  }
 }
 $jsPayload = [
   'lang' => $lang,

@@ -117,17 +117,18 @@ Options -Indexes
   RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/guide/([a-z0-9-]+)$ article.php?lang=$1&slug=$2 [L,QSA]
   RewriteRule ^guide/([a-z0-9-]+)$ article.php?slug=$1 [L,QSA]
 
-  # Itineraries (patch 10): hub /itinerari, builder /itinerari/roma-N-giorni, saved /itinerari/salvato/{CODE} (noindex).
-  # Slugs per language live in lib/itineraries.php; languages without texts are redirected in PHP.
-  RewriteRule ^((?:en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/)?(itinerari|itineraries)(/[A-Za-z0-9/-]*[A-Za-z0-9])?/+$ /$1$2$3 [R=301,L]
+  # Itineraries (patch 10, languages patch 11): hub /itinerari, builder /itinerari/roma-N-giorni,
+  # saved /itinerari/salvato/{CODE} (noindex). Slugs per language live in lib/itineraries.php:
+  # these rules accept every language's slug; PHP sends visitors to the right one.
+  RewriteRule ^((?:en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/)?(itinerari|itineraries|itineraires|reiserouten|itinerarios|roteiros)(/[A-Za-z0-9/-]*[A-Za-z0-9])?/+$ /$1$2$3 [R=301,L]
   RewriteCond %{THE_REQUEST} \s/+(itineraries|itinerary-saved)\.php[?\s] [NC]
   RewriteRule ^(itineraries|itinerary-saved)\.php$ /itinerari [R=301,L]
-  RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/(?:itinerari/salvato|itineraries/saved)/([A-Za-z0-9-]{4,16})$ itinerary-saved.php?lang=$1&t=$2 [L,QSA]
-  RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/(?:itinerari/salvato|itineraries/saved)$ itinerary-saved.php?lang=$1 [L,QSA]
-  RewriteRule ^(?:itinerari/salvato|itineraries/saved)/([A-Za-z0-9-]{4,16})$ itinerary-saved.php?t=$1 [L,QSA]
-  RewriteRule ^(?:itinerari/salvato|itineraries/saved)$ itinerary-saved.php [L,QSA]
-  RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/(?:itinerari|itineraries)(?:/[a-z0-9-]+)?$ itineraries.php?lang=$1 [L,QSA]
-  RewriteRule ^(?:itinerari|itineraries)(?:/[a-z0-9-]+)?$ itineraries.php [L,QSA]
+  RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/(?:itinerari|itineraries|itineraires|reiserouten|itinerarios|roteiros)/(?:salvato|saved|sauvegarde|gespeichert|guardado)/([A-Za-z0-9-]{4,16})$ itinerary-saved.php?lang=$1&t=$2 [L,QSA]
+  RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/(?:itinerari|itineraries|itineraires|reiserouten|itinerarios|roteiros)/(?:salvato|saved|sauvegarde|gespeichert|guardado)$ itinerary-saved.php?lang=$1 [L,QSA]
+  RewriteRule ^(?:itinerari|itineraries|itineraires|reiserouten|itinerarios|roteiros)/(?:salvato|saved|sauvegarde|gespeichert|guardado)/([A-Za-z0-9-]{4,16})$ itinerary-saved.php?t=$1 [L,QSA]
+  RewriteRule ^(?:itinerari|itineraries|itineraires|reiserouten|itinerarios|roteiros)/(?:salvato|saved|sauvegarde|gespeichert|guardado)$ itinerary-saved.php [L,QSA]
+  RewriteRule ^(en|fr|es|ru|ro|pt|pl|ko|de|se|dk|zh|ja)/(?:itinerari|itineraries|itineraires|reiserouten|itinerarios|roteiros)(?:/[a-z0-9-]+)?$ itineraries.php?lang=$1 [L,QSA]
+  RewriteRule ^(?:itinerari|itineraries|itineraires|reiserouten|itinerarios|roteiros)(?:/[a-z0-9-]+)?$ itineraries.php [L,QSA]
 
   # Clean URLs for default language
   RewriteRule ^(booking|apartment|neighborhood|tips|rules|contact|privacy|cookies|review)$ $1.php [L,QSA]
