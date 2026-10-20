@@ -7,6 +7,7 @@ return [
   'ui' => [
     'crumb' => 'Itinerari',
     'nav' => 'Itinerari a Roma',
+    'nav_short' => 'Itinerari',
     'map_label' => 'Mappa dell’itinerario',
     'days_label' => 'Giorno',
     'day' => 'Giorno {n}',

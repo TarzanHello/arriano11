@@ -5,6 +5,7 @@ return [
   'ui' => [
     'crumb' => 'Itinéraires',
     'nav' => 'Itinéraires à Rome',
+    'nav_short' => 'Itinéraires',
     'map_label' => 'Carte de l’itinéraire',
     'days_label' => 'Jour',
     'day' => 'Jour {n}',

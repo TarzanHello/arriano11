@@ -5,6 +5,7 @@ return [
   'ui' => [
     'crumb' => 'Reiserouten',
     'nav' => 'Reiserouten durch Rom',
+    'nav_short' => 'Reiserouten',
     'map_label' => 'Karte der Route',
     'days_label' => 'Tag',
     'day' => 'Tag {n}',

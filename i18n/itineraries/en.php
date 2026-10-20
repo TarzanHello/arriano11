@@ -6,6 +6,7 @@ return [
   'ui' => [
     'crumb' => 'Itineraries',
     'nav' => 'Rome itineraries',
+    'nav_short' => 'Itineraries',
     'map_label' => 'Itinerary map',
     'days_label' => 'Day',
     'day' => 'Day {n}',

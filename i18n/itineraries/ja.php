@@ -6,6 +6,7 @@ return [
   'ui' => [
     'crumb' => '観光ルート',
     'nav' => 'ローマ観光ルート',
+    'nav_short' => '観光ルート',
     'map_label' => 'ルートの地図',
     'days_label' => '日目',
     'day' => '{n}日目',

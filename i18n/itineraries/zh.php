@@ -6,6 +6,7 @@ return [
   'ui' => [
     'crumb' => '行程路线',
     'nav' => '罗马行程路线',
+    'nav_short' => '行程路线',
     'map_label' => '路线地图',
     'days_label' => '天',
     'day' => '第 {n} 天',

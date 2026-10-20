@@ -6,6 +6,7 @@ return [
   'ui' => [
     'crumb' => 'Itinerarii',
     'nav' => 'Itinerarii prin Roma',
+    'nav_short' => 'Itinerarii',
     'map_label' => 'Harta itinerarului',
     'days_label' => 'Ziua',
     'day' => 'Ziua {n}',

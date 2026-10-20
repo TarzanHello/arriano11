@@ -6,6 +6,7 @@ return [
   'ui' => [
     'crumb' => '여행 코스',
     'nav' => '로마 여행 코스',
+    'nav_short' => '여행 코스',
     'map_label' => '코스 지도',
     'days_label' => '일차',
     'day' => '{n}일차',

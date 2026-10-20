@@ -5,6 +5,7 @@ return [
   'ui' => [
     'crumb' => 'Roteiros',
     'nav' => 'Roteiros em Roma',
+    'nav_short' => 'Roteiros',
     'map_label' => 'Mapa do roteiro',
     'days_label' => 'Dia',
     'day' => 'Dia {n}',

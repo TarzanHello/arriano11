@@ -6,6 +6,7 @@ return [
   'ui' => [
     'crumb' => 'Trasy',
     'nav' => 'Trasy po Rzymie',
+    'nav_short' => 'Trasy',
     'map_label' => 'Mapa trasy',
     'days_label' => 'Dzień',
     'day' => 'Dzień {n}',

@@ -455,6 +455,8 @@ send_security_headers([
       <nav class="nav" id="siteNav" aria-label="<?php echo e(t('nav.menu')); ?>">
         <a class="<?php echo nav_active_route('apartment', $route); ?>" href="<?php echo e(i18n_url('apartment')); ?>"><?php echo e(t('nav.apartment')); ?></a>
         <a class="<?php echo nav_active_route('neighborhood', $route); ?>" href="<?php echo e(i18n_url('neighborhood')); ?>"><?php echo e(t('nav.neighborhood')); ?></a>
+        <?php $navItinLang = i18n_route_lang('itineraries', $lang); ?>
+        <a class="<?php echo is_itin_route($route) ? 'is-active' : ''; ?>" href="<?php echo e(i18n_url('itineraries', $navItinLang)); ?>"><?php echo e((string)itin_t('ui.nav_short', $navItinLang)); ?></a>
         <a class="<?php echo nav_active_route('tips', $route); ?>" href="<?php echo e(i18n_url('tips')); ?>"><?php echo e(t('nav.tips')); ?></a>
         <a class="<?php echo nav_active_route('rules', $route); ?>" href="<?php echo e(i18n_url('rules')); ?>"><?php echo e(t('nav.rules')); ?></a>
         <a class="<?php echo nav_active_route('contact', $route); ?>" href="<?php echo e(i18n_url('contact')); ?>"><?php echo e(t('nav.contact')); ?></a>

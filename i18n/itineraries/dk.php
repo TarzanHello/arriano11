@@ -6,6 +6,7 @@ return [
   'ui' => [
     'crumb' => 'Ruter',
     'nav' => 'Ruter i Rom',
+    'nav_short' => 'Ruter',
     'map_label' => 'Kort over ruten',
     'days_label' => 'Dag',
     'day' => 'Dag {n}',

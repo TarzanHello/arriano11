@@ -6,6 +6,7 @@ return [
   'ui' => [
     'crumb' => 'Resrutter',
     'nav' => 'Resrutter i Rom',
+    'nav_short' => 'Resrutter',
     'map_label' => 'Karta över rutten',
     'days_label' => 'Dag',
     'day' => 'Dag {n}',
